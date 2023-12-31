@@ -10,6 +10,7 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  Button,
 } from "react-native";
 import * as Font from "expo-font";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +26,7 @@ import Svg, {
   LinearGradient as SvgLinearGradient,
   Stop,
 } from "react-native-svg";
+import { ConnectWallet, darkTheme } from "@thirdweb-dev/react-native";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -107,23 +109,8 @@ const LoginInner = () => {
   const handleLogin = () => {
     api
       .post("/auth/get_token/", {
-        username: username_x,
         password: password_x,
       })
-
-      //async code
-      // .then(response => {
-      //     if (response.status === 200) {
-      //         setLoggedIn(true);
-      //         setTokens({ access: response.data.access, refresh: response.data.refresh });
-      //         AsyncStorage.setItem('authTokens', JSON.stringify({ access: response.data.access, refresh: response.data.refresh }));
-      //         AsyncStorage.setItem('username', username_x);
-      //         navigation.navigate('ProfileTab');
-      //         //navigation.navigate('test');
-      //     } else {
-      //         // Handle other status codes here
-      //     }
-      // })
       .then((response) => {
         if (response.status === 200) {
           setLoggedIn(true);
@@ -132,7 +119,6 @@ const LoginInner = () => {
             refresh: response.data.refresh,
           });
           navigation.navigate("ProfileTab");
-          //navigation.navigate('test');
         } else {
           // Handle other status codes here
         }
@@ -157,41 +143,15 @@ const LoginInner = () => {
             { width: 650.637, height: 739.49, borderRadius: 739.49 },
           ]}
         />
-
-        <Text style={styles.loginText}>Login</Text>
-        <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          colors={["#B80DCA", "#4035CB"]}
-          style={{
-            position: "absolute",
-            top: 239 + 49, // 39px below the "Login" text
-            width: 302,
-            height: 63,
-            borderRadius: 10,
-            padding: 3, // This will be the width of your border
-          }}>
-          <View
-            style={{
-              flex: 1,
-              borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
-              backgroundColor: "#D9D9D9", // or whatever your button's background color is
-              justifyContent: "center", // Center the text vertically
-              alignItems: "flex-start", // Center the text horizontally
-              paddingLeft: 10,
-            }}>
-            <Text
-              style={{
-                color: "#3D3939",
-                fontFamily: "Inter",
-                fontSize: 20,
-                fontStyle: "italic",
-                fontWeight: "600",
-              }}>
-              Connect Your Wallet
-            </Text>
-          </View>
-        </LinearGradient>
+        <View style={styles.walletContainer}>
+          <Text style={styles.loginText}>Login</Text>
+          <ConnectWallet
+            buttonTitle="Login"
+            modalTitleIconUrl=""
+            modalTitle="Connect Your Wallet"
+            theme="dark"
+          />
+        </View>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don`t you have account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("newSignUp")}>
@@ -262,9 +222,8 @@ const LoginInner = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#0C0C0C", // Set background color to rgba(5, 5, 5, 0.70)
+    backgroundColor: "#0C0C0C",
   },
   circle: {
     transform: [{ rotate: "-179.736deg" }],
@@ -287,10 +246,12 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+  walletContainer: {
+    marginTop: 350,
+    width: "80%",
+  },
   loginText: {
-    position: "absolute",
-    top: 239,
-    left: 40,
+    marginBottom: 39,
     color: "#FFF",
     fontFamily: "Inter",
     fontSize: 25,
@@ -316,8 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Arrange the text and button horizontally
     justifyContent: "center", // Center the text and button horizontally
     alignItems: "center", // Center the text and button vertically
-    position: "absolute", // Position the container absolutely
-    top: 239 + 49 + 123, // Position the container 123px below the "Connect to Wallet" button
+    marginTop: 120,
   },
   signupText: {
     color: "#FFF",
