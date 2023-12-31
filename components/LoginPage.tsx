@@ -1,6 +1,5 @@
-
-import {useState, useEffect} from 'react';
-import {LinearGradient} from 'expo-linear-gradient';
+import { useState, useEffect } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   View,
   StyleSheet,
@@ -11,10 +10,10 @@ import {
   StatusBar,
   Dimensions,
   Image,
-} from 'react-native';
-import * as Font from 'expo-font';
-import { useNavigation } from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+} from "react-native";
+import * as Font from "expo-font";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface CustomTextProps {
   style: any;
@@ -27,7 +26,7 @@ const CustomText = (props: CustomTextProps) => {
   useEffect(() => {
     async function loadFont() {
       await Font.loadAsync({
-        'custom-font': require('./assets/fonts/ZenDots-Regular.ttf'),
+        "custom-font": require("../assets/fonts/ZenDots-Regular.ttf"),
       });
 
       setFontLoaded(true);
@@ -41,14 +40,14 @@ const CustomText = (props: CustomTextProps) => {
   }
 
   return (
-    <Text style={{...props.style, fontFamily: 'custom-font'}}>
+    <Text style={{ ...props.style, fontFamily: "custom-font" }}>
       {props.children}
     </Text>
   );
 };
 
 const LoginPage = () => {
-  const {height} = Dimensions.get('window');
+  const { height } = Dimensions.get("window");
   const statusBarHeight = StatusBar.currentHeight || 0;
   const imageHeight = height - statusBarHeight;
 
@@ -82,7 +81,7 @@ const LoginPage = () => {
       }),
     ]).start(() => {
       setTimeout(() => {
-        navigation.navigate('Register');
+        navigation.navigate("Register");
       }, 3000);
     });
   };
@@ -102,12 +101,12 @@ const LoginPage = () => {
 
   const rectangleColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#7A0099', '#00168C'],
+    outputRange: ["#7A0099", "#00168C"],
   });
 
   const rectangleBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#6A0084', '#080060'],
+    outputRange: ["#6A0084", "#080060"],
   });
 
   const textAnimation = new Animated.Value(0);
@@ -119,22 +118,22 @@ const LoginPage = () => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#9600BC', '#000936']}
-        start={{x: 0, y: 0}}
-        end={{x: 0.4, y: 1}}
+        colors={["#9600BC", "#000936"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.4, y: 1 }}
         style={styles.gradient}
         locations={[0.1885, 1.2]}>
         <ImageBackground
-          source={require('./assets/Checks.png')}
+          source={require("../assets/Checks.png")}
           style={[
             styles.background,
-            {height: imageHeight, marginTop: statusBarHeight},
+            { height: imageHeight, marginTop: statusBarHeight },
           ]}>
-          <View style={{flex: 1, alignItems: 'center'}}>
+          <View style={{ flex: 1, alignItems: "center" }}>
             <Image
-              source={require('./assets/LadderLogo.png')}
+              source={require("../assets/LadderLogo.png")}
               style={{
-                position: 'absolute',
+                position: "absolute",
                 top: 130,
                 width: 197,
                 height: 197,
@@ -142,30 +141,30 @@ const LoginPage = () => {
             />
             <TouchableOpacity onPress={handlePress}>
               <Animated.View
-                style={{marginTop: 240 + 197, position: 'relative'}}>
+                style={{ marginTop: 240 + 197, position: "relative" }}>
                 <Animated.View
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     opacity: circleOpacityRight,
                     left: 247,
                     top: (76 - 33 * 2) / 2,
                     width: 33 * 2,
                     height: 33 * 2,
                     borderRadius: 33,
-                    backgroundColor: '#58006e',
+                    backgroundColor: "#58006e",
                     zIndex: 1,
                   }}
                 />
                 <Animated.View
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     opacity: circleOpacityLeft,
                     left: 6,
                     top: (76 - 33 * 2) / 2,
                     width: 33 * 2,
                     height: 33 * 2,
                     borderRadius: 33,
-                    backgroundColor: '#080060',
+                    backgroundColor: "#080060",
                     zIndex: 1,
                   }}
                 />
@@ -174,9 +173,9 @@ const LoginPage = () => {
                     width: 317 + 4,
                     height: 72 + 4,
                     borderRadius: 42,
-                    backgroundColor: 'black',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    backgroundColor: "black",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}>
                   <Animated.View
                     style={{
@@ -186,22 +185,22 @@ const LoginPage = () => {
                       backgroundColor: rectangleColor,
                       borderWidth: 2,
                       borderColor: rectangleBorderColor,
-                      flexDirection: 'row',
-                      alignItems: 'center',
+                      flexDirection: "row",
+                      alignItems: "center",
                       paddingLeft: 15,
                     }}>
                     <Animated.View
                       style={{
-                        position: 'absolute',
-                        transform: [{translateX: textPosition}],
+                        position: "absolute",
+                        transform: [{ translateX: textPosition }],
                       }}>
                       <CustomText
                         style={{
-                          color: '#FFF',
-                          fontFamily: 'Zen Dots',
+                          color: "#FFF",
+                          fontFamily: "Zen Dots",
                           fontSize: 24,
-                          fontStyle: 'normal',
-                          fontWeight: '400',
+                          fontStyle: "normal",
+                          fontWeight: "400",
                           lineHeight: 24,
                         }}>
                         Connect Wallet
@@ -221,16 +220,16 @@ const LoginPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   background: {
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
+    resizeMode: "cover",
+    justifyContent: "center",
+    alignItems: "center",
   },
   gradient: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
