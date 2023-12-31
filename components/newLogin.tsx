@@ -130,93 +130,129 @@ const LoginInner = () => {
       });
   };
 
-  return (
-    <>
-      <StatusBar backgroundColor="transparent" translucent={true} />
-      <View style={styles.container}>
-        <LinearGradient
-          colors={["#B80DCA", "#4035CB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[
-            styles.circle,
-            { width: 650.637, height: 739.49, borderRadius: 739.49 },
-          ]}
-        />
-        <View style={styles.walletContainer}>
-          <Text style={styles.loginText}>Login</Text>
-          <ConnectWallet
-            buttonTitle="Login"
-            modalTitleIconUrl=""
-            modalTitle="Connect Your Wallet"
-            theme="dark"
-          />
-        </View>
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Don`t you have account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("newSignUp")}>
-            <MaskedView
-              style={{ flexDirection: "row" }}
-              maskElement={<Text style={styles.signupButton}>Sign up!</Text>}>
-              <LinearGradient
-                colors={["#B80DCA", "#4035CB"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}>
-                <Text style={[styles.signupButton, { opacity: 0 }]}>
-                  Sign up!
-                </Text>
-              </LinearGradient>
-            </MaskedView>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.loginButtonContainer}>
-          <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
-            <Path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
-              fill="#0C0C0C"
-              stroke="url(#gradient)"
-              strokeWidth="7"
-            />
-            <Defs>
-              <SvgLinearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                <Stop offset="0%" stopColor="#B80DCA" />
-                <Stop offset="100%" stopColor="#4035CB" />
-              </SvgLinearGradient>
-            </Defs>
-          </Svg>
-          <MaskedView
-            style={styles.loginButtonText}
-            maskElement={
-              <Text
-                style={{
-                  fontSize: 34,
-                  fontFamily: "Inter",
-                  fontStyle: "italic",
-                }}>
-                Login
-              </Text>
-            }>
-            <LinearGradient
-              colors={["#B80DCA", "#4035CB"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}>
-              <Text
-                style={{
-                  fontSize: 34,
-                  fontFamily: "Inter",
-                  fontStyle: "italic",
-                  opacity: 0,
-                }}>
-                Login
-              </Text>
-            </LinearGradient>
-          </MaskedView>
-        </View>
-      </View>
-    </>
-  );
+    return (
+        <>
+            <StatusBar backgroundColor='transparent' translucent={true} />
+            <View style={styles.container}>
+
+                <LinearGradient
+                    colors={['#B80DCA', '#4035CB']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[styles.circle, { width: 650.637, height: 739.49, borderRadius: 739.49 }]}
+                />
+
+                <Text style={styles.loginText}>Login</Text>
+                <LinearGradient
+                    start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
+                    colors={['#B80DCA', '#4035CB']}
+                    style={{
+                        position: 'absolute',
+                        top: 239 + 49, // 39px below the "Login" text
+                        width: 302,
+                        height: 63,
+                        borderRadius: 10,
+                        padding: 3, // This will be the width of your border
+                    }}
+                >
+
+                    <View
+                        style={{
+                            flex: 1,
+                            borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
+                            backgroundColor: '#D9D9D9', // or whatever your button's background color is
+                            justifyContent: 'center', // Center the text vertically
+                            alignItems: 'flex-start', // Center the text horizontally
+                            paddingLeft: 10,
+                        }}
+                    >
+                        <TouchableOpacity>
+                            <Text style={{
+                                color: '#3D3939',
+                                fontFamily: 'Inter',
+                                fontSize: 20,
+                                fontStyle: 'italic',
+                                fontWeight: '600',
+                            }}>Connect Your Wallet</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </LinearGradient>
+                <View style={styles.signupContainer}>
+                    <Text style={styles.signupText}>Don`t you have account? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('newSignUp')}>
+                        <MaskedView
+                            style={{ flexDirection: 'row' }}
+                            maskElement={
+                                <Text style={styles.signupButton}>
+                                    Sign up!
+                                </Text>
+                            }
+                        >
+                            <LinearGradient
+                                colors={['#B80DCA', '#4035CB']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            >
+                                <Text style={[styles.signupButton, { opacity: 0 }]}>
+                                    Sign up!
+                                </Text>
+                            </LinearGradient>
+                        </MaskedView>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.loginButtonContainer}>
+                    <TouchableOpacity>
+                        <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
+                            <Path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
+                                fill="#0C0C0C"
+                                stroke="url(#gradient)"
+                                strokeWidth="7"
+                            />
+                            <Defs>
+                                <SvgLinearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                                    <Stop offset="0%" stopColor="#B80DCA" />
+                                    <Stop offset="100%" stopColor="#4035CB" />
+                                </SvgLinearGradient>
+                            </Defs>
+                        </Svg>
+                        <MaskedView
+                            style={styles.loginButtonText}
+                            maskElement={
+                                <Text
+                                    style={{
+                                        fontSize: 34,
+                                        fontFamily: 'Inter',
+                                        fontStyle: 'italic',
+                                    }}
+                                >
+                                    Login
+                                </Text>
+                            }
+                        >
+                            <LinearGradient colors={['#B80DCA', '#4035CB']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+                                <Text
+                                    style={{
+                                        fontSize: 34,
+                                        fontFamily: 'Inter',
+                                        fontStyle: 'italic',
+                                        opacity: 0,
+                                    }}
+                                >
+                                    Login
+                                </Text>
+                            </LinearGradient>
+                        </MaskedView>
+                    </TouchableOpacity>
+                </View>
+
+            </View>
+        </>
+    );
 };
 
 const styles = StyleSheet.create({
