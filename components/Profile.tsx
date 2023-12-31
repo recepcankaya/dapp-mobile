@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -9,38 +8,37 @@ import {
   BackHandler,
   Image,
   SafeAreaView,
-} from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import * as Font from 'expo-font'
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { UserContext, UserProvider } from './context/UserContext';
-import { MissionContext, MissionProvider } from './context/MissionContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Font from "expo-font";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { UserContext, UserProvider } from "./context/UserContext";
+import { MissionContext, MissionProvider } from "./context/MissionContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type TabParamList = {
   Profile: undefined;
   // Add other screens here...
 };
 
-type ProfileScreenRouteProp = RouteProp<TabParamList, 'Profile'>;
-
+type ProfileScreenRouteProp = RouteProp<TabParamList, "Profile">;
 
 type RootStackParamList = {
   Profile: undefined;
-  'Tasks List': undefined;
+  "Tasks List": undefined;
   // Add other routes here
 };
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  'Profile'
+  "Profile"
 >;
 
 type CustomTextProps = {
-  style?: object,
-  children: React.ReactNode
-}
+  style?: object;
+  children: React.ReactNode;
+};
 
 const CustomText2 = (props: CustomTextProps) => {
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -48,7 +46,7 @@ const CustomText2 = (props: CustomTextProps) => {
   useEffect(() => {
     async function loadFont() {
       await Font.loadAsync({
-        'custom-font': require('./assets/fonts/ZenDots-Regular.ttf'),
+        "custom-font": require("../assets/fonts/ZenDots-Regular.ttf"),
       });
 
       setFontLoaded(true);
@@ -62,37 +60,37 @@ const CustomText2 = (props: CustomTextProps) => {
   }
 
   return (
-    <Text style={{ ...props.style, fontFamily: 'custom-font' }}>
+    <Text style={{ ...props.style, fontFamily: "custom-font" }}>
       {props.children}
     </Text>
   );
 };
 
 const CustomText = (props: CustomTextProps) => {
-  const [fontLoaded, setFontLoaded] = useState(false)
+  const [fontLoaded, setFontLoaded] = useState(false);
 
   useEffect(() => {
     async function loadFont() {
       await Font.loadAsync({
-        'custom-font': require('./assets/fonts/Inter-Regular.ttf')
-      })
+        "custom-font": require("../assets/fonts/Inter-Regular.ttf"),
+      });
 
-      setFontLoaded(true)
+      setFontLoaded(true);
     }
 
-    loadFont()
-  }, [])
+    loadFont();
+  }, []);
 
   if (!fontLoaded) {
-    return <Text>Loading...</Text>
+    return <Text>Loading...</Text>;
   }
 
   return (
-    <Text style={{ ...props.style, fontFamily: 'Inter' }}>
+    <Text style={{ ...props.style, fontFamily: "Inter" }}>
       {props.children}
     </Text>
-  )
-}
+  );
+};
 
 function Profile({ route }: { route: ProfileScreenRouteProp }) {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
@@ -121,8 +119,6 @@ function Profile({ route }: { route: ProfileScreenRouteProp }) {
     return missions_list.filter((mission) => mission.isCompleted).length;
   }
 
-
-
   useEffect(() => {
     const backAction = () => {
       // Do nothing and prevent default back button behavior
@@ -130,8 +126,8 @@ function Profile({ route }: { route: ProfileScreenRouteProp }) {
     };
 
     const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
+      "hardwareBackPress",
+      backAction
     );
 
     return () => backHandler.remove();
@@ -139,220 +135,211 @@ function Profile({ route }: { route: ProfileScreenRouteProp }) {
 
   return (
     <>
-      <StatusBar backgroundColor='transparent' translucent={true} />
+      <StatusBar backgroundColor="transparent" translucent={true} />
 
       <UserProvider>
         <View style={styles.container}>
           <LinearGradient
-            colors={['#DC00C6', '#2400B4']}
+            colors={["#DC00C6", "#2400B4"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.background}
-          >
+            style={styles.background}>
             <SafeAreaView style={{ flex: 1 }}>
               <View style={styles.profileIconContainer}>
                 <View style={styles.circle}>
-                  <Image source={require('./assets/profile_pic.png')} style={{ width: '100%', height: '100%', borderRadius: 50 }} resizeMode="cover" />
+                  <Image
+                    source={require("../assets/profile_pic.png")}
+                    style={{ width: "100%", height: "100%", borderRadius: 50 }}
+                    resizeMode="cover"
+                  />
                 </View>
                 <View style={styles.rectanglesContainer}>
                   <View style={styles.rectangle1}>
                     <CustomText style={styles.text}> {username}</CustomText>
                   </View>
                   <View style={styles.rectangle2}>
-                    <CustomText style={styles.text}>   Level 0</CustomText>
+                    <CustomText style={styles.text}> Level 0</CustomText>
                   </View>
                 </View>
               </View>
               <View style={styles.newRectanglesContainer}>
                 <LinearGradient
-                  colors={['#5927B1', '#A300B0']}
+                  colors={["#5927B1", "#A300B0"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.newRectangle}
-                >
+                  style={styles.newRectangle}>
                   <CustomText style={styles.text}>Follower</CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#5927B1', '#A300B0']}
+                  colors={["#5927B1", "#A300B0"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.newRectangle2}
-                >
+                  style={styles.newRectangle2}>
                   <CustomText style={styles.text}>Following</CustomText>
                 </LinearGradient>
               </View>
               <View style={styles.newSmallRectanglesContainer}>
                 <LinearGradient
-                  colors={['#5927B1', '#A300B0']}
+                  colors={["#5927B1", "#A300B0"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.newRectangle3}
-                >
+                  style={styles.newRectangle3}>
                   <CustomText style={styles.text}> - </CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#5927B1', '#A300B0']}
+                  colors={["#5927B1", "#A300B0"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.newRectangle4}
-                >
+                  style={styles.newRectangle4}>
                   <CustomText style={styles.text}> - </CustomText>
                 </LinearGradient>
               </View>
               <View style={styles.tasksInfoContainer}>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfo1}
-                >
+                  style={styles.tasksInfo1}>
                   <CustomText style={styles.text}>Finished</CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfo2}
-                >
+                  style={styles.tasksInfo2}>
                   <CustomText style={styles.text}>On-Going</CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfo3}
-                >
+                  style={styles.tasksInfo3}>
                   <CustomText style={styles.text}>Unfinished</CustomText>
                 </LinearGradient>
               </View>
               <View style={styles.tasksInfoValuesContainer}>
                 <LinearGradient
-                  colors={['#4D2EB7', '#FD00CA']}
+                  colors={["#4D2EB7", "#FD00CA"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfoValue1}
-                >
-                  <CustomText style={styles.text}>{countCompleted(missions_list)}</CustomText>
+                  style={styles.tasksInfoValue1}>
+                  <CustomText style={styles.text}>
+                    {countCompleted(missions_list)}
+                  </CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#4D2EB7', '#FD00CA']}
+                  colors={["#4D2EB7", "#FD00CA"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfoValue2}
-                >
-                  <CustomText style={styles.text}>{missions_list.length - countCompleted(missions_list)}</CustomText>
+                  style={styles.tasksInfoValue2}>
+                  <CustomText style={styles.text}>
+                    {missions_list.length - countCompleted(missions_list)}
+                  </CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#4D2EB7', '#FD00CA']}
+                  colors={["#4D2EB7", "#FD00CA"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.tasksInfoValue3}
-                >
-                  <CustomText style={styles.text}>{missions_list.length}</CustomText>
+                  style={styles.tasksInfoValue3}>
+                  <CustomText style={styles.text}>
+                    {missions_list.length}
+                  </CustomText>
                 </LinearGradient>
               </View>
               <View style={styles.pageNamesContainer}>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.pageName1}
-                >
+                  style={styles.pageName1}>
                   <CustomText style={styles.smallText}>NFT</CustomText>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.pageName2}
-                >
+                  style={styles.pageName2}>
                   <CustomText style={styles.smallText}>Achievements</CustomText>
                 </LinearGradient>
               </View>
               <View style={styles.pagesContainer}>
                 <LinearGradient
-                  colors={['#E002E0', '#3403DC']}
+                  colors={["#E002E0", "#3403DC"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.page1}
-                >
+                  style={styles.page1}>
                   <CustomText2
-                    style={
-                      {
-                        color: 'black',
-                        fontSize: 20,
-                        textAlign: 'center',
-                      }
-                    }
-                  >Coming Soon</CustomText2>
+                    style={{
+                      color: "black",
+                      fontSize: 20,
+                      textAlign: "center",
+                    }}>
+                    Coming Soon
+                  </CustomText2>
                 </LinearGradient>
                 <LinearGradient
-                  colors={['#E002E0', '#3403DC']}
+                  colors={["#E002E0", "#3403DC"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.page2}
-                >
+                  style={styles.page2}>
                   <CustomText2
-                    style={
-                      {
-                        color: 'black',
-                        fontSize: 20,
-                        textAlign: 'center',
-                      }
-                    }
-                  >Coming Soon</CustomText2>
+                    style={{
+                      color: "black",
+                      fontSize: 20,
+                      textAlign: "center",
+                    }}>
+                    Coming Soon
+                  </CustomText2>
                 </LinearGradient>
               </View>
               <View style={styles.pageNamesContainer2}>
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.pageName3}
-                >
+                  style={styles.pageName3}>
                   <CustomText style={styles.smallText}>Wallet</CustomText>
                 </LinearGradient>
 
                 <LinearGradient
-                  colors={['#0A33A5', '#B100DD']}
+                  colors={["#0A33A5", "#B100DD"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.pageName4}
-                >
+                  style={styles.pageName4}>
                   <CustomText style={styles.smallText}>Tasks</CustomText>
                 </LinearGradient>
-
               </View>
               <View style={styles.pagesContainer2}>
                 <LinearGradient
-                  colors={['#E002E0', '#3403DC']}
+                  colors={["#E002E0", "#3403DC"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.page3}
-                >
+                  style={styles.page3}>
                   <CustomText2
-                    style={
-                      {
-                        color: 'black',
-                        fontSize: 20,
-                        textAlign: 'center',
-                      }
-                    }
-                  >Coming Soon</CustomText2>
+                    style={{
+                      color: "black",
+                      fontSize: 20,
+                      textAlign: "center",
+                    }}>
+                    Coming Soon
+                  </CustomText2>
                 </LinearGradient>
-                <TouchableOpacity onPress={() => navigation.navigate('Tasks List')}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Tasks List")}>
                   <LinearGradient
-                    colors={['#E002E0', '#3403DC']}
+                    colors={["#E002E0", "#3403DC"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={styles.page4}
-                  >
-                    <Image source={require('./assets/tasks_little.png')}
+                    style={styles.page4}>
+                    <Image
+                      source={require("../assets/tasks_little.png")}
                       style={{
-                        width: '80%',
-                        height: '80%',
-                        alignSelf: 'center',
-                      }} resizeMode="contain" />
+                        width: "80%",
+                        height: "80%",
+                        alignSelf: "center",
+                      }}
+                      resizeMode="contain"
+                    />
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
@@ -361,61 +348,61 @@ function Profile({ route }: { route: ProfileScreenRouteProp }) {
         </View>
       </UserProvider>
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight
+    paddingTop: StatusBar.currentHeight,
   },
   container: {
-    flex: 1
+    flex: 1,
   },
   rectangle: {
     width: 278,
     height: 82,
     borderRadius: 100,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 6,
-    left: 8
+    left: 8,
   },
   profileIconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    top: 0
+    flexDirection: "row",
+    alignItems: "center",
+    top: 0,
   },
   circle: {
     width: 73,
     height: 73,
     borderRadius: 73 / 2,
-    backgroundColor: 'lightblue',
+    backgroundColor: "lightblue",
     left: 10,
     zIndex: 1,
   },
   textContainer: {
-    marginLeft: 10
+    marginLeft: 10,
   },
   text: {
-    color: '#FFF',
-    textAlign: 'center',
+    color: "#FFF",
+    textAlign: "center",
     //fontFamily: 'Inter',
     fontSize: 15,
     //fontStyle: 'normal',
     //fontWeight: '300',
     lineHeight: 28,
-    letterSpacing: 1.2
+    letterSpacing: 1.2,
   },
   rectanglesContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     marginLeft: -5,
-    zIndex: 0
+    zIndex: 0,
   },
   rectangle1: {
     width: 133,
     height: 26,
-    backgroundColor: '#AD00D1',
+    backgroundColor: "#AD00D1",
     borderRadius: 13,
     marginBottom: 0, // Adjust as needed
     //justifyContent: 'center',
@@ -424,17 +411,17 @@ const styles = StyleSheet.create({
   rectangle2: {
     width: 133,
     height: 26,
-    backgroundColor: '#AE03B9',
+    backgroundColor: "#AE03B9",
     borderRadius: 13,
     //justifyContent: 'center',
     //alignItems: 'center',
-    marginLeft: -5
+    marginLeft: -5,
   },
   newRectanglesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 5, // Adjust as needed
-    justifyContent: 'center',
-    zIndex: 1
+    justifyContent: "center",
+    zIndex: 1,
   },
   newRectangle: {
     width: 133,
@@ -449,10 +436,10 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   newSmallRectanglesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: -7, // Adjust as needed
-    justifyContent: 'center',
-    zIndex: 0
+    justifyContent: "center",
+    zIndex: 0,
   },
   newRectangle3: {
     width: 98,
@@ -467,9 +454,9 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   tasksInfoContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 20, // Adjust as needed
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   tasksInfo1: {
     width: 100,
@@ -490,9 +477,9 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   tasksInfoValuesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 2, // Adjust as needed
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   tasksInfoValue1: {
     width: 34,
@@ -513,17 +500,16 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   pageNamesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 15, // Adjust as needed
-    justifyContent: 'center',
-    zIndex: 1
+    justifyContent: "center",
+    zIndex: 1,
   },
   pageName1: {
     width: 85,
     height: 20,
     borderRadius: 13,
     marginRight: 90, // Adjust as needed
-
   },
   pageName2: {
     width: 85,
@@ -532,39 +518,39 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   smallText: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Inter',
+    color: "#FFF",
+    textAlign: "center",
+    fontFamily: "Inter",
     fontSize: 10,
-    fontStyle: 'normal',
+    fontStyle: "normal",
     //fontWeight: '300',
     lineHeight: 21,
-    letterSpacing: 1.2
+    letterSpacing: 1.2,
   },
   pagesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: -5, // Adjust as needed
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   page1: {
     width: 125,
     height: 125,
     borderRadius: 12,
     marginRight: 50, // Adjust as needed
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   page2: {
     width: 125,
     height: 125,
     borderRadius: 12,
     // No marginBottom needed
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   pageNamesContainer2: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 15, // Adjust as needed
-    justifyContent: 'center',
-    zIndex: 1
+    justifyContent: "center",
+    zIndex: 1,
   },
   pageName3: {
     width: 85,
@@ -579,24 +565,24 @@ const styles = StyleSheet.create({
     // No marginBottom needed
   },
   pagesContainer2: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: -5, // Adjust as needed
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   page3: {
     width: 125,
     height: 125,
     borderRadius: 12,
     marginRight: 50, // Adjust as needed
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   page4: {
     width: 125,
     height: 125,
     borderRadius: 12,
     // No marginBottom needed
-    justifyContent: 'center'
+    justifyContent: "center",
   },
-})
+});
 
-export default Profile
+export default Profile;

@@ -1,29 +1,50 @@
-
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LoginPage from './components/LoginPage';
-import LoadingScreen from './components/LoadingScreen';
-import Profile from './components/Profile';
-import AddTask from './components/AddTask';
-import TasksList from './components/TasksList';
-import { Image, SafeAreaView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'
-import LoginInner from './components/login';
-import Register from './components/register';
-import { TokenContext, TokenProvider } from './components/context/TokenContext';
-import { UserProvider } from './components/context/UserContext';
-import { MissionContext, MissionProvider } from './components/context/MissionContext';
-import newLogin from './components/newLogin'
-import newSignUp from './components/newSignUp'
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import LoginPage from "./components/LoginPage";
+import LoadingScreen from "./components/LoadingScreen";
+import Profile from "./components/Profile";
+import AddTask from "./components/AddTask";
+import TasksList from "./components/TasksList";
+import { Image, SafeAreaView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import LoginInner from "./components/login";
+import Register from "./components/register";
+import { TokenContext, TokenProvider } from "./components/context/TokenContext";
+import { UserProvider } from "./components/context/UserContext";
+import {
+  MissionContext,
+  MissionProvider,
+} from "./components/context/MissionContext";
+import newLogin from "./components/newLogin";
+import newSignUp from "./components/newSignUp";
+import {
+  ThirdwebProvider,
+  smartWallet,
+  metamaskWallet,
+  coinbaseWallet,
+  trustWallet,
+  rainbowWallet,
+  walletConnect,
+  embeddedWallet,
+  localWallet,
+} from "@thirdweb-dev/react-native";
 
 type TabParamList = {
-  'Profile': undefined;
-  'Add Task': undefined;
-  'Tasks List': { taskText: string };
-  'LoginInner': undefined;
-  'Register': undefined;
+  Profile: undefined;
+  "Add Task": undefined;
+  "Tasks List": { taskText: string };
+  LoginInner: undefined;
+  Register: undefined;
+};
+
+/**
+ * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
+ */
+const smartWalletConfig = {
+  factoryAddress: "0x8317579CeFC6c4FCA25D6ba68F7939B34Ef20eF7",
+  gasless: true,
 };
 
 const Stack = createNativeStackNavigator();
@@ -32,14 +53,14 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function ProfileTabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName='Profile'
+      initialRouteName="Profile"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: [
           {
-            display: 'flex',
-            backgroundColor: '#003172'
+            display: "flex",
+            backgroundColor: "#003172",
           },
           null,
         ],
@@ -47,26 +68,25 @@ function ProfileTabNavigator() {
           let iconName;
           let isProfile;
 
-          if (route.name === 'Add Task') {
+          if (route.name === "Add Task") {
             iconName = focused
-              ? require('./assets/ic_positive.png')
-              : require('./assets/ic_positive.png');
-          } else if (route.name === 'Profile') {
+              ? require("./assets/ic_positive.png")
+              : require("./assets/ic_positive.png");
+          } else if (route.name === "Profile") {
             iconName = focused
-              ? require('./assets/LadderLogo.png')
-              : require('./assets/LadderLogo.png');
+              ? require("./assets/LadderLogo.png")
+              : require("./assets/LadderLogo.png");
             isProfile = true;
-          } else if (route.name === 'Tasks List') {
+          } else if (route.name === "Tasks List") {
             iconName = focused
-              ? require('./assets/tabbar_addtask.png')
-              : require('./assets/tabbar_addtask.png');
-
+              ? require("./assets/tabbar_addtask.png")
+              : require("./assets/tabbar_addtask.png");
           }
 
           // You can return any component that you like here!
           return isProfile ? (
             <LinearGradient
-              colors={['#BF00BF', '#0505D5']}
+              colors={["#BF00BF", "#0505D5"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
@@ -74,40 +94,51 @@ function ProfileTabNavigator() {
                 height: 33,
                 flexShrink: 0,
                 borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
               <Image source={iconName} style={{ width: 30, height: 30 }} />
             </LinearGradient>
           ) : (
             <Image source={iconName} style={{ width: 25, height: 25 }} />
           );
         },
-      })}
-    >
-
-      <Tab.Screen
-        name="Add Task"
-        component={AddTask}
-
-      />
+      })}>
+      <Tab.Screen name="Add Task" component={AddTask} />
       <Tab.Screen name="Profile" component={Profile} />
-      <Tab.Screen
-        name="Tasks List"
-        component={TasksList}
-        options={{
-        }}
-      />
-
+      <Tab.Screen name="Tasks List" component={TasksList} options={{}} />
     </Tab.Navigator>
   );
 }
 function App() {
   return (
-    <TokenProvider>
-      <UserProvider>
-        <MissionProvider>
+    <ThirdwebProvider
+      activeChain="mumbai"
+      clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
+      supportedWallets={[
+        smartWallet(metamaskWallet({ recommended: true }), smartWalletConfig),
+        smartWallet(coinbaseWallet({ recommended: true }), smartWalletConfig),
+        smartWallet(walletConnect(), smartWalletConfig),
+        smartWallet(trustWallet(), smartWalletConfig),
+        smartWallet(rainbowWallet(), smartWalletConfig),
+        smartWallet(localWallet(), smartWalletConfig),
+        smartWallet(
+          embeddedWallet({
+            auth: {
+              // you need to enable EmbeddedWallets under your API Key in your thirdweb dashboard:
+              // https://thirdweb.com/dashboard/settings/api-keys
+              options: ["email", "google"],
+              // you need to add this deeplink in your allowed `Redirect URIs` under your API Key in your thirdweb dashboard:
+              // https://thirdweb.com/dashboard/settings/api-keys
+              redirectUrl: "rnstarter://",
+            },
+          }),
+          smartWalletConfig
+        ),
+      ]}>
+      <TokenProvider>
+        <UserProvider>
+          <MissionProvider>
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Loading">
                 <Stack.Screen
@@ -149,9 +180,10 @@ function App() {
                 />
               </Stack.Navigator>
             </NavigationContainer>
-        </MissionProvider>
-      </UserProvider>
-    </TokenProvider>
+          </MissionProvider>
+        </UserProvider>
+      </TokenProvider>
+    </ThirdwebProvider>
   );
 }
 
