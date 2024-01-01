@@ -93,13 +93,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.reactnative.example'
+    namespace 'com.ladderit'
     defaultConfig {
-        applicationId 'com.reactnative.example'
+        applicationId 'com.ladderit'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 4
+        versionName "1.0.3"
     }
     packagingOptions {
         pickFirst 'lib/x86/libcrypto.so'
