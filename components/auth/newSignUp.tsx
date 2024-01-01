@@ -7,6 +7,7 @@ import {
   StatusBar,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -35,12 +36,14 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [timezone, setTimezone] = useState("1");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
 
   const handleRegister = async () => {
     try {
+      setLoading(true);
       const response = await api.post("/user/register/", {
         username,
         password: userAddress,
@@ -53,6 +56,7 @@ const Register = () => {
       } else {
         // Handle other status codes here
       }
+      setLoading(false);
     } catch (error: any) {
       if (
         error.response &&
@@ -70,6 +74,7 @@ const Register = () => {
       }
       console.log(error.response?.data?.email);
       setErrorMessage(error.message);
+      setLoading(false);
     }
   };
 
@@ -180,8 +185,8 @@ const Register = () => {
                 onValueChange={(itemValue, itemIndex) => setTimezone(itemValue)}
                 style={styles.input}>
                 <Picker.Item label="UTC+1" value="1" />
-                <Picker.Item label="UTC+3" value="3" />
                 <Picker.Item label="UTC+2" value="2" />
+                <Picker.Item label="UTC+3" value="3" />
                 <Picker.Item label="UTC+4" value="4" />
                 <Picker.Item label="UTC+5" value="5" />
               </Picker>
@@ -207,33 +212,37 @@ const Register = () => {
                 </SvgLinearGradient>
               </Defs>
             </Svg>
-            <MaskedView
-              style={styles.signUpButtonText}
-              maskElement={
-                <Text
-                  style={{
-                    fontSize: 26,
-                    fontFamily: "Inter",
-                    fontStyle: "italic",
-                  }}>
-                  Sign Up
-                </Text>
-              }>
-              <LinearGradient
-                colors={["#B80DCA", "#4035CB"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}>
-                <Text
-                  style={{
-                    fontSize: 26,
-                    fontFamily: "Inter",
-                    fontStyle: "italic",
-                    opacity: 0,
-                  }}>
-                  Sign Up
-                </Text>
-              </LinearGradient>
-            </MaskedView>
+            {loading ? (
+              <ActivityIndicator color="#B80DCA" size="large" />
+            ) : (
+              <MaskedView
+                style={styles.signUpButtonText}
+                maskElement={
+                  <Text
+                    style={{
+                      fontSize: 26,
+                      fontFamily: "Inter",
+                      fontStyle: "italic",
+                    }}>
+                    Sign Up
+                  </Text>
+                }>
+                <LinearGradient
+                  colors={["#B80DCA", "#4035CB"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}>
+                  <Text
+                    style={{
+                      fontSize: 26,
+                      fontFamily: "Inter",
+                      fontStyle: "italic",
+                      opacity: 0,
+                    }}>
+                    Sign Up
+                  </Text>
+                </LinearGradient>
+              </MaskedView>
+            )}
           </TouchableOpacity>
         </View>
       </View>
