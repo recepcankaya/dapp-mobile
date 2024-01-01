@@ -1,4 +1,4 @@
-package com.reactnative.example;
+package com.ladderit;
 
 import android.os.Build;
 import android.os.Bundle;
