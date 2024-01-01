@@ -17,8 +17,8 @@ import {
   MissionContext,
   MissionProvider,
 } from "./components/context/MissionContext";
-import newLogin from "./components/newLogin";
-import newSignUp from "./components/newSignUp";
+import newLogin from "./components/auth/newLogin";
+import newSignUp from "./components/auth/newSignUp";
 import {
   ThirdwebProvider,
   smartWallet,

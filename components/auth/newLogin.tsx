@@ -1,32 +1,26 @@
 import { useState, useEffect, useContext } from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
-  ImageBackground,
   StatusBar,
-  Dimensions,
-  TextInput,
   Alert,
-  Button,
 } from "react-native";
-import * as Font from "expo-font";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import axios from "axios";
-import { TokenContext } from "./context/TokenContext";
-import { UserContext } from "./context/UserContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, {
   Path,
   Defs,
   LinearGradient as SvgLinearGradient,
   Stop,
 } from "react-native-svg";
-import { ConnectWallet, darkTheme } from "@thirdweb-dev/react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ConnectWallet, useAddress } from "@thirdweb-dev/react-native";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
+import axios from "axios";
+
+import { TokenContext } from "../context/TokenContext";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -35,65 +29,49 @@ const api = axios.create({
   },
 });
 
-interface CustomTextProps {
-  style: any;
-  children: React.ReactNode;
-}
-
 type TabParamList = {
   LoginInner: { access?: string; refresh?: string };
   // other tabs...
 };
 
-const CustomText = (props: CustomTextProps) => {
-  const [fontLoaded, setFontLoaded] = useState(false);
-
-  useEffect(() => {
-    async function loadFont() {
-      await Font.loadAsync({
-        "custom-font": require("../assets/fonts/ZenDots-Regular.ttf"),
-      });
-
-      setFontLoaded(true);
-    }
-
-    loadFont();
-  }, []);
-
-  if (!fontLoaded) {
-    return <Text>Loading...</Text>;
-  }
-
-  return (
-    <Text style={{ ...props.style, fontFamily: "custom-font" }}>
-      {props.children}
-    </Text>
-  );
-};
-
 const LoginInner = () => {
-  const handleUsernameChange = (text: string) => {
-    setUsername_x(text);
-    setUsername(text);
-  };
-  const windowWidth = Dimensions.get("window").width;
-
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const { height } = Dimensions.get("window");
-  const statusBarHeight = StatusBar.currentHeight || 0;
-  const imageHeight = height - statusBarHeight;
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
   const [errorMessage, setErrorMessage] = useState(null);
-
-  const [username_x, setUsername_x] = useState("");
-  const [password_x, setPassword_x] = useState("");
-
-  const { username, setUsername } = useContext(UserContext);
-
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { setTokens } = useContext(TokenContext);
+  // Retrieves the user's connected wallet address using the useAddress hook.
+  const userAddress = useAddress();
 
+  const handleLogin = () => {
+    api
+      .post("/auth/get_token/", {
+        password: userAddress,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setLoggedIn(true);
+          setTokens({
+            access: response.data.access,
+            refresh: response.data.refresh,
+          });
+          navigation.navigate("ProfileTab");
+        } else {
+          Alert.alert("Error", "Login failed");
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        Alert.alert("Error", error.message);
+        setErrorMessage(error.message);
+      });
+  };
+
+  /**
+   * useEffect hook that navigates to the "ProfileTab" screen after a delay if the user is registered.
+   * @param registered - A boolean indicating whether the user is registered.
+   * @param navigation - The navigation object used to navigate between screens.
+   * @returns A cleanup function that clears the timeout when the component unmounts.
+   */
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
@@ -106,34 +84,19 @@ const LoginInner = () => {
     return () => clearTimeout(timer); // cleanup on unmount
   }, [loggedIn, navigation]);
 
-  const handleLogin = () => {
-    api
-      .post("/auth/get_token/", {
-        password: password_x,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          setLoggedIn(true);
-          setTokens({
-            access: response.data.access,
-            refresh: response.data.refresh,
-          });
-          navigation.navigate("ProfileTab");
-        } else {
-          // Handle other status codes here
-        }
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-        Alert.alert("Error", error.message);
-        setErrorMessage(error.message);
-      });
-  };
-
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.container}>
+        <LinearGradient
+          colors={["#B80DCA", "#4035CB"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.circle,
+            { width: 650.637, height: 739.49, borderRadius: 739.49 },
+          ]}
+        />
         <View style={styles.walletContainer}>
           <Text style={styles.loginText}>Login</Text>
           <ConnectWallet
@@ -161,7 +124,7 @@ const LoginInner = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.loginButtonContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleLogin}>
             <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
               <Path
                 fillRule="evenodd"
@@ -183,7 +146,7 @@ const LoginInner = () => {
               maskElement={
                 <Text
                   style={{
-                    fontSize: 34,
+                    fontSize: 26,
                     fontFamily: "Inter",
                     fontStyle: "italic",
                   }}>
@@ -196,7 +159,7 @@ const LoginInner = () => {
                 end={{ x: 1, y: 0 }}>
                 <Text
                   style={{
-                    fontSize: 34,
+                    fontSize: 26,
                     fontFamily: "Inter",
                     fontStyle: "italic",
                     opacity: 0,
@@ -216,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#0C0C0C",
+    backgroundColor: "#050505",
   },
   circle: {
     transform: [{ rotate: "-179.736deg" }],
@@ -249,7 +212,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 25,
     fontStyle: "italic",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   buttonContainer: {
     flex: 1,
@@ -263,13 +226,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#AD00D1",
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute", // Position the button absolutely
+    position: "absolute",
     bottom: 0,
   },
   signupContainer: {
-    flexDirection: "row", // Arrange the text and button horizontally
-    justifyContent: "center", // Center the text and button horizontally
-    alignItems: "center", // Center the text and button vertically
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 120,
   },
   signupText: {
@@ -277,10 +240,10 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 20,
     fontStyle: "italic",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   signupButton: {
-    color: "#FFF", // The text color will be white because the gradient background is not supported
+    color: "#FFF",
     fontFamily: "Inter",
     fontSize: 20,
     fontStyle: "italic",
