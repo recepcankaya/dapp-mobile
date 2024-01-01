@@ -21,6 +21,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 
 import { TokenContext } from "../context/TokenContext";
+import CustomConnectWallet from "../customs/CustomConnectWallet";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -28,11 +29,6 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
-type TabParamList = {
-  LoginInner: { access?: string; refresh?: string };
-  // other tabs...
-};
 
 const LoginInner = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -54,7 +50,7 @@ const LoginInner = () => {
             access: response.data.access,
             refresh: response.data.refresh,
           });
-          navigation.navigate("ProfileTab");
+          navigation.navigate("LoginInner");
         } else {
           Alert.alert("Error", "Login failed");
         }
@@ -99,12 +95,7 @@ const LoginInner = () => {
         />
         <View style={styles.walletContainer}>
           <Text style={styles.loginText}>Login</Text>
-          <ConnectWallet
-            buttonTitle="Login"
-            modalTitleIconUrl=""
-            modalTitle="Connect Your Wallet"
-            theme="dark"
-          />
+          <CustomConnectWallet />
         </View>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don`t you have account? </Text>

@@ -21,6 +21,7 @@ import Svg, {
 import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react-native";
+import CustomConnectWallet from "../customs/CustomConnectWallet";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -48,7 +49,7 @@ const Register = () => {
 
       if (response.status === 200) {
         setRegistered(true);
-        navigation.navigate("ProfileTab");
+        navigation.navigate("newLogin");
       } else {
         // Handle other status codes here
       }
@@ -71,8 +72,6 @@ const Register = () => {
       setErrorMessage(error.message);
     }
   };
-
-  console.log("The wallet address is: " + userAddress);
 
   /**
    * useEffect hook that navigates to the "ProfileTab" screen after a delay if the user is registered.
@@ -188,14 +187,7 @@ const Register = () => {
               </Picker>
             </View>
           </LinearGradient>
-          <View style={styles.walletContainer}>
-            <ConnectWallet
-              buttonTitle="Connect Your Wallet"
-              modalTitleIconUrl=""
-              modalTitle="Connect"
-              theme="dark"
-            />
-          </View>
+          <CustomConnectWallet style={{ width: "100%" }} />
         </View>
         <View style={styles.signUpButtonContainer}>
           <TouchableOpacity onPress={handleRegister}>
@@ -268,9 +260,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     marginTop: 250,
-  },
-  walletContainer: {
-    width: "100%",
   },
   signUpText: {
     color: "#FFF",
