@@ -1,24 +1,18 @@
 import React from "react";
+import { Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import LoginPage from "./components/LoginPage";
+import { LinearGradient } from "expo-linear-gradient";
 import LoadingScreen from "./components/LoadingScreen";
 import Profile from "./components/Profile";
 import AddTask from "./components/AddTask";
 import TasksList from "./components/TasksList";
-import { Image, SafeAreaView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import LoginInner from "./components/login";
-import Register from "./components/register";
-import { TokenContext, TokenProvider } from "./components/context/TokenContext";
-import { UserProvider } from "./components/context/UserContext";
-import {
-  MissionContext,
-  MissionProvider,
-} from "./components/context/MissionContext";
 import newLogin from "./components/auth/newLogin";
 import newSignUp from "./components/auth/newSignUp";
+import { TokenProvider } from "./components/context/TokenContext";
+import { UserProvider } from "./components/context/UserContext";
+import { MissionProvider } from "./components/context/MissionContext";
 import {
   ThirdwebProvider,
   smartWallet,
@@ -82,8 +76,6 @@ function ProfileTabNavigator() {
               ? require("./assets/tabbar_addtask.png")
               : require("./assets/tabbar_addtask.png");
           }
-
-          // You can return any component that you like here!
           return isProfile ? (
             <LinearGradient
               colors={["#BF00BF", "#0505D5"]}
@@ -147,25 +139,8 @@ function App() {
                   options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
                 />
                 <Stack.Screen
-                  name="Login"
-                  component={LoginPage}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-
-                <Stack.Screen
                   name="ProfileTab"
                   component={ProfileTabNavigator}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-
-                <Stack.Screen
-                  name="LoginInner"
-                  component={LoginInner}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-                <Stack.Screen
-                  name="Register"
-                  component={Register}
                   options={{ headerShown: false }} // Hide navigation bar on LoginPage
                 />
                 <Stack.Screen
