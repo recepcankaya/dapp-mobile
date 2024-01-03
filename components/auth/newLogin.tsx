@@ -22,6 +22,8 @@ import axios from "axios";
 
 import { TokenContext } from "../context/TokenContext";
 import CustomConnectWallet from "../customs/CustomConnectWallet";
+import { UserContext } from "../context/UserContext";
+import { UserIdContext} from "../context/UserIdContext";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -31,6 +33,9 @@ const api = axios.create({
 });
 
 const LoginInner = () => {
+  const { username, setUsername } = useContext(UserContext);
+  const { user_id, setUserId } = useContext(UserIdContext);
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -41,27 +46,50 @@ const LoginInner = () => {
   const handleLogin = () => {
     api
       .post("/auth/get_token/", {
+
         password: userAddress,
       })
       .then((response) => {
         if (response.status === 200) {
           setLoggedIn(true);
+          console.log(response.data)
           setTokens({
             access: response.data.access,
             refresh: response.data.refresh,
           });
-          navigation.navigate("LoginInner");
+          api.get("/user/user_detail/", {
+            headers: {
+              Authorization: `Bearer ${response.data.access}`
+            }
+          })
+          .then((response1) => {
+            if (response1.status === 200) {
+              console.log(response1.data); // This will log the response data to the console
+              //set user id response.data.id
+              const user_id_temp = response1.data.id;
+          
+              setUserId(user_id_temp);
+              
+            } else {
+              Alert.alert("Error", "Failed to get user details");
+            }
+          })
+          .catch((error1) => {
+            console.error(error1);
+            Alert.alert("Error", "An error occurred while trying to get user details");
+          });
+          navigation.navigate('ProfileTab');
+          setUsername(userAddress ?? '');
         } else {
           Alert.alert("Error", "Login failed");
         }
       })
       .catch((error) => {
-        console.log(error.response.data);
         Alert.alert("Error", error.message);
         setErrorMessage(error.message);
       });
+      
   };
-
   /**
    * useEffect hook that navigates to the "ProfileTab" screen after a delay if the user is registered.
    * @param registered - A boolean indicating whether the user is registered.
@@ -194,11 +222,11 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   walletContainer: {
-    marginTop: 350,
+    marginTop: 200,
     width: "80%",
   },
   loginText: {
-    marginBottom: 39,
+    marginBottom: 10,
     color: "#FFF",
     fontFamily: "Inter",
     fontSize: 25,
@@ -224,7 +252,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 120,
+    marginTop: 60,
   },
   signupText: {
     color: "#FFF",

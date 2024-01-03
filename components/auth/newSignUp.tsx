@@ -63,6 +63,7 @@ const Register = () => {
         error.response.data &&
         (error.response.data.email?.[0] || error.response.data.username?.[0])
       ) {
+        console.log("error1")
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
@@ -70,6 +71,8 @@ const Register = () => {
             error.response.data.username?.[0]
         );
       } else {
+      console.log("error2")
+      console.log(error.response)
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
@@ -116,7 +119,7 @@ const Register = () => {
             end={{ x: 0, y: 1 }}
             colors={["#B80DCA", "#4035CB"]}
             style={{
-              marginBottom: 30, // 15px below the "Sign Up" text
+              marginBottom: 20, // 15px below the "Sign Up" text
               width: 302,
               height: 63,
               borderRadius: 10,
@@ -154,7 +157,7 @@ const Register = () => {
             end={{ x: 0, y: 1 }}
             colors={["#B80DCA", "#4035CB"]}
             style={{
-              marginBottom: 30, // 15px below the "Sign Up" text
+              marginBottom: 20, // 15px below the "Sign Up" text
               width: 302,
               height: 63,
               borderRadius: 10,
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: 250,
+    marginTop: 190,
   },
   signUpText: {
     color: "#FFF",
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 30,
+    marginBottom: 20,
     alignSelf: "flex-start",
   },
   signUpButtonContainer: {

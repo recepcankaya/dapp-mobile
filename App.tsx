@@ -10,9 +10,11 @@ import AddTask from "./components/AddTask";
 import TasksList from "./components/TasksList";
 import newLogin from "./components/auth/newLogin";
 import newSignUp from "./components/auth/newSignUp";
+import Categories from "./components/Categories";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
+import { UserIdProvider } from "./components/context/UserIdContext";
 import {
   ThirdwebProvider,
   smartWallet,
@@ -130,6 +132,7 @@ function App() {
       ]}>
       <TokenProvider>
         <UserProvider>
+          <UserIdProvider>
           <MissionProvider>
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Loading">
@@ -153,9 +156,15 @@ function App() {
                   component={newSignUp}
                   options={{ headerShown: false }} // Hide navigation bar on LoginPage
                 />
+                <Stack.Screen
+                  name="Categories"
+                  component={Categories}
+                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                />
               </Stack.Navigator>
             </NavigationContainer>
           </MissionProvider>
+          </UserIdProvider>
         </UserProvider>
       </TokenProvider>
     </ThirdwebProvider>

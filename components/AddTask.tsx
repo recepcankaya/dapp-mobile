@@ -17,6 +17,7 @@ import { TokenContext, TokenProvider } from "./context/TokenContext";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { UserContext } from "./context/UserContext";
+import { UserIdContext,UserIdProvider } from "./context/UserIdContext";
 
 type TabParamList = {
   Profile: { username: string; tokens: Int32Array }; // Define parameters for Profile route here
@@ -72,6 +73,8 @@ const CustomText = (props: CustomTextProps) => {
 
 const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
   const { username } = useContext(UserContext) || {}; // Add null check and default empty object
+  const { user_id } = useContext(UserIdContext);
+
 
   const navigation = useNavigation<AddTaskScreenNavigationProp>();
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
@@ -81,7 +84,7 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
   const createMission = () => {
     const url = "/mission/create/";
     const data = {
-      user: tokens?.access,
+      user: user_id,
       title: title,
     };
 
@@ -101,13 +104,14 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
         }
       })
       .catch((error) => {
-        Alert.alert("One mission per day");
+        console.log(error.response)
         setErrorMessage(error.message);
       });
   };
 
   return (
     <TokenProvider>
+      <UserIdProvider>
       <View style={styles.container}>
         <LinearGradient
           colors={["#DC00C6", "#2400B4"]}
@@ -162,6 +166,7 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
           </SafeAreaView>
         </LinearGradient>
       </View>
+      </UserIdProvider>
     </TokenProvider>
   );
 };
