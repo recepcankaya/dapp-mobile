@@ -47,8 +47,9 @@ const Register = () => {
       setLoading(true);
       const response = await api.post("/user/register/", {
         username,
-        password: userAddress,
+        password,
         timeZone: timezone,
+        wallet: userAddress,
       });
 
       if (response.status === 200) {
@@ -74,6 +75,7 @@ const Register = () => {
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
+      console.log("userAddress: ", userAddress);
       setErrorMessage(error.message);
       setLoading(false);
     }
