@@ -3,7 +3,7 @@ import * as Font from "expo-font";
 import { Text } from "react-native";
 
 interface CustomTextProps {
-  style: any;
+  style?: any;
   children: React.ReactNode;
 }
 
@@ -13,7 +13,7 @@ const CustomText = (props: CustomTextProps) => {
   useEffect(() => {
     async function loadFont() {
       await Font.loadAsync({
-        "custom-font": require("./assets/fonts/ZenDots-Regular.ttf"),
+        "custom-font": require("../assets/fonts/ZenDots-Regular.ttf"),
       });
 
       setFontLoaded(true);
@@ -32,3 +32,5 @@ const CustomText = (props: CustomTextProps) => {
     </Text>
   );
 };
+
+export default CustomText;
