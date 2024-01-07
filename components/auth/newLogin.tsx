@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Svg, {
   Path,
@@ -15,7 +18,7 @@ import Svg, {
 } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react-native";
+import { useAddress } from "@thirdweb-dev/react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
@@ -32,6 +35,7 @@ const api = axios.create({
 
 const LoginInner = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { setTokens } = useContext(TokenContext);
@@ -50,7 +54,7 @@ const LoginInner = () => {
             access: response.data.access,
             refresh: response.data.refresh,
           });
-          navigation.navigate("LoginInner");
+          navigation.navigate("ProfileTab");
         } else {
           Alert.alert("Error", "Login failed");
         }
@@ -63,7 +67,7 @@ const LoginInner = () => {
   };
 
   /**
-   * useEffect hook that navigates to the "ProfileTab" screen after a delay if the user is registered.
+   * useEffect hook that navigates to the "Profile" screen after a delay if the user is registered.
    * @param registered - A boolean indicating whether the user is registered.
    * @param navigation - The navigation object used to navigate between screens.
    * @returns A cleanup function that clears the timeout when the component unmounts.
@@ -83,7 +87,7 @@ const LoginInner = () => {
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <LinearGradient
           colors={["#B80DCA", "#4035CB"]}
           start={{ x: 0, y: 0 }}
@@ -93,9 +97,48 @@ const LoginInner = () => {
             { width: 650.637, height: 739.49, borderRadius: 739.49 },
           ]}
         />
-        <View style={styles.walletContainer}>
+        <View style={styles.inputContainer}>
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
+          <View style={styles.passwordContainer}>
+            <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              colors={["#B80DCA", "#4035CB"]}
+              style={{
+                marginBottom: 30,
+                height: 63,
+                borderRadius: 10,
+                padding: 3,
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 10,
+                  backgroundColor: "#D9D9D9",
+                  justifyContent: "center",
+                  paddingLeft: 10,
+                }}>
+                <Text
+                  style={{
+                    color: "#D9D9D9",
+                    fontFamily: "Inter",
+                    fontSize: 20,
+                    fontStyle: "italic",
+                    fontWeight: "600",
+                  }}></Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor="#0C0C0C"
+                  value={password}
+                  onChangeText={setPassword}
+                  autoCapitalize="none"
+                  secureTextEntry={true}
+                />
+              </View>
+            </LinearGradient>
+          </View>
         </View>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don`t you have account? </Text>
@@ -121,7 +164,7 @@ const LoginInner = () => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
-                fill="#0C0C0C"
+                fill="#050505"
                 stroke="url(#gradient)"
                 strokeWidth="7"
               />
@@ -161,7 +204,7 @@ const LoginInner = () => {
             </MaskedView>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -193,8 +236,8 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-  walletContainer: {
-    marginTop: 350,
+  inputContainer: {
+    marginTop: 250,
     width: "80%",
   },
   loginText: {
@@ -204,6 +247,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
+  },
+  passwordContainer: {
+    width: "100%",
+    marginTop: 30,
   },
   buttonContainer: {
     flex: 1,
@@ -224,7 +271,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 120,
+    marginTop: 90,
   },
   signupText: {
     color: "#FFF",
@@ -243,16 +290,16 @@ const styles = StyleSheet.create({
   input: {
     width: 250,
     height: 40,
-    borderColor: "gray",
+    borderColor: "transparent",
     borderWidth: 1,
     borderRadius: 10,
     paddingLeft: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 0,
+    marginBottom: 25,
   },
   loginButtonContainer: {
     position: "absolute",
-    right: 0, // Position to the right
+    right: 0,
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",

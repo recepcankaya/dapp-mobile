@@ -18,7 +18,7 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@thirdweb-dev/react-native": "^0.4",
     "@thirdweb-dev/react-native-compat": "^0.4",
-    "amazon-cognito-identity-js": "^6.3.6",
+    "amazon-cognito-identity-js": "^6.3.7",
     "axios": "^1.6.3",
     "ethers": "^5",
     "expo": "49.0.0",

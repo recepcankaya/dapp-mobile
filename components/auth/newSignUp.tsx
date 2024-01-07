@@ -35,6 +35,7 @@ const Register = () => {
   const [registered, setRegistered] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [timezone, setTimezone] = useState("1");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -192,7 +193,45 @@ const Register = () => {
               </Picker>
             </View>
           </LinearGradient>
-          <CustomConnectWallet style={{ width: "100%" }} />
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            colors={["#B80DCA", "#4035CB"]}
+            style={{
+              marginBottom: 30,
+              width: 302,
+              height: 63,
+              borderRadius: 10,
+              padding: 3,
+            }}>
+            <View
+              style={{
+                flex: 1,
+                borderRadius: 10,
+                backgroundColor: "#D9D9D9",
+                justifyContent: "center",
+                paddingLeft: 10,
+              }}>
+              <Text
+                style={{
+                  color: "#D9D9D9",
+                  fontFamily: "Inter",
+                  fontSize: 20,
+                  fontStyle: "italic",
+                  fontWeight: "600",
+                }}></Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#0C0C0C"
+                value={password}
+                onChangeText={setPassword}
+                autoCapitalize="none"
+                secureTextEntry={true}
+              />
+            </View>
+          </LinearGradient>
+          <CustomConnectWallet style={{ width: 250 }} />
         </View>
         <View style={styles.signUpButtonContainer}>
           <TouchableOpacity onPress={handleRegister}>
@@ -201,7 +240,7 @@ const Register = () => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
-                fill="#0C0C0C"
+                fill="#050505"
                 stroke="url(#gradient)"
                 strokeWidth="7"
               />
