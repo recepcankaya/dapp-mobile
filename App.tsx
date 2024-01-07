@@ -11,6 +11,7 @@ import TasksList from "./components/TasksList";
 import newLogin from "./components/auth/newLogin";
 import newSignUp from "./components/auth/newSignUp";
 import Categories from "./components/Categories";
+import NewProfile from "./components/newProfile";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
@@ -149,17 +150,22 @@ function App() {
                 <Stack.Screen
                   name="newLogin"
                   component={newLogin}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  options={{ headerShown: false }} // Hide navigation bar 
                 />
                 <Stack.Screen
                   name="newSignUp"
                   component={newSignUp}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  options={{ headerShown: false }} // Hide navigation bar
                 />
                 <Stack.Screen
                   name="Categories"
                   component={Categories}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  options={{ headerShown: false }} // Hide navigation bar
+                />
+                <Stack.Screen
+                  name="NewProfile"
+                  component={NewProfile}
+                  options={{ headerShown: false }} // Hide navigation bar 
                 />
               </Stack.Navigator>
             </NavigationContainer>
