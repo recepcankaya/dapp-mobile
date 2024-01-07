@@ -45,7 +45,8 @@ const LoginInner = () => {
   const handleLogin = () => {
     api
       .post("/auth/get_token/", {
-        password: userAddress,
+        wallet: userAddress,
+        password,
       })
       .then((response) => {
         if (response.status === 200) {
