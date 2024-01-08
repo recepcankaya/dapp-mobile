@@ -25,6 +25,9 @@ import {
   embeddedWallet,
   localWallet,
 } from "@thirdweb-dev/react-native";
+import ActiveMissions from "./components/ActiveMissions";
+import NewProfile from "./components/newProfile";
+import Categories from "./components/Categories";
 
 type TabParamList = {
   Profile: undefined;
