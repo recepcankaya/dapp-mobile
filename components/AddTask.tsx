@@ -74,15 +74,17 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
     <TokenProvider>
       <View style={styles.container}>
         <View style={styles.formContainer}>
-          {/* <AddMissionAttachment />
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            colors={["#B80DCA", "#4035CB"]}
-            style={styles.formGradientBorder}>
-            <View style={styles.form}></View>
-          </LinearGradient> */}
-          <View style={styles.loginButtonContainer}>
+          <View>
+            <AddMissionAttachment />
+            <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              colors={["#B80DCA", "#4035CB"]}
+              style={styles.formGradientBorder}>
+              <View style={styles.form}></View>
+            </LinearGradient>
+          </View>
+          <View style={styles.buttonContainer}>
             <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
               <Path
                 fillRule="evenodd"
@@ -99,7 +101,7 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
                 </SvgLinearGradient>
               </Defs>
             </Svg>
-            <Text>Done</Text>
+            <Text style={styles.buttonText}>Done</Text>
           </View>
         </View>
       </View>
@@ -109,8 +111,6 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    alignItems: "center",
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     backgroundColor: "#050505",
@@ -123,28 +123,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   form: {
-    height: 654,
+    height: 364,
     width: 364,
     backgroundColor: "#1E1E1E",
     borderRadius: 20,
   },
-  loginButtonContainer: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
+  buttonContainer: {
+    display: "flex",
+    alignItems: "flex-end",
   },
-  loginButtonText: {
-    fontFamily: "Inter",
-    fontSize: 22,
-    fontStyle: "italic",
-    fontWeight: "400",
-    right: 30,
-    bottom: 40,
-    position: "absolute",
-    zIndex: 1,
+  buttonText: {
+    color: "#efeeee",
+    fontSize: 25,
+    fontFamily: "rosarivo",
   },
 });
 
