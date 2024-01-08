@@ -10,8 +10,6 @@ import AddTask from "./components/AddTask";
 import TasksList from "./components/TasksList";
 import newLogin from "./components/auth/newLogin";
 import newSignUp from "./components/auth/newSignUp";
-import Categories from "./components/Categories";
-import NewProfile from "./components/newProfile";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
@@ -27,11 +25,15 @@ import {
   embeddedWallet,
   localWallet,
 } from "@thirdweb-dev/react-native";
+import ActiveMissions from "./components/ActiveMissions";
+import NewProfile from "./components/newProfile";
+import Categories from "./components/Categories";
 
 type TabParamList = {
   Profile: undefined;
   "Add Task": undefined;
   "Tasks List": { taskText: string };
+  "Active Missions": undefined;
   LoginInner: undefined;
   Register: undefined;
 };
@@ -91,17 +93,20 @@ function ProfileTabNavigator() {
                 borderRadius: 14,
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Image source={iconName} style={{ width: 30, height: 30 }} />
             </LinearGradient>
           ) : (
             <Image source={iconName} style={{ width: 25, height: 25 }} />
           );
         },
-      })}>
+      })}
+    >
       <Tab.Screen name="Add Task" component={AddTask} />
       <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen name="Tasks List" component={TasksList} options={{}} />
+      <Tab.Screen name="Active Missions" component={ActiveMissions} />
     </Tab.Navigator>
   );
 }
@@ -130,13 +135,14 @@ function App() {
           }),
           smartWalletConfig
         ),
-      ]}>
+      ]}
+    >
       <TokenProvider>
         <UserProvider>
           <UserIdProvider>
           <MissionProvider>
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="Loading">
+              <Stack.Navigator initialRouteName="ProfileTab">
                 <Stack.Screen
                   name="Loading"
                   component={LoadingScreen}
