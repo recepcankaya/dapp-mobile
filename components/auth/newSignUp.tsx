@@ -75,7 +75,6 @@ const Register = () => {
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
-      console.log("userAddress: ", userAddress);
       setErrorMessage(error.message);
       setLoading(false);
     }
