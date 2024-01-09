@@ -6,6 +6,7 @@ import {
   StatusBar,
   Alert,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
@@ -90,11 +91,20 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
               end={{ x: 0, y: 1 }}
               colors={["#B80DCA", "#4035CB"]}
               style={styles.formGradientBorder}>
-              <View style={styles.form}></View>
+              <View style={styles.form}>
+                <Text style={styles.textHeading}>Add Mission</Text>
+                <TextInput
+                  placeholder="Start building yourself"
+                  placeholderTextColor="#0C0C0C"
+                  style={styles.missionInput}
+                  value={title}
+                  onChangeText={setTitle}
+                />
+              </View>
             </LinearGradient>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={createMission}>
               <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
                 <Path
                   fillRule="evenodd"
@@ -172,6 +182,22 @@ const styles = StyleSheet.create({
     width: 357,
     backgroundColor: "#1E1E1E",
     borderRadius: 20,
+  },
+  textHeading: {
+    color: "#EFEEEE",
+    fontSize: 35,
+    marginTop: 80,
+    textAlign: "center",
+  },
+  missionInput: {
+    width: 275,
+    height: 60,
+    backgroundColor: "#EFEEEE",
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 50,
+    paddingLeft: 20,
+    fontSize: 18,
   },
   buttonContainer: {
     alignItems: "flex-end",
