@@ -1,4 +1,4 @@
-package com.reactnative.example;
+package com.ladderit;
 
 import android.app.Application;
 import android.content.res.Configuration;
