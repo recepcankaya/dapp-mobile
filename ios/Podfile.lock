@@ -1,4 +1,5 @@
 PODS:
+  - ASN1Decoder (1.9.0)
   - boost (1.76.0)
   - CoinbaseWalletSDK/Client (1.0.4)
   - CoinbaseWalletSDK/CrossPlatform (1.0.4):
@@ -7,13 +8,18 @@ PODS:
     - CoinbaseWalletSDK/CrossPlatform (= 1.0.4)
     - ExpoModulesCore
   - DoubleConversion (1.1.6)
-  - EXApplication (5.3.1):
+  - EASClient (0.6.0):
+    - ExpoModulesCore
+  - EXApplication (5.4.0):
     - ExpoModulesCore
   - EXConstants (14.4.2):
     - ExpoModulesCore
-  - EXFileSystem (15.4.4):
+  - EXFileSystem (15.4.5):
     - ExpoModulesCore
   - EXFont (11.4.0):
+    - ExpoModulesCore
+  - EXJSONUtils (0.7.1)
+  - EXManifests (0.7.2):
     - ExpoModulesCore
   - Expo (49.0.0):
     - ExpoModulesCore
@@ -23,6 +29,8 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (12.3.0):
     - ExpoModulesCore
+  - ExpoLinearGradient (12.5.0):
+    - ExpoModulesCore
   - ExpoModulesCore (1.5.4):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -31,6 +39,18 @@ PODS:
     - ReactCommon/turbomodule/core
   - ExpoSecureStore (12.5.0):
     - ExpoModulesCore
+  - EXStructuredHeaders (3.3.0)
+  - EXUpdates (0.18.17):
+    - ASN1Decoder (~> 1.8)
+    - EASClient
+    - EXManifests
+    - ExpoModulesCore
+    - EXStructuredHeaders
+    - EXUpdatesInterface
+    - RCT-Folly (= 2021.07.22.00)
+    - ReachabilitySwift
+    - React-Core
+  - EXUpdatesInterface (0.10.1)
   - FBLazyVector (0.72.4)
   - FBReactNativeSpec (0.72.4):
     - RCT-Folly (= 2021.07.22.00)
@@ -71,6 +91,7 @@ PODS:
     - FBLazyVector (= 0.72.4)
     - RCTRequired (= 0.72.4)
     - React-Core (= 0.72.4)
+  - ReachabilitySwift (5.0.0)
   - React (0.72.4):
     - React-Core (= 0.72.4)
     - React-Core/DevSupport (= 0.72.4)
@@ -351,14 +372,14 @@ PODS:
     - glog
   - react-native-aes-gcm-crypto (0.2.2):
     - React-Core
-  - react-native-get-random-values (1.9.0):
+  - react-native-get-random-values (1.10.0):
     - React-Core
-  - react-native-mmkv (2.10.2):
+  - react-native-mmkv (2.11.0):
     - MMKV (>= 1.2.13)
     - React-Core
   - react-native-netinfo (9.5.0):
     - React-Core
-  - react-native-quick-base64 (2.0.7):
+  - react-native-quick-base64 (2.0.8):
     - React-Core
   - react-native-quick-crypto (0.6.1):
     - OpenSSL-Universal
@@ -366,6 +387,8 @@ PODS:
     - React-callinvoker
     - React-Core
   - react-native-randombytes (3.6.1):
+    - React-Core
+  - react-native-safe-area-context (4.8.2):
     - React-Core
   - React-NativeModulesApple (0.72.4):
     - hermes-engine
@@ -477,11 +500,49 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - RNAWSCognito (6.3.6):
+  - RNAWSCognito (6.3.7):
     - React-Core
   - RNCAsyncStorage (1.17.11):
     - React-Core
+  - RNCMaskedView (0.2.9):
+    - React-Core
+  - RNCPicker (2.6.1):
+    - React-Core
+  - RNGestureHandler (2.12.1):
+    - React-Core
   - RNInAppBrowser (3.7.0):
+    - React-Core
+  - RNReanimated (3.3.0):
+    - DoubleConversion
+    - FBLazyVector
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-Core/DevSupport
+    - React-Core/RCTWebSocket
+    - React-CoreModules
+    - React-cxxreact
+    - React-hermes
+    - React-jsi
+    - React-jsiexecutor
+    - React-jsinspector
+    - React-RCTActionSheet
+    - React-RCTAnimation
+    - React-RCTAppDelegate
+    - React-RCTBlob
+    - React-RCTImage
+    - React-RCTLinking
+    - React-RCTNetwork
+    - React-RCTSettings
+    - React-RCTText
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNScreens (3.29.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNSVG (13.14.0):
     - React-Core
@@ -492,16 +553,23 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - "CoinbaseWalletSDKExpo (from `../node_modules/@coinbase/wallet-mobile-sdk/ios`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EASClient (from `../node_modules/expo-eas-client/ios`)
   - EXApplication (from `../node_modules/expo-application/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
+  - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
+  - EXManifests (from `../node_modules/expo-manifests/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoDocumentPicker (from `../node_modules/expo-document-picker/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
+  - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
+  - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
+  - EXUpdates (from `../node_modules/expo-updates/ios`)
+  - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -530,6 +598,7 @@ DEPENDENCIES:
   - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
   - react-native-quick-crypto (from `../node_modules/react-native-quick-crypto`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -549,18 +618,25 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNAWSCognito (from `../node_modules/amazon-cognito-identity-js`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - ASN1Decoder
     - CoinbaseWalletSDK
     - fmt
     - libevent
     - MMKV
     - MMKVCore
     - OpenSSL-Universal
+    - ReachabilitySwift
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -570,6 +646,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@coinbase/wallet-mobile-sdk/ios"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EASClient:
+    :path: "../node_modules/expo-eas-client/ios"
   EXApplication:
     :path: "../node_modules/expo-application/ios"
   EXConstants:
@@ -578,6 +656,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-file-system/ios"
   EXFont:
     :path: "../node_modules/expo-font/ios"
+  EXJSONUtils:
+    :path: "../node_modules/expo-json-utils/ios"
+  EXManifests:
+    :path: "../node_modules/expo-manifests/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoClipboard:
@@ -586,10 +668,18 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-document-picker/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
+  ExpoLinearGradient:
+    :path: "../node_modules/expo-linear-gradient/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
+  EXStructuredHeaders:
+    :path: "../node_modules/expo-structured-headers/ios"
+  EXUpdates:
+    :path: "../node_modules/expo-updates/ios"
+  EXUpdatesInterface:
+    :path: "../node_modules/expo-updates-interface/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -643,6 +733,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-quick-crypto"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-perflogger:
@@ -681,28 +773,46 @@ EXTERNAL SOURCES:
     :path: "../node_modules/amazon-cognito-identity-js"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNCPicker:
+    :path: "../node_modules/@react-native-picker/picker"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNInAppBrowser:
     :path: "../node_modules/react-native-inappbrowser-reborn"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 57d2868c099736d80fcd648bf211b4431e51a558
+  ASN1Decoder: 4f4bbcaf1d1b8be56daa3280e82863a607f5bda9
+  boost: 0a937fbcfdd646fca221c4f1d9750d7ccfdfc2dc
   CoinbaseWalletSDK: ea1f37512bbc69ebe07416e3b29bf840f5cc3152
   CoinbaseWalletSDKExpo: 89f8ad7f799227be7aff2b9353b7a77d37eb8283
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
-  EXApplication: 042aa2e3f05258a16962ea1a9914bf288db9c9a1
+  EASClient: 49f8ea858204eb4844d9fb386e5fb7920aee2e30
+  EXApplication: 2a0d9abd4feace9c6faedfe541c1dec02e3702cd
   EXConstants: ce5bbea779da8031ac818c36bea41b10e14d04e1
-  EXFileSystem: 2b826a3bf1071a4b80a8457e97124783d1ac860e
+  EXFileSystem: f8b838a880254de42a5a7da20ed5ce12e2697c1b
   EXFont: 738c44c390953ebcbab075a4848bfbef025fd9ee
+  EXJSONUtils: 6802be4282d42b97c51682468ddc1026a06f8276
+  EXManifests: cf66451b11b2c2f6464917528d792759f7fd6ce0
   Expo: dc993e0d66e657a31dc45574543ca1ed3d68c617
   ExpoClipboard: d2f0e44d50e5ba07b02f5fb7bd280178b420e24e
   ExpoDocumentPicker: d3b6b0ed2dbbc2f05158e0294dd3f4673f386e5f
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
+  ExpoLinearGradient: 5d18293f89c063036121281175c4653d6a7c34a2
   ExpoModulesCore: cfc52053496bae101b7ce6cd20a0ebaefbf977c0
   ExpoSecureStore: 5372610a4bbcf5e50fafbe6f38f8d9c22edf8253
+  EXStructuredHeaders: 324cc3130571d2696357fafd8be7fd9a0b5fdf6e
+  EXUpdates: 8f03b362414e8f9f0998f8a6d6c9fc00f2a9d2f2
+  EXUpdatesInterface: 82ed48d417cdcd376c12ca1c2ce390d35500bed6
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
@@ -715,6 +825,7 @@ SPEC CHECKSUMS:
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: c0569ecc035894e4a68baecb30fe6a7ea6e399f9
   RCTTypeSafety: e90354072c21236e0bcf1699011e39acd25fea2f
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   React: a1be3c6dc0a6e949ccd3e659781aa47bbae1868f
   React-callinvoker: 1020b33f6cb1a1824f9ca2a86609fbce2a73c6ed
   React-Codegen: a0a26badf098d4a779acda922caf74f6ecabed28
@@ -728,12 +839,13 @@ SPEC CHECKSUMS:
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
   react-native-aes-gcm-crypto: f1bade1824458569b0e0f27ef4bc647ffe48ebbc
-  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
-  react-native-mmkv: 9ae7ca3977e8ef48dbf7f066974eb844c20b5fd7
+  react-native-get-random-values: 384787fd76976f5aec9465aff6fa9e9129af1e74
+  react-native-mmkv: e97c0c79403fb94577e5d902ab1ebd42b0715b43
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
-  react-native-quick-base64: a5dbe4528f1453e662fcf7351029500b8b63e7bb
+  react-native-quick-base64: 777057ea4286f806b00259ede65dc79c7c706320
   react-native-quick-crypto: 455c1b411db006dba1026a30681ececb19180187
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
+  react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
   React-RCTActionSheet: 02904b932b50e680f4e26e7a686b33ebf7ef3c00
@@ -751,13 +863,18 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 4941cc1b3cf08b792fbf666342c9fc95f1969035
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
-  RNAWSCognito: c36b39c89406b2107aa6d57448d0a7c8feb2af58
+  RNAWSCognito: 55657f2870fbf9be09abe014af7ab3084fb45d78
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
+  RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
+  RNCPicker: b18aaf30df596e9b1738e7c1f9ee55402a229dca
+  RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
+  RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
+  RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
 PODFILE CHECKSUM: bc65806dfef06377e534a092032410121ab2fe6d
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.12.1

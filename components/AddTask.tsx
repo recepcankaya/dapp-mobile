@@ -22,6 +22,8 @@ import Svg, {
 } from "react-native-svg";
 import AddMissionAttachment from "./SVGComponents/AddMissionAttachment";
 import * as Font from "expo-font";
+import { UserContext } from "./context/UserContext";
+import { UserIdContext, UserIdProvider } from "./context/UserIdContext";
 
 type TabParamList = {
   Profile: { username: string; tokens: Int32Array }; // Define parameters for Profile route here
@@ -45,15 +47,18 @@ const api = axios.create({
 });
 
 const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
+  const { username } = useContext(UserContext) || {}; // Add null check and default empty object
+  const { user_id } = useContext(UserIdContext);
+
+  const navigation = useNavigation<AddTaskScreenNavigationProp>();
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
-  const navigation = useNavigation<AddTaskScreenNavigationProp>();
 
   const createMission = () => {
     const url = "/mission/create/";
     const data = {
-      user: tokens?.access,
+      user: user_id,
       title: title,
     };
 
@@ -73,70 +78,77 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
         }
       })
       .catch((error) => {
-        Alert.alert("One mission per day");
+        console.log(error.response);
         setErrorMessage(error.message);
       });
   };
 
   return (
     <TokenProvider>
-      <View style={styles.container}>
-        <View style={styles.formContainer}>
-          <View style={styles.attachContainer}>
-            <AddMissionAttachment />
-          </View>
-          <View style={styles.gradientFormContainer}>
-            <LinearGradient
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              colors={["#B80DCA", "#4035CB"]}
-              style={styles.formGradientBorder}>
-              <View style={styles.form}>
-                <Text style={styles.textHeading}>Add Mission</Text>
-                <TextInput
-                  placeholder="Start building yourself"
-                  placeholderTextColor="#0C0C0C"
-                  style={styles.missionInput}
-                  value={title}
-                  onChangeText={setTitle}
-                />
-              </View>
-            </LinearGradient>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={createMission}>
-              <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
-                <Path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
-                  fill="#050505"
-                  stroke="url(#gradient)"
-                  strokeWidth="7"
-                />
-                <Defs>
-                  <SvgLinearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                    <Stop offset="0%" stopColor="#B80DCA" />
-                    <Stop offset="100%" stopColor="#4035CB" />
-                  </SvgLinearGradient>
-                </Defs>
-                {/* @todo - link the font later */}
-                <SvgText
-                  fill="#efeeee"
-                  fontSize="32"
-                  fontFamily="rosarivo"
-                  x="55%" // center and a little bit right horizontally
-                  y="55%" // center and a little bit bottom vertically
-                  textAnchor="middle" // align text to the middle
-                  alignmentBaseline="middle" // align text vertically
-                >
-                  Done
-                </SvgText>
-              </Svg>
-            </TouchableOpacity>
+      <UserIdProvider>
+        <View style={styles.container}>
+          <View style={styles.formContainer}>
+            <View style={styles.attachContainer}>
+              <AddMissionAttachment />
+            </View>
+            <View style={styles.gradientFormContainer}>
+              <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                colors={["#B80DCA", "#4035CB"]}
+                style={styles.formGradientBorder}>
+                <View style={styles.form}>
+                  <Text style={styles.textHeading}>Add Mission</Text>
+                  <TextInput
+                    placeholder="Start building yourself"
+                    placeholderTextColor="#0C0C0C"
+                    style={styles.missionInput}
+                    value={title}
+                    onChangeText={setTitle}
+                  />
+                </View>
+              </LinearGradient>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={createMission}>
+                <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
+                  <Path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
+                    fill="#050505"
+                    stroke="url(#gradient)"
+                    strokeWidth="7"
+                  />
+                  <Defs>
+                    <SvgLinearGradient
+                      id="gradient"
+                      x1="0"
+                      y1="0"
+                      x2="1"
+                      y2="0">
+                      <Stop offset="0%" stopColor="#B80DCA" />
+                      <Stop offset="100%" stopColor="#4035CB" />
+                    </SvgLinearGradient>
+                  </Defs>
+                  {/* @todo - link the font later */}
+                  <SvgText
+                    fill="#efeeee"
+                    fontSize="32"
+                    fontFamily="rosarivo"
+                    x="55%" // center and a little bit right horizontally
+                    y="55%" // center and a little bit bottom vertically
+                    textAnchor="middle" // align text to the middle
+                    alignmentBaseline="middle" // align text vertically
+                  >
+                    Done
+                  </SvgText>
+                </Svg>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </UserIdProvider>
     </TokenProvider>
   );
 };
