@@ -13,6 +13,7 @@ import newSignUp from "./components/auth/newSignUp";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
+import { UserIdProvider } from "./components/context/UserIdContext";
 import {
   ThirdwebProvider,
   smartWallet,
@@ -24,11 +25,15 @@ import {
   embeddedWallet,
   localWallet,
 } from "@thirdweb-dev/react-native";
+import ActiveMissions from "./components/ActiveMissions";
+import NewProfile from "./components/newProfile";
+import Categories from "./components/Categories";
 
 type TabParamList = {
   Profile: undefined;
   "Add Task": undefined;
   "Tasks List": { taskText: string };
+  "Active Missions": undefined;
   LoginInner: undefined;
   Register: undefined;
 };
@@ -99,6 +104,7 @@ function ProfileTabNavigator() {
       <Tab.Screen name="Add Task" component={AddTask} />
       <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen name="Tasks List" component={TasksList} options={{}} />
+      <Tab.Screen name="Active Missions" component={ActiveMissions} />
     </Tab.Navigator>
   );
 }
@@ -130,32 +136,44 @@ function App() {
       ]}>
       <TokenProvider>
         <UserProvider>
-          <MissionProvider>
-            <NavigationContainer>
-              <Stack.Navigator initialRouteName="Loading">
-                <Stack.Screen
-                  name="Loading"
-                  component={LoadingScreen}
-                  options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
-                />
-                <Stack.Screen
-                  name="ProfileTab"
-                  component={ProfileTabNavigator}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-                <Stack.Screen
-                  name="newLogin"
-                  component={newLogin}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-                <Stack.Screen
-                  name="newSignUp"
-                  component={newSignUp}
-                  options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </MissionProvider>
+          <UserIdProvider>
+            <MissionProvider>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Loading">
+                  <Stack.Screen
+                    name="Loading"
+                    component={LoadingScreen}
+                    options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
+                  />
+                  <Stack.Screen
+                    name="ProfileTab"
+                    component={ProfileTabNavigator}
+                    options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  />
+                  <Stack.Screen
+                    name="newLogin"
+                    component={newLogin}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="newSignUp"
+                    component={newSignUp}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Categories"
+                    component={Categories}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="NewProfile"
+                    component={NewProfile}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </MissionProvider>
+          </UserIdProvider>
         </UserProvider>
       </TokenProvider>
     </ThirdwebProvider>

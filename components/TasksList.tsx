@@ -244,7 +244,8 @@ const TasksList: React.FC<{
           colors={["#DC00C6", "#2400B4"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.background}>
+          style={styles.background}
+        >
           <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.profileIconContainer}>
               <View style={styles.circle}>
@@ -277,7 +278,8 @@ const TasksList: React.FC<{
                       </View>
                       <View style={styles.tasksViewIconContainer}>
                         <TouchableOpacity
-                          onPress={() => completeMission(mission.id)}>
+                          onPress={() => completeMission(mission.id)}
+                        >
                           <Image
                             source={require("../assets/ic_positive_green.png")}
                             style={styles.icon}
@@ -302,7 +304,8 @@ const TasksList: React.FC<{
                           </View>
                         </View>
                         <TouchableOpacity
-                          onPress={() => deleteMission(mission.id)}>
+                          onPress={() => deleteMission(mission.id)}
+                        >
                           <Image
                             source={require("../assets/ic_negative_red.png")}
                             style={styles.icon}
@@ -458,3 +461,26 @@ const styles = StyleSheet.create({
 });
 
 export default TasksList;
+
+{
+  /* <View>
+        <View
+          style={{
+            backgroundColor: "white",
+            height: 100,
+            width: 100,
+            borderRadius: 50,
+            alignItems: 'center'
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "black",
+              height: 50,
+              width: 50,
+              borderRadius: 50,
+            }}
+          ></View>
+        </View>
+      </View> */
+}
