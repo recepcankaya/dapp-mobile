@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   attachContainer: {
     margin: "auto",
     alignItems: "center",
-    top: -30,
+    top: -20,
   },
   formContainer: {
     marginTop: 150,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   gradientFormContainer: {
     alignItems: "center",
-    marginTop: -110,
+    marginTop: -100,
     zIndex: -2,
   },
   formGradientBorder: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     right: 0,
-    bottom: 60,
+    bottom: 40,
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
