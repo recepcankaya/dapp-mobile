@@ -41,6 +41,7 @@ function ActiveMissions() {
   //   { isCompleted: true, title: "Mission 2" },
   //   { isCompleted: false, title: "Mission 3" },
   // ]);
+  //yorum satırı
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
