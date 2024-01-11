@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-expo-starter",
-    "slug": "react-native-expo-starter",
+    "name": "ladder-it",
+    "slug": "ladder-it",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

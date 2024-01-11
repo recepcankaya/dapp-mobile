@@ -60,6 +60,7 @@ function ProfileTabNavigator() {
           {
             display: "flex",
             backgroundColor: "#003172",
+            justifyContent: 'space-between',
           },
           null,
         ],
