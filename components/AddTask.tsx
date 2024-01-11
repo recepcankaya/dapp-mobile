@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     right: 0,
-    bottom: 40,
+    bottom: 55,
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
