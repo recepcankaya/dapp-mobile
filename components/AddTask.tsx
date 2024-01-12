@@ -7,6 +7,7 @@ import {
   Alert,
   TouchableOpacity,
   TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
@@ -109,44 +110,45 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
                 </View>
               </LinearGradient>
             </View>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={createMission}>
-                <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
-                  <Path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
-                    fill="#050505"
-                    stroke="url(#gradient)"
-                    strokeWidth="7"
-                  />
-                  <Defs>
-                    <SvgLinearGradient
-                      id="gradient"
-                      x1="0"
-                      y1="0"
-                      x2="1"
-                      y2="0">
-                      <Stop offset="0%" stopColor="#B80DCA" />
-                      <Stop offset="100%" stopColor="#4035CB" />
-                    </SvgLinearGradient>
-                  </Defs>
-                  {/* @todo - link the font later */}
-                  <SvgText
-                    fill="#efeeee"
-                    fontSize="32"
-                    fontFamily="rosarivo"
-                    x="55%" // center and a little bit right horizontally
-                    y="55%" // center and a little bit bottom vertically
-                    textAnchor="middle" // align text to the middle
-                    alignmentBaseline="middle" // align text vertically
-                  >
-                    Done
-                  </SvgText>
-                </Svg>
-              </TouchableOpacity>
-            </View>
           </View>
+          <KeyboardAvoidingView style={styles.buttonContainer}>
+            <TouchableOpacity onPress={createMission}>
+              <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
+                <Path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M109.119 6.28364C125.645 9.54071 136.874 23.7587 151.609 32.0213C167.73 41.0608 191.703 40.3053 199.769 57.1128C207.807 73.8619 191.716 92.3733 189.443 110.861C187.111 129.843 196.896 151.2 186.264 166.995C175.554 182.907 154.52 188.842 135.635 190.807C118.409 192.598 103.331 181.459 86.4893 177.372C68.4574 172.996 47.9926 177.249 33.1719 165.941C17.2693 153.808 5.09061 134.639 4.04704 114.473C3.02277 94.6792 18.9714 79.1193 27.7632 61.4214C36.1565 44.526 39.0109 23.3912 54.5136 12.8845C70.0737 2.33886 90.7526 2.66378 109.119 6.28364Z"
+                  fill="#050505"
+                  stroke="url(#gradient)"
+                  strokeWidth="7"
+                />
+                <Defs>
+                  <SvgLinearGradient
+                    id="gradient"
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="0">
+                    <Stop offset="0%" stopColor="#B80DCA" />
+                    <Stop offset="100%" stopColor="#4035CB" />
+                  </SvgLinearGradient>
+                </Defs>
+                {/* @todo - link the font later */}
+                <SvgText
+                  fill="#efeeee"
+                  fontSize="32"
+                  fontFamily="rosarivo"
+                  x="55%" // center and a little bit right horizontally
+                  y="55%" // center and a little bit bottom vertically
+                  textAnchor="middle" // align text to the middle
+                  alignmentBaseline="middle" // align text vertically
+                >
+                  Done
+                </SvgText>
+              </Svg>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+
         </View>
       </UserIdProvider>
     </TokenProvider>
@@ -162,6 +164,7 @@ const styles = StyleSheet.create({
   attachContainer: {
     margin: "auto",
     alignItems: "center",
+    top: -20,
   },
   formContainer: {
     marginTop: 150,
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
   },
   gradientFormContainer: {
     alignItems: "center",
-    marginTop: -80,
+    marginTop: -100,
     zIndex: -2,
   },
   formGradientBorder: {
@@ -212,7 +215,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   buttonContainer: {
-    alignItems: "flex-end",
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
 });
 
