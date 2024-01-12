@@ -28,8 +28,8 @@ Trace:
 
 npm manifest: 
   {
-    "name": "the-one",
-    "version": "1.0.0",
+    "name": "LadderIt",
+    "version": "1.1.0",
     "scripts": {
       "start": "expo start --dev-client",
       "android": "expo run:android",
