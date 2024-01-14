@@ -237,9 +237,6 @@ function ActiveMissions() {
             Active Missions
           </CustomText>
         </View>
-        <TouchableOpacity style={styles.missionsListHeaderBottom}>
-          <CustomText style={styles.missionsListAddButton}>+</CustomText>
-        </TouchableOpacity>
       </View>
     );
   };
