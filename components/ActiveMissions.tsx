@@ -11,7 +11,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import CustomText from "./customs/CustomText";
-import Svg, { Path, LinearGradient, Stop, Defs } from "react-native-svg";
+import Svg, {
+  Path,
+  LinearGradient,
+  Stop,
+  Defs,
+  Ellipse,
+  G,
+} from "react-native-svg";
 import { Agenda } from "react-native-calendars";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
@@ -148,12 +155,61 @@ function ActiveMissions() {
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
             onPress={() => completeMission(item.id)}>
-            {item.isCompleted && (
-              <Svg width={27} height={26} viewBox="0 0 27 26" fill="none">
+            {item.isCompleted ? (
+              <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
+                <G filter="url(#filter0_di_479_3)">
+                  <G filter="url(#filter1_f_479_3)">
+                    <Ellipse
+                      cx={23.5}
+                      cy={23}
+                      rx={19.5}
+                      ry={19}
+                      fill="#D9D9D9"
+                    />
+                  </G>
+                  <G filter="url(#filter2_d_479_3)">
+                    <Ellipse
+                      cx={23.5}
+                      cy={23}
+                      rx={19.5}
+                      ry={19}
+                      fill="#D9D9D9"
+                      fillOpacity={0.7}
+                      // shapeRendering="crispEdges"
+                    />
+                  </G>
+                  <Path
+                    d="M32.047 10l-2.373 2.948-9.562 11.383-2.786-3.194-2.476-2.948L10 23.962l2.476 2.948 5.16 6.142L20.009 36l2.476-2.948 12.039-14.33L37 15.772 32.047 10z"
+                    fill="url(#paint0_linear_479_3)"
+                  />
+                </G>
+                <Defs>
+                  <LinearGradient
+                    id="paint0_linear_479_3"
+                    x1={23.5}
+                    y1={10}
+                    x2={23.5}
+                    y2={36}
+                    gradientUnits="userSpaceOnUse">
+                    <Stop stopColor="#B80DCA" />
+                    <Stop offset={1} stopColor="#4035CB" />
+                  </LinearGradient>
+                </Defs>
+              </Svg>
+            ) : (
+              <Svg width={39} height={38} viewBox="0 0 39 38" fill="none">
+                <Ellipse
+                  cx={19.5}
+                  cy={19}
+                  rx={19.5}
+                  ry={19}
+                  fill="#B80DCA"
+                  fillOpacity={0.1}
+                />
                 <Path
-                  d="M22.0471 0L19.6739 2.94803L10.1121 14.3307L7.32612 11.137L4.84968 8.18898L0 13.9622L2.47643 16.9102L7.63567 23.052L10.0089 26L12.4853 23.052L24.5236 8.72126L27 5.77323L22.0471 0Z"
-                  fill="#9EE628"
-                  fillOpacity={0.5}
+                  d="M28.047 6l-2.373 2.948-9.562 11.383-2.786-3.194-2.476-2.948L6 19.962l2.476 2.948 5.16 6.142L16.009 32l2.476-2.948 12.039-14.33L33 11.772 28.047 6z"
+                  fill="#D9D9D9"
+                  fillOpacity={0.1}
                 />
               </Svg>
             )}
