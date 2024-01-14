@@ -121,26 +121,24 @@ function ActiveMissions() {
       <View style={styles.missionItemContainer}>
         <Svg
           width={width}
-          height={108}
-          viewBox={`0 0 414 108`}
+          height={107}
+          viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}
-        >
+          style={{ position: "absolute" }}>
           <Path
-            d="M411.021 93.0356C410.948 100.668 404.112 106.455 396.572 105.264L204.15 74.8873C202.402 74.6114 200.623 74.6021 198.873 74.8597L17.789 101.509C10.1949 102.627 3.39683 96.6996 3.46956 89.024L3.86444 47.3489C3.92204 41.2695 8.34539 36.1132 14.3453 35.1314L208.307 3.39211C209.739 3.15783 211.2 3.17456 212.626 3.44157L401.218 38.755C407.176 39.8706 411.475 45.0992 411.417 51.1599L411.021 93.0356Z"
+            d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
-            stroke="url(#paint0_linear_53_14)"
+            stroke="url(#paint0_linear_53_15)"
             strokeWidth={5}
           />
           <Defs>
             <LinearGradient
-              id="paint0_linear_53_14"
-              x1="723.326"
-              y1="41.634"
-              x2="724.007"
-              y2="-30.1992"
-              gradientUnits="userSpaceOnUse"
-            >
+              id="paint0_linear_53_15"
+              x1={722.523}
+              y1={41.1111}
+              x2={723.204}
+              y2={-30.722}
+              gradientUnits="userSpaceOnUse">
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -149,8 +147,7 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}
-          >
+            onPress={() => completeMission(item.id)}>
             {item.isCompleted && (
               <Svg width={27} height={26} viewBox="0 0 27 26" fill="none">
                 <Path

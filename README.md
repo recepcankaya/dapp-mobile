@@ -7,7 +7,7 @@ Got questions? Jump into our [Discord](https://discord.gg/thirdweb) to speak wit
 Create a project using this example:
 
 ```bash
-npx thirdweb create --template react-native-expo-starter
+npx thirdweb create --template ladder-it
 ```
 
 Install dependencies:

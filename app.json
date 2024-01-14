@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "react-native-expo-starter",
-    "slug": "react-native-expo-starter",
-    "version": "1.0.0",
+    "name": "LadderIt",
+    "slug": "LadderIt",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,19 +11,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.reactnative.example"
+      "bundleIdentifier": "com.ladderit"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.reactnative.example"
+      "package": "com.ladderit"
     },
     "web": {
       "favicon": "./assets/favicon.png"
