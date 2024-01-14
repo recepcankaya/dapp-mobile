@@ -1,18 +1,17 @@
 import React from "react";
-import { Image } from "react-native";
+import { Dimensions, Image, Platform, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { LinearGradient } from "expo-linear-gradient";
+// import { LinearGradient } from "expo-linear-gradient";
 import LoadingScreen from "./components/LoadingScreen";
-import Profile from "./components/Profile";
 import AddTask from "./components/AddTask";
-import TasksList from "./components/TasksList";
 import newLogin from "./components/auth/newLogin";
 import newSignUp from "./components/auth/newSignUp";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
+import { Svg, Defs, LinearGradient, Stop, Path, Mask } from "react-native-svg";
 import { UserIdProvider } from "./components/context/UserIdContext";
 import {
   ThirdwebProvider,
@@ -28,6 +27,17 @@ import {
 import ActiveMissions from "./components/ActiveMissions";
 import NewProfile from "./components/newProfile";
 import Categories from "./components/Categories";
+import {
+  ActiveMissionsNegativeIcon,
+  ActiveMissionsPositiveIcon,
+  CategoriesNegativeIcon,
+  CategoriesPositiveIcon,
+  ProfileNegativeIcon,
+  ProfilePositiveIcon,
+} from "./components/assets/bottomTabButtonIcons";
+
+const { height, width } = Dimensions.get("window");
+const isIOS = Platform.OS === "ios";
 
 type TabParamList = {
   Profile: undefined;
@@ -36,6 +46,7 @@ type TabParamList = {
   "Active Missions": undefined;
   LoginInner: undefined;
   Register: undefined;
+  Categories: undefined;
 };
 
 /**
@@ -52,60 +63,107 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function ProfileTabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Active Missions"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: [
           {
-            display: "flex",
-            backgroundColor: "#003172",
-            justifyContent: 'space-between',
+            backgroundColor: "#0C0C0C",
+            position: "absolute",
+            bottom: height >= 812 && Platform.OS === "ios" ? 34 : 0,
+            alignItems: "center",
+            justifyContent: "center",
+            borderBlockColor: "#0C0C0C",
+            height: height >= 812 && Platform.OS === "ios" ? 140 : 100,
           },
           null,
         ],
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          console.log("focused", focused);
           let isProfile;
+          let isActiveMissions;
+          let isCategories;
 
-          if (route.name === "Add Task") {
-            iconName = focused
-              ? require("./assets/ic_positive.png")
-              : require("./assets/ic_positive.png");
+          if (route.name === "Categories") {
+            isCategories = true;
+            isActiveMissions = false;
+            isProfile = false;
           } else if (route.name === "Profile") {
-            iconName = focused
-              ? require("./assets/LadderLogo.png")
-              : require("./assets/LadderLogo.png");
             isProfile = true;
-          } else if (route.name === "Tasks List") {
-            iconName = focused
-              ? require("./assets/tabbar_addtask.png")
-              : require("./assets/tabbar_addtask.png");
+            isActiveMissions = false;
+            isCategories = false;
+          } else if (route.name === "Active Missions") {
+            isActiveMissions = true;
+            isProfile = false;
+            isCategories = false;
           }
-          return isProfile ? (
-            <LinearGradient
-              colors={["#BF00BF", "#0505D5"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+          return (
+            <View
               style={{
-                width: 35,
-                height: 33,
-                flexShrink: 0,
-                borderRadius: 14,
-                alignItems: "center",
-                justifyContent: "center",
+                flex: 1,
+                justifyContent: isActiveMissions ? "flex-start" : "flex-end",
+                margin: isActiveMissions ? 15 : 25,
               }}>
-              <Image source={iconName} style={{ width: 30, height: 30 }} />
-            </LinearGradient>
-          ) : (
-            <Image source={iconName} style={{ width: 25, height: 25 }} />
+              {focused
+                ? isProfile
+                  ? ProfilePositiveIcon()
+                  : isCategories
+                    ? CategoriesPositiveIcon()
+                    : isActiveMissions
+                      ? ActiveMissionsPositiveIcon()
+                      : ProfileNegativeIcon()
+                : isProfile
+                  ? ProfileNegativeIcon()
+                  : isCategories
+                    ? CategoriesNegativeIcon()
+                    : isActiveMissions
+                      ? ActiveMissionsNegativeIcon()
+                      : ProfileNegativeIcon()}
+            </View>
+          );
+        },
+        tabBarBackground() {
+          return (
+            <View
+              style={{
+                height: height >= 812 && Platform.OS === "ios" ? 174 : 140,
+                backgroundColor: "#0C0C0C",
+              }}>
+              <Svg width={width} height={124} viewBox="0 0 430 124" fill="none">
+                <Defs>
+                  <LinearGradient
+                    id="paint0_linear_65_3186"
+                    x1="215.5"
+                    y1="0"
+                    x2="215.5"
+                    y2="332"
+                    gradientUnits="userSpaceOnUse">
+                    <Stop stopColor="#B80DCA" />
+                    <Stop offset="1" stopColor="#4035CB" />
+                  </LinearGradient>
+                </Defs>
+                <Mask id="path-1-inside-1_65_3186" fill="white">
+                  <Path
+                    d="M455 166C455 121.974 429.767 79.7513 384.852 48.6203C339.937 17.4892 279.019 3.32387e-06 215.5 0C151.981 -3.32387e-06 91.0629 17.4892 46.1479 48.6203C1.23298 79.7513 -24 121.974 -24 166L215.5 166H455Z"
+                    fill="white"
+                  />
+                </Mask>
+                <Path
+                  d="M455 166C455 121.974 429.767 79.7513 384.852 48.6203C339.937 17.4892 279.019 3.32387e-06 215.5 0C151.981 -3.32387e-06 91.0629 17.4892 46.1479 48.6203C1.23298 79.7513 -24 121.974 -24 166L215.5 166H455Z"
+                  fill="#0C0C0C"
+                  stroke="url(#paint0_linear_65_3186)"
+                  strokeWidth={10}
+                  mask="url(#path-1-inside-1_65_3186)"
+                />
+              </Svg>
+            </View>
           );
         },
       })}>
-      <Tab.Screen name="Add Task" component={AddTask} />
-      <Tab.Screen name="Profile" component={Profile} />
-      <Tab.Screen name="Tasks List" component={TasksList} options={{}} />
+      <Tab.Screen name="Categories" component={Categories} />
       <Tab.Screen name="Active Missions" component={ActiveMissions} />
+      <Tab.Screen name="Profile" component={NewProfile} />
     </Tab.Navigator>
   );
 }
@@ -147,11 +205,6 @@ function App() {
                     options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
                   />
                   <Stack.Screen
-                    name="ProfileTab"
-                    component={ProfileTabNavigator}
-                    options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                  />
-                  <Stack.Screen
                     name="newLogin"
                     component={newLogin}
                     options={{ headerShown: false }} // Hide navigation bar
@@ -162,8 +215,18 @@ function App() {
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen
+                    name="ProfileTab"
+                    component={ProfileTabNavigator}
+                    options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  />
+                  <Stack.Screen
                     name="Categories"
                     component={Categories}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Add Task"
+                    component={AddTask}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen

@@ -47,11 +47,10 @@ const api = axios.create({
   },
 });
 
-const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
+const AddTask = () => {
   const { username } = useContext(UserContext) || {}; // Add null check and default empty object
   const { user_id } = useContext(UserIdContext);
 
-  const navigation = useNavigation<AddTaskScreenNavigationProp>();
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
@@ -123,12 +122,7 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
                   strokeWidth="7"
                 />
                 <Defs>
-                  <SvgLinearGradient
-                    id="gradient"
-                    x1="0"
-                    y1="0"
-                    x2="1"
-                    y2="0">
+                  <SvgLinearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
                     <Stop offset="0%" stopColor="#B80DCA" />
                     <Stop offset="100%" stopColor="#4035CB" />
                   </SvgLinearGradient>
@@ -148,7 +142,6 @@ const AddTask = ({ route }: { route: AddTaskRouteProp }) => {
               </Svg>
             </TouchableOpacity>
           </KeyboardAvoidingView>
-
         </View>
       </UserIdProvider>
     </TokenProvider>

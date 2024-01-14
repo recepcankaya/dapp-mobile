@@ -11,7 +11,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import CustomText from "./customs/CustomText";
-import Svg, { Path, LinearGradient, Stop, Defs } from "react-native-svg";
+import Svg, {
+  Path,
+  LinearGradient,
+  Stop,
+  Defs,
+  Ellipse,
+  G,
+} from "react-native-svg";
 import { Agenda } from "react-native-calendars";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
@@ -41,6 +48,7 @@ function ActiveMissions() {
   //   { isCompleted: true, title: "Mission 2" },
   //   { isCompleted: false, title: "Mission 3" },
   // ]);
+  //yorum satırı
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -120,26 +128,24 @@ function ActiveMissions() {
       <View style={styles.missionItemContainer}>
         <Svg
           width={width}
-          height={108}
-          viewBox={`0 0 414 108`}
+          height={107}
+          viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}
-        >
+          style={{ position: "absolute" }}>
           <Path
-            d="M411.021 93.0356C410.948 100.668 404.112 106.455 396.572 105.264L204.15 74.8873C202.402 74.6114 200.623 74.6021 198.873 74.8597L17.789 101.509C10.1949 102.627 3.39683 96.6996 3.46956 89.024L3.86444 47.3489C3.92204 41.2695 8.34539 36.1132 14.3453 35.1314L208.307 3.39211C209.739 3.15783 211.2 3.17456 212.626 3.44157L401.218 38.755C407.176 39.8706 411.475 45.0992 411.417 51.1599L411.021 93.0356Z"
+            d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
-            stroke="url(#paint0_linear_53_14)"
+            stroke="url(#paint0_linear_53_15)"
             strokeWidth={5}
           />
           <Defs>
             <LinearGradient
-              id="paint0_linear_53_14"
-              x1="723.326"
-              y1="41.634"
-              x2="724.007"
-              y2="-30.1992"
-              gradientUnits="userSpaceOnUse"
-            >
+              id="paint0_linear_53_15"
+              x1={722.523}
+              y1={41.1111}
+              x2={723.204}
+              y2={-30.722}
+              gradientUnits="userSpaceOnUse">
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -148,14 +154,62 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}
-          >
-            {item.isCompleted && (
-              <Svg width={27} height={26} viewBox="0 0 27 26" fill="none">
+            onPress={() => completeMission(item.id)}>
+            {item.isCompleted ? (
+              <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
+                <G filter="url(#filter0_di_479_3)">
+                  <G filter="url(#filter1_f_479_3)">
+                    <Ellipse
+                      cx={23.5}
+                      cy={23}
+                      rx={19.5}
+                      ry={19}
+                      fill="#D9D9D9"
+                    />
+                  </G>
+                  <G filter="url(#filter2_d_479_3)">
+                    <Ellipse
+                      cx={23.5}
+                      cy={23}
+                      rx={19.5}
+                      ry={19}
+                      fill="#D9D9D9"
+                      fillOpacity={0.7}
+                      // shapeRendering="crispEdges"
+                    />
+                  </G>
+                  <Path
+                    d="M32.047 10l-2.373 2.948-9.562 11.383-2.786-3.194-2.476-2.948L10 23.962l2.476 2.948 5.16 6.142L20.009 36l2.476-2.948 12.039-14.33L37 15.772 32.047 10z"
+                    fill="url(#paint0_linear_479_3)"
+                  />
+                </G>
+                <Defs>
+                  <LinearGradient
+                    id="paint0_linear_479_3"
+                    x1={23.5}
+                    y1={10}
+                    x2={23.5}
+                    y2={36}
+                    gradientUnits="userSpaceOnUse">
+                    <Stop stopColor="#B80DCA" />
+                    <Stop offset={1} stopColor="#4035CB" />
+                  </LinearGradient>
+                </Defs>
+              </Svg>
+            ) : (
+              <Svg width={39} height={38} viewBox="0 0 39 38" fill="none">
+                <Ellipse
+                  cx={19.5}
+                  cy={19}
+                  rx={19.5}
+                  ry={19}
+                  fill="#B80DCA"
+                  fillOpacity={0.1}
+                />
                 <Path
-                  d="M22.0471 0L19.6739 2.94803L10.1121 14.3307L7.32612 11.137L4.84968 8.18898L0 13.9622L2.47643 16.9102L7.63567 23.052L10.0089 26L12.4853 23.052L24.5236 8.72126L27 5.77323L22.0471 0Z"
-                  fill="#9EE628"
-                  fillOpacity={0.5}
+                  d="M28.047 6l-2.373 2.948-9.562 11.383-2.786-3.194-2.476-2.948L6 19.962l2.476 2.948 5.16 6.142L16.009 32l2.476-2.948 12.039-14.33L33 11.772 28.047 6z"
+                  fill="#D9D9D9"
+                  fillOpacity={0.1}
                 />
               </Svg>
             )}
@@ -183,9 +237,6 @@ function ActiveMissions() {
             Active Missions
           </CustomText>
         </View>
-        <TouchableOpacity style={styles.missionsListHeaderBottom}>
-          <CustomText style={styles.missionsListAddButton}>+</CustomText>
-        </TouchableOpacity>
       </View>
     );
   };
