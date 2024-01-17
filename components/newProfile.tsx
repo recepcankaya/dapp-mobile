@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { View, StyleSheet, Dimensions, Text } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { View, StyleSheet, Dimensions, Text, Alert, TextInput, TouchableOpacity } from "react-native";
 import Svg, {
   Rect,
   Defs,
@@ -11,10 +11,18 @@ import Svg, {
   Use,
 } from "react-native-svg";
 import { UserContext } from "./context/UserContext";
+
 import CustomConnectWallet from "./customs/CustomConnectWallet";
 import { ThirdwebProvider } from "@thirdweb-dev/react-native";
+import axios from "axios";
+import { TokenContext } from "./context/TokenContext";
 
-//const { username, setUsername } = useContext(UserContext);
+const api = axios.create({
+  baseURL: "https://akikoko.pythonanywhere.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 const { width, height } = Dimensions.get("window");
 const rectWidth = 431.138;
@@ -94,19 +102,57 @@ const TimezoneIcon = () => (
   </Svg>
 );
 
-// SVG component for the wallet icon
-const WalletIcon = () => (
-  <Svg width="35" height="35" viewBox="0 0 35 35" fill="none">
-    <Path
-      d="M8.78277 9.75H9.78277V8.75V4.375C9.78277 2.51986 11.3025 1 13.1523 1H21.8914C23.7412 1 25.2609 2.51986 25.2609 4.375V8.75V9.75H26.2609H34V19.6875C34 20.3614 33.4852 20.875 32.8152 20.875H2.22846C1.55846 20.875 1.0437 20.3614 1.0437 19.6875V9.75H8.78277ZM13.1523 3.375H12.1523V4.375V8.75V9.75H13.1523H21.8914H22.8914V8.75V4.375V3.375H21.8914H13.1523ZM1.0437 34V27.1491C1.40346 27.2113 1.78267 27.25 2.18477 27.25H32.7715C33.1822 27.25 33.5746 27.2186 33.9563 27.1561V34H1.0437Z"
-      fill="#D9D9D9"
-      stroke="#0C0C0C"
-      strokeWidth="2"
-    />
-  </Svg>
-);
-
 export default function NewProfile() {
+  const { username, setUsername } = useContext(UserContext);
+  const { tokens } = useContext(TokenContext);
+  const [tempUsername, setTempUsername] = useState('');
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await api.get("/user/user_detail/", {
+          headers: {
+            Authorization: `Bearer ${tokens?.access}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setUsername(response.data.username);
+          console.log(tempUsername)
+        } else {
+          Alert.alert("Error", "Failed to get user details");
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Error", "An error occurred while trying to get user details");
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+  const changeUsername = async (newUsername: string) => {
+    try {
+      const response = await api.patch("/user/profile_update/", {
+        username: newUsername,
+      }, {
+        headers: {
+          Authorization: `Bearer ${tokens?.access}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setUsername(newUsername); // Update the temporary username
+        Alert.alert("Success", "Username updated successfully");
+      } else {
+        Alert.alert("Error", "Failed to update username");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "An error occurred while trying to update username");
+    }
+  };
+
   return (
     <ThirdwebProvider theme="light">
       <View style={styles.container}>
@@ -124,9 +170,8 @@ export default function NewProfile() {
             y={height * 0.48}
             width={rectWidth}
             height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${
-              height * 0.1 + rectHeight / 2
-            })`}
+            transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${height * 0.1 + rectHeight / 2
+              })`}
             fill="url(#paint0_linear_113_6)"
             stroke="url(#paint1_linear_113_6)"
             strokeWidth="3"
@@ -137,9 +182,8 @@ export default function NewProfile() {
             y={height * 0.52 - rectHeight}
             width={rectWidth}
             height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.9 - rectWidth / 2} ${
-              height * 0.9 - rectHeight / 2
-            })`}
+            transform={`rotate(151.109 ${width * 0.9 - rectWidth / 2} ${height * 0.9 - rectHeight / 2
+              })`}
             fill="url(#paint0_linear_113_5)"
             stroke="url(#paint1_linear_113_5)"
             strokeWidth="2"
@@ -191,7 +235,7 @@ export default function NewProfile() {
         </Svg>
         {/* SVG component for inputs */}
         <View style={styles.rectangles}>
-          <View style={{ marginBottom: 15, position: "relative" }}>
+          <View style={{ marginBottom: 15, alignItems: 'center' }}>
             <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
@@ -228,14 +272,20 @@ export default function NewProfile() {
                 fontSize: 22,
                 fontWeight: "400",
                 letterSpacing: 0.44,
-              }}>
-              User name
-            </Text>
+              }}></Text>
+            <TextInput
+              style={styles.inputText}
+              placeholder={username}
+              placeholderTextColor="#0C0C0C"
+              value={tempUsername}
+              onChangeText={text => setTempUsername(text)}
+              autoCapitalize="none"
+            />
             <View style={{ position: "absolute", top: 15, right: 10 }}>
               <UserIcon />
             </View>
           </View>
-          <View style={{ marginBottom: 15, position: "relative" }}>
+          <View style={{ marginBottom: 15, alignItems: 'center' }}>
             <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
@@ -278,38 +328,51 @@ export default function NewProfile() {
               <TimezoneIcon />
             </View>
           </View>
-          <View style={{ marginBottom: 15, position: "relative" }}>
-            <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
-              <Rect
-                x="1.5"
-                y="1.5"
-                width="344"
-                height="68"
-                rx="18.5"
-                fill="#D9D9D9"
-                stroke="url(#paint0_linear_114_4)"
-                strokeWidth="3"
-              />
-              <Defs>
-                <LinearGradient
-                  id="paint0_linear_114_4"
-                  x1="173.5"
-                  y1="0"
-                  x2="173.5"
-                  y2="71"
-                  gradientUnits="userSpaceOnUse">
-                  <Stop stopColor="#B80DCA" />
-                  <Stop offset="1" stopColor="#4035CB" />
-                </LinearGradient>
-              </Defs>
-            </Svg>
-            <View style={{ position: "absolute", top: 2, left: 5 }}>
-              <CustomConnectWallet />
-            </View>
-            <View style={{ position: "absolute", top: 15, right: 10 }}>
-              <WalletIcon />
-            </View>
+          <View style={{ marginBottom: 15, position: "relative", justifyContent: 'center', alignItems: 'center' }}>
+            <CustomConnectWallet />
           </View>
+          <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
+            <View style={{ alignItems: 'center', marginBottom: 15, left: width * 0.17 }}>
+              <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
+                <Rect
+                  x="1.5"
+                  y="1.5"
+                  width="204"
+                  height="38"
+                  rx="18.5"
+                  fill="#D9D9D9"
+                  stroke="url(#paint0_linear_114_4)"
+                  strokeWidth="3"
+                />
+                <Defs>
+                  <LinearGradient
+                    id="paint0_linear_114_4"
+                    x1="173.5"
+                    y1="0"
+                    x2="173.5"
+                    y2="71"
+                    gradientUnits="userSpaceOnUse">
+                    <Stop stopColor="#B80DCA" />
+                    <Stop offset="1" stopColor="#4035CB" />
+                  </LinearGradient>
+                </Defs>
+              </Svg>
+              <Text
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  left: 64,
+                  width: 257,
+                  color: "#000",
+                  fontFamily: "Rosarivo",
+                  fontSize: 18,
+                  fontWeight: "400",
+                  letterSpacing: 0.44,
+                }}>
+                Update
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ThirdwebProvider>
@@ -352,5 +415,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 195 + 40, // 40px below the "Profile" text
     left: 25, // Aligned -15 px with the "Profile" text
+  },
+  inputText: {
+    position: "absolute",
+    top: 15,
+    left: 20,
+    width: 257,
+    height: 35,
+    color: "#000",
+    fontFamily: "Rosarivo",
+    fontSize: 22,
+    fontWeight: "400",
+    letterSpacing: 0.44,
   },
 });

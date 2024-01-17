@@ -75,6 +75,7 @@ const LoginInner = () => {
                 const user_id_temp = response1.data.id;
 
                 setUserId(user_id_temp);
+                setUsername(response1.data.username);
               } else {
                 Alert.alert("Error", "Failed to get user details");
               }
@@ -87,7 +88,7 @@ const LoginInner = () => {
               );
             });
           navigation.navigate("ProfileTab");
-          setUsername(userAddress ?? "");
+          
         } else {
           Alert.alert("Error", "Login failed");
         }
