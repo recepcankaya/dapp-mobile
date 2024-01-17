@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 import { TokenContext, TokenProvider } from "./context/TokenContext";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import Svg, {
   Path,
@@ -48,6 +48,9 @@ const api = axios.create({
 });
 
 const AddTask = () => {
+  const route = useRoute();
+  const { categoryType }: any = route.params;
+  console.log("category", categoryType);
   const { username } = useContext(UserContext) || {}; // Add null check and default empty object
   const { user_id } = useContext(UserIdContext);
 
@@ -60,6 +63,8 @@ const AddTask = () => {
     const data = {
       user: user_id,
       title: title,
+      startDate: new Date(),
+      category: categoryType,
     };
 
     const headers = {
@@ -96,7 +101,8 @@ const AddTask = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 colors={["#B80DCA", "#4035CB"]}
-                style={styles.formGradientBorder}>
+                style={styles.formGradientBorder}
+              >
                 <View style={styles.form}>
                   <Text style={styles.textHeading}>Add Mission</Text>
                   <TextInput

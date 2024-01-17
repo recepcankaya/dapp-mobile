@@ -2,64 +2,75 @@ import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function Categories({ navigation }: { navigation: any }) {
+  const navigateToAddTask = (categoryType: string) => {
+    navigation.navigate("Add Task", {
+      categoryType: categoryType,
+    });
+  };
   return (
     <View style={styles.main}>
       <Text style={styles.title}>Choose Your Interest</Text>
       <View style={styles.row}>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Art")}>
           <View style={styles.container}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.leftText}>Art</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Working")}>
           <View style={[styles.container, { marginRight: -15 }]}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.rightText}>Working</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>
       </View>
       <View style={[styles.row, { marginTop: 30 }]}>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Sport")}>
           <View style={styles.container}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.leftText}>Sport</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Language")}>
           <View style={[styles.container, { marginRight: -15 }]}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.rightText}>Language</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>
       </View>
       <View style={[styles.row, { marginTop: 30 }]}>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Literature")}>
           <View style={styles.container}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.leftText}>Literature</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Task")}>
+        <TouchableOpacity onPress={() => navigateToAddTask("Music")}>
           <View style={[styles.container, { marginRight: -15 }]}>
             <LinearGradient
               colors={["rgba(184, 13, 202, 0.50)", "rgba(64, 53, 203, 0.50)"]}
-              style={styles.rectangle}>
+              style={styles.rectangle}
+            >
               <Text style={styles.rightText}>Music</Text>
             </LinearGradient>
           </View>
