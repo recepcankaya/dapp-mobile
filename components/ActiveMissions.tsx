@@ -31,6 +31,8 @@ const missionItemHeight = width / 3.8333;
 function ActiveMissions() {
   const { tokens } = useContext(TokenContext);
   const [missions, setMissions] = useState<any[]>([]);
+  const [copyOfMissions, setCopyOfMissions] = useState<any[]>(missions);
+  const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
   const { username } = useContext(UserContext);
 
   const [selectedDate, setSelectedDate] = useState();
@@ -48,7 +50,6 @@ function ActiveMissions() {
   //   { isCompleted: true, title: "Mission 2" },
   //   { isCompleted: false, title: "Mission 3" },
   // ]);
-  //yorum satırı
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -57,9 +58,12 @@ function ActiveMissions() {
     },
   });
 
-  const onDayChange = (day: any) => {
-    console.log(day);
-  };
+  const onChangeDate = (date: any) => {
+    console.log('date', date);
+    setFilteredMissions(
+      copyOfMissions.filter((mission) => mission.startDate === date)
+    );
+  }
 
   const getMissions = async () => {
     const url = "/user/mission_list/"; // replace with the actual endpoint
@@ -131,7 +135,8 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}>
+          style={{ position: "absolute" }}
+        >
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -145,7 +150,8 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse">
+              gradientUnits="userSpaceOnUse"
+            >
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -154,7 +160,8 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}>
+            onPress={() => completeMission(item.id)}
+          >
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -190,7 +197,8 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -250,8 +258,8 @@ function ActiveMissions() {
         />
       </View>
       <FlatList
-        data={missions}
-        extraData={missions}
+        data={filteredMissions}
+        extraData={filteredMissions}
         renderItem={({ item, index }) => missionsRenderItem({ item, index })}
         style={styles.missionsList}
         contentContainerStyle={{ alignItems: "center" }}
