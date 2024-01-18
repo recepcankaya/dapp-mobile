@@ -5,11 +5,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // import { LinearGradient } from "expo-linear-gradient";
 import LoadingScreen from "../LoadingScreen";
-import Profile from "../Profile";
+import newProfile from "../newProfile";
 import AddTask from "../AddTask";
-import TasksList from "../TasksList";
-import newLogin from "../auth/newLogin";
-import newSignUp from "../auth/newSignUp";
+import Login from "../auth/Login";
+import Signup from "../auth/Signup";
 import { TokenProvider } from "../context/TokenContext";
 import { UserProvider } from "../context/UserContext";
 import { MissionProvider } from "../context/MissionContext";
@@ -37,7 +36,7 @@ type TabParamList = {
   "Active Missions": undefined;
   LoginInner: undefined;
   Register: undefined;
-  "Categories": undefined;
+  Categories: undefined;
 };
 
 /**
@@ -95,16 +94,14 @@ function ProfileTabNavigator() {
                 borderRadius: 14,
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Image source={iconName} style={{ width: 30, height: 30 }} />
             </LinearGradient>
           ) : (
             <Image source={iconName} style={{ width: 25, height: 25 }} />
           );
         },
-      })}
-    >
+      })}>
       {/* <Tab.Screen name="Add Task" component={AddTask} /> */}
 
       {/* <Tab.Screen name="Tasks List" component={TasksList} options={{}} /> */}
@@ -139,8 +136,7 @@ function App() {
           }),
           smartWalletConfig
         ),
-      ]}
-    >
+      ]}>
       <TokenProvider>
         <UserProvider>
           <UserIdProvider>
@@ -158,13 +154,13 @@ function App() {
                     options={{ headerShown: false }} // Hide navigation bar on LoginPage
                   />
                   <Stack.Screen
-                    name="newLogin"
-                    component={newLogin}
+                    name="Login"
+                    component={Login}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen
-                    name="newSignUp"
-                    component={newSignUp}
+                    name="Sign up"
+                    component={Signup}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen

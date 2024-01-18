@@ -27,6 +27,7 @@ import { TokenContext } from "../context/TokenContext";
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import { UserContext } from "../context/UserContext";
 import { UserIdContext } from "../context/UserIdContext";
+import CustomTextInput from "../customs/CustomTextInput";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -35,7 +36,7 @@ const api = axios.create({
   },
 });
 
-const LoginInner = () => {
+const Login = () => {
   const { username, setUsername } = useContext(UserContext);
   const { user_id, setUserId } = useContext(UserIdContext);
 
@@ -88,7 +89,6 @@ const LoginInner = () => {
               );
             });
           navigation.navigate("ProfileTab");
-          
         } else {
           Alert.alert("Error", "Login failed");
         }
@@ -133,48 +133,36 @@ const LoginInner = () => {
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
           <View style={styles.passwordContainer}>
-            <LinearGradient
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              colors={["#B80DCA", "#4035CB"]}
-              style={{
-                marginBottom: 30,
-                height: 63,
-                borderRadius: 10,
-                padding: 3,
-              }}>
-              <View
-                style={{
-                  flex: 1,
-                  borderRadius: 10,
-                  backgroundColor: "#D9D9D9",
-                  justifyContent: "center",
-                  paddingLeft: 10,
-                }}>
-                <Text
-                  style={{
-                    color: "#D9D9D9",
-                    fontFamily: "Inter",
-                    fontSize: 20,
-                    fontStyle: "italic",
-                    fontWeight: "600",
-                  }}></Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  placeholderTextColor="#0C0C0C"
-                  value={password}
-                  onChangeText={setPassword}
-                  autoCapitalize="none"
-                  secureTextEntry={true}
-                />
-              </View>
-            </LinearGradient>
+            <CustomTextInput
+              secureTextEntry
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Email Confirmation")}>
+              <MaskedView
+                style={{ flexDirection: "row" }}
+                maskElement={
+                  <Text style={styles.forgotPasswordButton}>
+                    Forgot Password?
+                  </Text>
+                }>
+                <LinearGradient
+                  colors={["#B80DCA", "#4035CB"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}>
+                  <Text style={[styles.forgotPasswordButton, { opacity: 0 }]}>
+                    Forgot Password?
+                  </Text>
+                </LinearGradient>
+              </MaskedView>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don`t you have account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("newSignUp")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Sign up")}>
             <MaskedView
               style={{ flexDirection: "row" }}
               maskElement={<Text style={styles.signupButton}>Sign up!</Text>}>
@@ -319,6 +307,12 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontWeight: "600",
   },
+  forgotPasswordButton: {
+    color: "#FFF",
+    fontFamily: "Inter",
+    fontSize: 20,
+    fontWeight: "600",
+  },
   input: {
     width: 250,
     height: 40,
@@ -349,4 +343,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginInner;
+export default Login;

@@ -31,7 +31,7 @@ const api = axios.create({
   },
 });
 
-const Register = () => {
+const Signup = () => {
   const [registered, setRegistered] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
@@ -54,7 +54,7 @@ const Register = () => {
 
       if (response.status === 200) {
         setRegistered(true);
-        navigation.navigate("newLogin");
+        navigation.navigate("Login");
       } else {
         // Handle other status codes here
       }
@@ -65,7 +65,7 @@ const Register = () => {
         error.response.data &&
         (error.response.data.email?.[0] || error.response.data.username?.[0])
       ) {
-        console.log("error1")
+        console.log("error1");
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
@@ -73,8 +73,8 @@ const Register = () => {
             error.response.data.username?.[0]
         );
       } else {
-      console.log("error2")
-      console.log(error.response)
+        console.log("error2");
+        console.log(error.response);
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
@@ -352,4 +352,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+export default Signup;

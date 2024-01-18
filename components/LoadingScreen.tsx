@@ -35,7 +35,7 @@ const LoadingScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate("newLogin");
+      navigation.navigate("Login");
     }, 5000); // 5 seconds
 
     return () => clearTimeout(timer); // cleanup on unmount

@@ -6,8 +6,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // import { LinearGradient } from "expo-linear-gradient";
 import LoadingScreen from "./components/LoadingScreen";
 import AddTask from "./components/AddTask";
-import newLogin from "./components/auth/newLogin";
-import newSignUp from "./components/auth/newSignUp";
+import Login from "./components/auth/Login";
+import Signup from "./components/auth/Signup";
 import { TokenProvider } from "./components/context/TokenContext";
 import { UserProvider } from "./components/context/UserContext";
 import { MissionProvider } from "./components/context/MissionContext";
@@ -35,6 +35,7 @@ import {
   ProfileNegativeIcon,
   ProfilePositiveIcon,
 } from "./components/assets/bottomTabButtonIcons";
+import EmailConfirmation from "./components/auth/forgotPassword/EmailConfirmation";
 
 const { height, width } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
@@ -44,8 +45,8 @@ type TabParamList = {
   "Add Task": undefined;
   "Tasks List": { taskText: string };
   "Active Missions": undefined;
-  LoginInner: undefined;
-  Register: undefined;
+  Login: undefined;
+  signup: undefined;
   Categories: undefined;
 };
 
@@ -205,13 +206,18 @@ function App() {
                     options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
                   />
                   <Stack.Screen
-                    name="newLogin"
-                    component={newLogin}
+                    name="Login"
+                    component={Login}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen
-                    name="newSignUp"
-                    component={newSignUp}
+                    name="Email Confirmation"
+                    component={EmailConfirmation}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Sign up"
+                    component={Signup}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen
