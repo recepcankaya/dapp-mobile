@@ -1,8 +1,7 @@
 /**
- * Represents the Email Confirmation component.
- * This component allows the user to confirm their email address.
+ * Represents the Code/Token Confirmation component.
+ * This component checks the code sent to the user's email address.
  */
-
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
@@ -25,12 +24,12 @@ import Svg, {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const EmailConfirmation: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+const ResetConfirmation: React.FC = () => {
+  const [code, setCode] = useState("");
+  const navigation = useNavigation();
 
   const handleSubmit = () => {
-    navigation.navigate("Reset Confirmation");
+    // navigation.navigate("Reset Confirmation");
   };
 
   return (
@@ -45,13 +44,13 @@ const EmailConfirmation: React.FC = () => {
         ]}
       />
       <View style={styles.input}>
-        <Text style={styles.heading}>Email Confirmation</Text>
+        <Text style={styles.heading}>Code Confirmation</Text>
         <CustomTextInput
-          placeholder="john.doe@example.com"
+          placeholder=""
           secureTextEntry={false}
-          inputMode="email"
-          value={email}
-          onChangeText={setEmail}
+          inputMode="numeric"
+          value={code}
+          onChangeText={setCode}
         />
       </View>
       <View style={styles.buttonContainer}>
@@ -151,4 +150,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmailConfirmation;
+export default ResetConfirmation;

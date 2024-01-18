@@ -36,6 +36,7 @@ import {
   ProfilePositiveIcon,
 } from "./components/assets/bottomTabButtonIcons";
 import EmailConfirmation from "./components/auth/forgotPassword/EmailConfirmation";
+import ResetConfirmation from "./components/auth/forgotPassword/ResetConfirmation";
 
 const { height, width } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
@@ -213,6 +214,11 @@ function App() {
                   <Stack.Screen
                     name="Email Confirmation"
                     component={EmailConfirmation}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Reset Confirmation"
+                    component={ResetConfirmation}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen

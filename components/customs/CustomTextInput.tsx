@@ -6,6 +6,14 @@ type CustomTextInputProps = {
   placeholder: string;
   value: string;
   onChangeText: React.Dispatch<React.SetStateAction<string>>;
+  inputMode:
+    | "text"
+    | "decimal"
+    | "numeric"
+    | "tel"
+    | "search"
+    | "email"
+    | "url";
 };
 
 const CustomTextInput = ({
@@ -13,6 +21,7 @@ const CustomTextInput = ({
   placeholder,
   value,
   onChangeText,
+  inputMode,
 }: CustomTextInputProps) => {
   return (
     <LinearGradient
@@ -49,6 +58,7 @@ const CustomTextInput = ({
           onChangeText={onChangeText}
           autoCapitalize="none"
           secureTextEntry={secureTextEntry}
+          inputMode={inputMode}
         />
       </View>
     </LinearGradient>
