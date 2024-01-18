@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions, Text, Alert, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Text,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import Svg, {
   Rect,
   Defs,
@@ -103,9 +111,10 @@ const TimezoneIcon = () => (
 );
 
 export default function NewProfile() {
+  const [tempUsername, setTempUsername] = useState("");
+  const [location, setLocation] = useState("");
   const { username, setUsername } = useContext(UserContext);
   const { tokens } = useContext(TokenContext);
-  const [tempUsername, setTempUsername] = useState('');
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -118,32 +127,40 @@ export default function NewProfile() {
 
         if (response.status === 200) {
           setUsername(response.data.username);
-          console.log(tempUsername)
+          setLocation(response.data.timeZone);
+          console.log(tempUsername);
         } else {
           Alert.alert("Error", "Failed to get user details");
         }
       } catch (error) {
         console.error(error);
-        Alert.alert("Error", "An error occurred while trying to get user details");
+        Alert.alert(
+          "Error",
+          "An error occurred while trying to get user details"
+        );
       }
     };
 
     fetchUserDetails();
-  }, []);
+  }, [username]);
 
   const changeUsername = async (newUsername: string) => {
     try {
-      const response = await api.patch("/user/profile_update/", {
-        username: newUsername,
-      }, {
-        headers: {
-          Authorization: `Bearer ${tokens?.access}`,
+      const response = await api.patch(
+        "/user/profile_update/",
+        {
+          username: newUsername,
         },
-      });
-
+        {
+          headers: {
+            Authorization: `Bearer ${tokens?.access}`,
+          },
+        }
+      );
       if (response.status === 200) {
         setUsername(newUsername); // Update the temporary username
         Alert.alert("Success", "Username updated successfully");
+        setTempUsername("");
       } else {
         Alert.alert("Error", "Failed to update username");
       }
@@ -170,8 +187,9 @@ export default function NewProfile() {
             y={height * 0.48}
             width={rectWidth}
             height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${height * 0.1 + rectHeight / 2
-              })`}
+            transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${
+              height * 0.1 + rectHeight / 2
+            })`}
             fill="url(#paint0_linear_113_6)"
             stroke="url(#paint1_linear_113_6)"
             strokeWidth="3"
@@ -182,8 +200,9 @@ export default function NewProfile() {
             y={height * 0.52 - rectHeight}
             width={rectWidth}
             height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.9 - rectWidth / 2} ${height * 0.9 - rectHeight / 2
-              })`}
+            transform={`rotate(151.109 ${width * 0.9 - rectWidth / 2} ${
+              height * 0.9 - rectHeight / 2
+            })`}
             fill="url(#paint0_linear_113_5)"
             stroke="url(#paint1_linear_113_5)"
             strokeWidth="2"
@@ -235,7 +254,8 @@ export default function NewProfile() {
         </Svg>
         {/* SVG component for inputs */}
         <View style={styles.rectangles}>
-          <View style={{ marginBottom: 15, alignItems: 'center' }}>
+          <View
+            style={{ marginBottom: 15, marginTop: 30, alignItems: "center" }}>
             <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
@@ -274,18 +294,23 @@ export default function NewProfile() {
                 letterSpacing: 0.44,
               }}></Text>
             <TextInput
-              style={styles.inputText}
+              style={[
+                styles.inputText,
+                tempUsername
+                  ? { fontStyle: "normal" }
+                  : { fontStyle: "italic" },
+              ]}
               placeholder={username}
               placeholderTextColor="#0C0C0C"
               value={tempUsername}
-              onChangeText={text => setTempUsername(text)}
+              onChangeText={(text) => setTempUsername(text)}
               autoCapitalize="none"
             />
             <View style={{ position: "absolute", top: 15, right: 10 }}>
               <UserIcon />
             </View>
           </View>
-          <View style={{ marginBottom: 15, alignItems: 'center' }}>
+          <View style={{ marginBottom: 15, alignItems: "center" }}>
             <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
@@ -322,17 +347,28 @@ export default function NewProfile() {
                 fontWeight: "400",
                 letterSpacing: 0.44,
               }}>
-              Location/ Timezone
+              UTC +{location}
             </Text>
             <View style={{ position: "absolute", top: 15, right: 10 }}>
               <TimezoneIcon />
             </View>
           </View>
-          <View style={{ marginBottom: 15, position: "relative", justifyContent: 'center', alignItems: 'center' }}>
+          <View
+            style={{
+              marginBottom: 15,
+              position: "relative",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
             <CustomConnectWallet />
           </View>
           <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
-            <View style={{ alignItems: 'center', marginBottom: 15, left: width * 0.17 }}>
+            <View
+              style={{
+                alignItems: "center",
+                marginBottom: 15,
+                left: width * 0.17,
+              }}>
               <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
                 <Rect
                   x="1.5"
@@ -395,19 +431,16 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   profilePicture: {
-    position: "absolute",
-    top: 70, // 77px from the top
-    right: 25, // 50px from the right
+    marginTop: 70,
+    alignItems: "flex-end",
+    marginRight: 25,
   },
   profileText: {
-    position: "absolute",
-    top: 195, // 250px from the top
-    left: 45, // 45px from the left
-    width: 158,
-    height: 41,
-    color: "#FFF",
+    marginTop: 40,
+    marginLeft: 30,
+    color: "#EFEEEE",
     fontFamily: "Rosarivo",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "400",
     letterSpacing: 2,
   },
