@@ -37,6 +37,7 @@ import {
 } from "./components/assets/bottomTabButtonIcons";
 import EmailConfirmation from "./components/auth/forgotPassword/EmailConfirmation";
 import ResetConfirmation from "./components/auth/forgotPassword/ResetConfirmation";
+import ResetPassword from "./components/auth/forgotPassword/ResetPassword";
 
 const { height, width } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
@@ -219,6 +220,11 @@ function App() {
                   <Stack.Screen
                     name="Reset Confirmation"
                     component={ResetConfirmation}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Reset Password"
+                    component={ResetPassword}
                     options={{ headerShown: false }} // Hide navigation bar
                   />
                   <Stack.Screen

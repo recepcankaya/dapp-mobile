@@ -1,7 +1,3 @@
-/**
- * Represents the Code/Token Confirmation component.
- * This component checks the code sent to the user's email address.
- */
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
@@ -16,13 +12,15 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 
-const ResetConfirmation: React.FC = () => {
-  const [code, setCode] = useState("");
+const ResetPassword = () => {
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = () => {
-    navigation.navigate("Reset Password");
+    navigation.navigate("Login");
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -35,18 +33,25 @@ const ResetConfirmation: React.FC = () => {
         ]}
       />
       <View style={styles.input}>
-        <Text style={styles.heading}>Code Confirmation</Text>
+        <Text style={styles.heading}>Reset Password</Text>
         <CustomTextInput
           placeholder=""
-          secureTextEntry={false}
-          inputMode="numeric"
-          value={code}
-          onChangeText={setCode}
+          secureTextEntry={true}
+          inputMode="text"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <CustomTextInput
+          placeholder=""
+          secureTextEntry={true}
+          inputMode="text"
+          value={passwordConfirmation}
+          onChangeText={setPasswordConfirmation}
         />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Confirm" />
+          <CustomGradientButton text="Change" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -89,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResetConfirmation;
+export default ResetPassword;
