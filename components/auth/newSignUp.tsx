@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Picker } from "@react-native-picker/picker";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, {
   Path,
@@ -65,7 +64,7 @@ const Register = () => {
         error.response.data &&
         (error.response.data.email?.[0] || error.response.data.username?.[0])
       ) {
-        console.log("error1")
+        console.log("error1");
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
@@ -73,8 +72,8 @@ const Register = () => {
             error.response.data.username?.[0]
         );
       } else {
-      console.log("error2")
-      console.log(error.response)
+        console.log("error2");
+        console.log(error.response);
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
@@ -152,49 +151,6 @@ const Register = () => {
                 onChangeText={setUsername}
                 autoCapitalize="none"
               />
-            </View>
-          </LinearGradient>
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            colors={["#B80DCA", "#4035CB"]}
-            style={{
-              marginBottom: 20, // 15px below the "Sign Up" text
-              width: 302,
-              height: 63,
-              borderRadius: 10,
-              padding: 3, // This will be the width of your border
-            }}>
-            <View
-              style={{
-                flex: 1,
-                borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
-                backgroundColor: "#D9D9D9", // or whatever your button's background color is
-                justifyContent: "center", // Center the text vertically
-                alignItems: "flex-start", // Center the text horizontally
-                paddingLeft: 10,
-              }}>
-              <Text
-                style={{
-                  color: "#3D3939",
-                  fontFamily: "Inter",
-                  fontSize: 20,
-                  fontStyle: "italic",
-                  fontWeight: "600",
-                  top: 20,
-                }}>
-                Timezone
-              </Text>
-              <Picker
-                selectedValue={timezone}
-                onValueChange={(itemValue, itemIndex) => setTimezone(itemValue)}
-                style={styles.input}>
-                <Picker.Item label="UTC+1" value="1" />
-                <Picker.Item label="UTC+2" value="2" />
-                <Picker.Item label="UTC+3" value="3" />
-                <Picker.Item label="UTC+4" value="4" />
-                <Picker.Item label="UTC+5" value="5" />
-              </Picker>
             </View>
           </LinearGradient>
           <LinearGradient

@@ -6,13 +6,11 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
+
 import DayCalendar from "./dayCalendar";
 import MonthCalendar from "./monthCalendar";
 import YearCalendar from "./yearCalendar";
-
-import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
-
-import moment from "moment";
 
 const { width } = Dimensions.get("screen");
 
@@ -20,43 +18,68 @@ interface CalendarProps {
   onChangeDate: (date: Date) => void;
 }
 
-const Calendar = (props: CalendarProps) => {
-  const { onChangeDate } = props;
-  const [dateType, setDateType] = useState(0);
-  const days = Array.from({ length: 31 }, (_, index) => index + 1);
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+const CalendarBackground = () => {
+  return (
+    <Svg
+      width={width}
+      height={180}
+      viewBox="0 0 430 180"
+      fill="none"
+      style={{ position: "absolute", top: -40 }}>
+      <Defs>
+        <LinearGradient
+          id="paint0_linear_53_7"
+          x1="215.062"
+          y1="179.358"
+          x2="214.36"
+          y2="-191.546"
+          gradientUnits="userSpaceOnUse">
+          <Stop stopColor="#B80DCA" />
+          <Stop offset="1" stopColor="#4035CB" />
+        </LinearGradient>
+      </Defs>
+      <Mask id="path-1-inside-1_53_7" fill="white">
+        <Path d="M-24.7187 -5.64075C-24.6441 43.5442 0.66043 90.6669 45.6281 125.361C90.5958 160.055 151.543 179.478 215.062 179.358C278.582 179.238 339.47 159.584 384.332 124.72C429.194 89.8555 454.355 42.6372 454.281 -6.54778L214.781 -6.09428L-24.7187 -5.64075Z" />
+      </Mask>
+      <Path
+        d="M-24.7187 -5.64075C-24.6441 43.5442 0.66043 90.6669 45.6281 125.361C90.5958 160.055 151.543 179.478 215.062 179.358C278.582 179.238 339.47 159.584 384.332 124.72C429.194 89.8555 454.355 42.6372 454.281 -6.54778L214.781 -6.09428L-24.7187 -5.64075Z"
+        fill="#0C0C0C"
+        stroke="url(#paint0_linear_53_7)"
+        strokeWidth={10}
+        mask="url(#path-1-inside-1_53_7)"
+      />
+    </Svg>
+  );
+};
 
-  const years = [
-    "2023",
-    "2024",
-    "2025",
-    "2026",
-    "2027",
-    "2028",
-    "2029",
-    "2030",
-  ];
-  const [month, setMonth] = useState(months[0]);
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [year, setYear] = useState(years[0]);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [day, setDay] = useState(days[0]);
-  const [dayInitialIndex, setDayInitialIndex] = useState(0);
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const years = ["2022", "2023", "2024"];
+const days = Array.from({ length: 31 }, (_, index) => index + 1);
+
+const Calendar = (props: CalendarProps) => {
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const [month, setMonth] = useState<string>(months[new Date().getMonth()]);
+  const [day, setDay] = useState<number>(new Date().getDate());
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<number>();
+  const [dayInitialIndex, setDayInitialIndex] = useState<number>(0);
   const [monthInitialIndex, setMonthInitialIndex] = useState<number>(0);
-  const [yearInitialIndex, setYearInitialIndex] = useState(0);
+  const [yearInitialIndex, setYearInitialIndex] = useState<number>(0);
+  const [dateType, setDateType] = useState(0);
+  const { onChangeDate } = props;
 
   useEffect(() => {
     const date = new Date(
@@ -107,45 +130,9 @@ const Calendar = (props: CalendarProps) => {
       setMonthInitialIndex(months.indexOf(month));
     } else if (dateType === 2) {
       console.log("year", year);
-      setYearInitialIndex(years.indexOf(year));
+      setYearInitialIndex(years.indexOf(year.toString()));
     }
   }, [dateType]);
-
-  const CalendarBackground = () => {
-    return (
-      <Svg
-        width={width}
-        height={180}
-        viewBox="0 0 430 180"
-        fill="none"
-        style={{ position: "absolute", top: -40 }}
-      >
-        <Defs>
-          <LinearGradient
-            id="paint0_linear_53_7"
-            x1="215.062"
-            y1="179.358"
-            x2="214.36"
-            y2="-191.546"
-            gradientUnits="userSpaceOnUse"
-          >
-            <Stop stopColor="#B80DCA" />
-            <Stop offset="1" stopColor="#4035CB" />
-          </LinearGradient>
-        </Defs>
-        <Mask id="path-1-inside-1_53_7" fill="white">
-          <Path d="M-24.7187 -5.64075C-24.6441 43.5442 0.66043 90.6669 45.6281 125.361C90.5958 160.055 151.543 179.478 215.062 179.358C278.582 179.238 339.47 159.584 384.332 124.72C429.194 89.8555 454.355 42.6372 454.281 -6.54778L214.781 -6.09428L-24.7187 -5.64075Z" />
-        </Mask>
-        <Path
-          d="M-24.7187 -5.64075C-24.6441 43.5442 0.66043 90.6669 45.6281 125.361C90.5958 160.055 151.543 179.478 215.062 179.358C278.582 179.238 339.47 159.584 384.332 124.72C429.194 89.8555 454.355 42.6372 454.281 -6.54778L214.781 -6.09428L-24.7187 -5.64075Z"
-          fill="#0C0C0C"
-          stroke="url(#paint0_linear_53_7)"
-          strokeWidth={10}
-          mask="url(#path-1-inside-1_53_7)"
-        />
-      </Svg>
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -174,7 +161,7 @@ const Calendar = (props: CalendarProps) => {
         <YearCalendar
           onChangeYearValue={(value: string) => {
             console.log("yearValue", value);
-            setYear(value);
+            setYear(Number(value));
             setYearInitialIndex(years.findIndex((y) => y === value));
           }}
           yearInitialIndex={yearInitialIndex}
