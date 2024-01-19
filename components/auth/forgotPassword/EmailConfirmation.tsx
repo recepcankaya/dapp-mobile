@@ -17,13 +17,17 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
+import useLoading from "../../hooks/useLoading";
 
 const EmailConfirmation = () => {
   const [email, setEmail] = useState("");
+  const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = () => {
+    setLoading(true);
     navigation.navigate("Reset Confirmation");
+    setLoading(false);
   };
 
   return (
@@ -49,7 +53,7 @@ const EmailConfirmation = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Confirm" />
+          <CustomGradientButton text="Confirm" isLoading={isLoading} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

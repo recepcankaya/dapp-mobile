@@ -7,6 +7,7 @@ import {
   StatusBar,
   Alert,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,11 +17,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 
 import { TokenContext } from "../context/TokenContext";
-import CustomConnectWallet from "../customs/CustomConnectWallet";
 import { UserContext } from "../context/UserContext";
 import { UserIdContext } from "../context/UserIdContext";
+import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomTextInput from "../customs/CustomTextInput";
 import CustomGradientButton from "../customs/CustomGradientButton";
+import useLoading from "../hooks/useLoading";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -30,83 +32,51 @@ const api = axios.create({
 });
 
 const Login = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
-  const { username, setUsername } = useContext(UserContext);
-  const { user_id, setUserId } = useContext(UserIdContext);
+  const { setUsername } = useContext(UserContext);
+  const { setUserId } = useContext(UserIdContext);
   const { setTokens } = useContext(TokenContext);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
+  const { isLoading, setLoading } = useLoading();
 
-  const handleLogin = () => {
-    api
-      .post("/auth/get_token/", {
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await api.post("/auth/get_token/", {
         wallet: userAddress,
         password,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          setLoggedIn(true);
-          console.log(response.data);
-          setTokens({
-            access: response.data.access,
-            refresh: response.data.refresh,
-          });
-          navigation.navigate("ProfileTab");
-          api
-            .get("/user/user_detail/", {
-              headers: {
-                Authorization: `Bearer ${response.data.access}`,
-              },
-            })
-            .then((response1) => {
-              if (response1.status === 200) {
-                console.log(response1.data); // This will log the response data to the console
-                //set user id response.data.id
-                const user_id_temp = response1.data.id;
-
-                setUserId(user_id_temp);
-                setUsername(response1.data.username);
-              } else {
-                Alert.alert("Error", "Failed to get user details");
-              }
-            })
-            .catch((error1) => {
-              console.error(error1);
-              Alert.alert(
-                "Error",
-                "An error occurred while trying to get user details"
-              );
-            });
-          navigation.navigate("ProfileTab");
-        } else {
-          Alert.alert("Error", "Login failed");
-        }
-      })
-      .catch((error) => {
-        Alert.alert("Error", error.message);
       });
-  };
-
-  /**
-   * useEffect hook that navigates to the "Profile" screen after a delay if the user is registered.
-   * @param registered - A boolean indicating whether the user is registered.
-   * @param navigation - The navigation object used to navigate between screens.
-   * @returns A cleanup function that clears the timeout when the component unmounts.
-   */
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (loggedIn) {
-      timer = setTimeout(() => {
+      if (response.status === 200) {
+        console.log(response.data);
+        setTokens({
+          access: response.data.access,
+          refresh: response.data.refresh,
+        });
+        const userDetailRes = await api.get("/user/user_detail/", {
+          headers: {
+            Authorization: `Bearer ${response.data.access}`,
+          },
+        });
+        if (userDetailRes.status === 200) {
+          console.log(userDetailRes.data);
+          const user_id_temp = userDetailRes.data.id;
+          setUserId(user_id_temp);
+          setUsername(userDetailRes.data.username);
+        } else {
+          Alert.alert("Error", "Failed to get user details");
+        }
         navigation.navigate("ProfileTab");
-      }, 3000); // 3 seconds
+      } else {
+        Alert.alert("Error", "Login failed");
+      }
+      setLoading(false);
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+      setLoading(false);
     }
-
-    return () => clearTimeout(timer); // cleanup on unmount
-  }, [loggedIn, navigation]);
-
+  };
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
@@ -171,7 +141,7 @@ const Login = () => {
         </View>
         <View style={styles.loginButtonContainer}>
           <TouchableOpacity onPress={handleLogin}>
-            <CustomGradientButton text="Login" />
+            <CustomGradientButton text="Login" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

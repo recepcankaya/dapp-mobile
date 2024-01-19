@@ -1,5 +1,4 @@
-import { StyleSheet, Text } from "react-native";
-import MaskedView from "@react-native-masked-view/masked-view";
+import { ActivityIndicator, StyleSheet, Text } from "react-native";
 import Svg, {
   Path,
   Defs,
@@ -7,12 +6,17 @@ import Svg, {
   Stop,
 } from "react-native-svg";
 import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 type CustomGradientButtonProps = {
   text: string;
+  isLoading: boolean;
 };
 
-const CustomGradientButton = ({ text }: CustomGradientButtonProps) => {
+const CustomGradientButton = ({
+  text,
+  isLoading,
+}: CustomGradientButtonProps) => {
   return (
     <>
       <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
@@ -31,33 +35,41 @@ const CustomGradientButton = ({ text }: CustomGradientButtonProps) => {
           </SvgLinearGradient>
         </Defs>
       </Svg>
-      <MaskedView
-        style={styles.buttonText}
-        maskElement={
-          <Text
-            style={{
-              fontSize: 26,
-              fontFamily: "Inter",
-              fontStyle: "italic",
-            }}>
-            {text}
-          </Text>
-        }>
-        <LinearGradient
-          colors={["#B80DCA", "#4035CB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}>
-          <Text
-            style={{
-              fontSize: 26,
-              fontFamily: "Inter",
-              fontStyle: "italic",
-              opacity: 0,
-            }}>
-            {text}
-          </Text>
-        </LinearGradient>
-      </MaskedView>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="#B80DCA"
+          style={styles.buttonText}
+        />
+      ) : (
+        <MaskedView
+          style={styles.buttonText}
+          maskElement={
+            <Text
+              style={{
+                fontSize: 26,
+                fontFamily: "Inter",
+                fontStyle: "italic",
+              }}>
+              {text}
+            </Text>
+          }>
+          <LinearGradient
+            colors={["#B80DCA", "#4035CB"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}>
+            <Text
+              style={{
+                fontSize: 26,
+                fontFamily: "Inter",
+                fontStyle: "italic",
+                opacity: 0,
+              }}>
+              {text}
+            </Text>
+          </LinearGradient>
+        </MaskedView>
+      )}
     </>
   );
 };

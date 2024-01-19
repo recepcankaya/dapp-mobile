@@ -5,26 +5,19 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
-  TextInput,
   Alert,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Picker } from "@react-native-picker/picker";
-import MaskedView from "@react-native-masked-view/masked-view";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient as SvgLinearGradient,
-  Stop,
-} from "react-native-svg";
 import { LinearGradient } from "expo-linear-gradient";
+import { useAddress } from "@thirdweb-dev/react-native";
 import axios from "axios";
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react-native";
+
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
+import useLoading from "../hooks/useLoading";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -34,14 +27,13 @@ const api = axios.create({
 });
 
 const Signup = () => {
-  const [registered, setRegistered] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [timezone, setTimezone] = useState("1");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
+  const { isLoading, setLoading } = useLoading();
 
   const handleRegister = async () => {
     try {
@@ -49,12 +41,11 @@ const Signup = () => {
       const response = await api.post("/user/register/", {
         username,
         password,
-        timeZone: timezone,
+        email,
         wallet: userAddress,
       });
 
       if (response.status === 200) {
-        setRegistered(true);
         navigation.navigate("Login");
       } else {
         // Handle other status codes here
@@ -83,24 +74,6 @@ const Signup = () => {
     }
   };
 
-  /**
-   * useEffect hook that navigates to the "ProfileTab" screen after a delay if the user is registered.
-   * @param registered - A boolean indicating whether the user is registered.
-   * @param navigation - The navigation object used to navigate between screens.
-   * @returns A cleanup function that clears the timeout when the component unmounts.
-   */
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (registered) {
-      timer = setTimeout(() => {
-        navigation.navigate("ProfileTab");
-      }, 3000); // 3 seconds
-    }
-
-    return () => clearTimeout(timer); // cleanup on unmount
-  }, [registered, navigation]);
-
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
@@ -123,61 +96,25 @@ const Signup = () => {
             value={username}
             onChangeText={setUsername}
           />
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            colors={["#B80DCA", "#4035CB"]}
-            style={{
-              marginBottom: 20, // 15px below the "Sign Up" text
-              width: 302,
-              height: 63,
-              borderRadius: 10,
-              padding: 3, // This will be the width of your border
-            }}>
-            <View
-              style={{
-                flex: 1,
-                borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
-                backgroundColor: "#D9D9D9", // or whatever your button's background color is
-                justifyContent: "center", // Center the text vertically
-                alignItems: "flex-start", // Center the text horizontally
-                paddingLeft: 10,
-              }}>
-              <Text
-                style={{
-                  color: "#3D3939",
-                  fontFamily: "Inter",
-                  fontSize: 20,
-                  fontStyle: "italic",
-                  fontWeight: "600",
-                  top: 20,
-                }}>
-                Timezone
-              </Text>
-              <Picker
-                selectedValue={timezone}
-                onValueChange={(itemValue, itemIndex) => setTimezone(itemValue)}
-                style={styles.input}>
-                <Picker.Item label="UTC+1" value="1" />
-                <Picker.Item label="UTC+2" value="2" />
-                <Picker.Item label="UTC+3" value="3" />
-                <Picker.Item label="UTC+4" value="4" />
-                <Picker.Item label="UTC+5" value="5" />
-              </Picker>
-            </View>
-          </LinearGradient>
+          <CustomTextInput
+            placeholder="Email"
+            secureTextEntry={false}
+            inputMode="email"
+            value={email}
+            onChangeText={setEmail}
+          />
           <CustomTextInput
             placeholder="Password"
             secureTextEntry={true}
             inputMode="text"
-            value="password"
+            value={password}
             onChangeText={setPassword}
           />
           <CustomConnectWallet style={{ width: 250 }} />
         </View>
         <View style={styles.signUpButtonContainer}>
           <TouchableOpacity onPress={handleRegister}>
-            <CustomGradientButton text="Sign up" />
+            <CustomGradientButton text="Sign up" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
       </View>

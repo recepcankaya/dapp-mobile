@@ -16,14 +16,18 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
+import useLoading from "../../hooks/useLoading";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = () => {
+    setLoading(true);
     navigation.navigate("Login");
+    setLoading(false);
   };
 
   return (
@@ -56,7 +60,7 @@ const ResetPassword = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Change" />
+          <CustomGradientButton text="Change" isLoading={isLoading} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
