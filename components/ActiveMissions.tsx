@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
   StatusBar,
-  FlatList,
   Dimensions,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -19,12 +19,13 @@ import Svg, {
   Ellipse,
   G,
 } from "react-native-svg";
-import { Agenda } from "react-native-calendars";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
-import { MissionContext } from "./context/MissionContext";
 import { TokenContext } from "./context/TokenContext";
 import { UserContext } from "./context/UserContext";
+import Calendar from "./customs/calendar";
+
+import moment from "moment";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -35,21 +36,17 @@ function ActiveMissions() {
   const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
   const { username } = useContext(UserContext);
 
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState<Date>();
 
   useEffect(() => {
     console.log("selectedDate", selectedDate);
   }, [selectedDate]);
 
-  // const [missions, setMissions] = useState([
-  //   { isCompleted: false, title: "swim 1 hour" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  // ]);
+  useEffect(() => {
+    console.log("filteredMissions", filteredMissions);
+    console.log("missions", missions);
+    setFilteredMissions(missions);
+  }, [filteredMissions, missions]);
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -58,12 +55,27 @@ function ActiveMissions() {
     },
   });
 
-  const onChangeDate = (date: any) => {
-    console.log('date', date);
-    setFilteredMissions(
-      copyOfMissions.filter((mission) => mission.startDate === date)
+  const onChangeDate = (date: Date) => {
+    console.log("test", new Date());
+    console.log(
+      "new Date()",
+      new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
     );
-  }
+    console.log(
+      "filteredMissions",
+      copyOfMissions.filter((mission) => mission.startDate > date)
+    );
+    setFilteredMissions(
+      copyOfMissions.filter(
+        (mission) =>
+          mission.startDate > date &&
+          mission.startDate <
+            new Date(date.getFullYear(), date.getMonth(), date.getDay() + 1)
+      )
+    );
+
+    // setFilteredMissions(copyOfMissions);
+  };
 
   const getMissions = async () => {
     const url = "/user/mission_list/"; // replace with the actual endpoint
@@ -74,6 +86,7 @@ function ActiveMissions() {
 
     try {
       const response = await api.get(url, { headers });
+      console.log("missions", response.data);
       setMissions(response.data);
     } catch (error) {
       console.error(error);
@@ -251,12 +264,19 @@ function ActiveMissions() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <View style={{ height: 120 }}>
+      <Calendar
+        onChangeDate={(date) => {
+          console.log("date-active missions", date);
+          setSelectedDate(date);
+          onChangeDate(date);
+        }}
+      />
+      {/* <View style={{ height: 120 }}>
         <Agenda
           selected={selectedDate}
           onDayPress={(day: any) => setSelectedDate(day.dateString)}
         />
-      </View>
+      </View> */}
       <FlatList
         data={filteredMissions}
         extraData={filteredMissions}

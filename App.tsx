@@ -80,7 +80,6 @@ function ProfileTabNavigator() {
           null,
         ],
         tabBarIcon: ({ focused, color, size }) => {
-          console.log("focused", focused);
           let isProfile;
           let isActiveMissions;
           let isCategories;
