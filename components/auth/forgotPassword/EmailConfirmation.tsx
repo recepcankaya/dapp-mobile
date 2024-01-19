@@ -3,30 +3,22 @@
  * This component allows the user to confirm their email address.
  */
 
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
-  Button,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import CustomTextInput from "../../customs/CustomTextInput";
-import MaskedView from "@react-native-masked-view/masked-view";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient as SvgLinearGradient,
-  Stop,
-} from "react-native-svg";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import CustomGradientButton from "../../customs/CustomGradientButton";
 
-const EmailConfirmation: React.FC = () => {
+import CustomGradientButton from "../../customs/CustomGradientButton";
+import CustomTextInput from "../../customs/CustomTextInput";
+
+const EmailConfirmation = () => {
   const [email, setEmail] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 

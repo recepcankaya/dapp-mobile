@@ -24,6 +24,7 @@ import axios from "axios";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react-native";
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
+import CustomTextInput from "../customs/CustomTextInput";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -34,7 +35,6 @@ const api = axios.create({
 
 const Signup = () => {
   const [registered, setRegistered] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [timezone, setTimezone] = useState("1");
@@ -79,7 +79,6 @@ const Signup = () => {
         Alert.alert("Error", error.message);
       }
       console.log(error.response?.data?.email);
-      setErrorMessage(error.message);
       setLoading(false);
     }
   };
@@ -117,44 +116,13 @@ const Signup = () => {
         />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            colors={["#B80DCA", "#4035CB"]}
-            style={{
-              marginBottom: 20, // 15px below the "Sign Up" text
-              width: 302,
-              height: 63,
-              borderRadius: 10,
-              padding: 3, // This will be the width of your border
-            }}>
-            <View
-              style={{
-                flex: 1,
-                borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
-                backgroundColor: "#D9D9D9", // or whatever your button's background color is
-                justifyContent: "center", // Center the text vertically
-                alignItems: "flex-start", // Center the text horizontally
-                paddingLeft: 10,
-              }}>
-              <Text
-                style={{
-                  color: "#D9D9D9",
-                  fontFamily: "Inter",
-                  fontSize: 20,
-                  fontStyle: "italic",
-                  fontWeight: "600",
-                }}></Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#0C0C0C"
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-              />
-            </View>
-          </LinearGradient>
+          <CustomTextInput
+            placeholder="Username"
+            secureTextEntry={false}
+            inputMode="text"
+            value={username}
+            onChangeText={setUsername}
+          />
           <LinearGradient
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
@@ -198,44 +166,13 @@ const Signup = () => {
               </Picker>
             </View>
           </LinearGradient>
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            colors={["#B80DCA", "#4035CB"]}
-            style={{
-              marginBottom: 30,
-              width: 302,
-              height: 63,
-              borderRadius: 10,
-              padding: 3,
-            }}>
-            <View
-              style={{
-                flex: 1,
-                borderRadius: 10,
-                backgroundColor: "#D9D9D9",
-                justifyContent: "center",
-                paddingLeft: 10,
-              }}>
-              <Text
-                style={{
-                  color: "#D9D9D9",
-                  fontFamily: "Inter",
-                  fontSize: 20,
-                  fontStyle: "italic",
-                  fontWeight: "600",
-                }}></Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#0C0C0C"
-                value={password}
-                onChangeText={setPassword}
-                autoCapitalize="none"
-                secureTextEntry={true}
-              />
-            </View>
-          </LinearGradient>
+          <CustomTextInput
+            placeholder="Password"
+            secureTextEntry={true}
+            inputMode="text"
+            value="password"
+            onChangeText={setPassword}
+          />
           <CustomConnectWallet style={{ width: 250 }} />
         </View>
         <View style={styles.signUpButtonContainer}>

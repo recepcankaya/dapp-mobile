@@ -2,7 +2,6 @@
  * Represents the Code/Token Confirmation component.
  * This component checks the code sent to the user's email address.
  */
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   View,
@@ -11,12 +10,14 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import CustomTextInput from "../../customs/CustomTextInput";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import CustomGradientButton from "../../customs/CustomGradientButton";
 
-const ResetConfirmation: React.FC = () => {
+import CustomGradientButton from "../../customs/CustomGradientButton";
+import CustomTextInput from "../../customs/CustomTextInput";
+
+const ResetConfirmation = () => {
   const [code, setCode] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 

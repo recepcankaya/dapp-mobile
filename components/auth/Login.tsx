@@ -6,16 +6,8 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
-  TextInput,
   KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient as SvgLinearGradient,
-  Stop,
-} from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAddress } from "@thirdweb-dev/react-native";
@@ -38,14 +30,12 @@ const api = axios.create({
 });
 
 const Login = () => {
-  const { username, setUsername } = useContext(UserContext);
-  const { user_id, setUserId } = useContext(UserIdContext);
-
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const { username, setUsername } = useContext(UserContext);
+  const { user_id, setUserId } = useContext(UserIdContext);
   const { setTokens } = useContext(TokenContext);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
 
@@ -96,9 +86,9 @@ const Login = () => {
       })
       .catch((error) => {
         Alert.alert("Error", error.message);
-        setErrorMessage(error.message);
       });
   };
+
   /**
    * useEffect hook that navigates to the "Profile" screen after a delay if the user is registered.
    * @param registered - A boolean indicating whether the user is registered.
@@ -204,24 +194,12 @@ const styles = StyleSheet.create({
     top: -545,
     alignSelf: "center",
   },
-  background: {
-    resizeMode: "cover",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  gradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   inputContainer: {
     marginTop: 250,
     width: "80%",
   },
   loginText: {
-    marginBottom: 10,
+    marginBottom: 25,
     color: "#FFF",
     fontFamily: "Inter",
     fontSize: 25,
@@ -236,16 +214,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  button: {
-    width: 417,
-    height: 72,
-    borderRadius: 42,
-    backgroundColor: "#AD00D1",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    bottom: 0,
   },
   signupContainer: {
     flexDirection: "row",
@@ -272,16 +240,6 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 20,
     fontWeight: "600",
-  },
-  input: {
-    width: 250,
-    height: 40,
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
-    marginTop: 0,
-    marginBottom: 25,
   },
   loginButtonContainer: {
     position: "absolute",

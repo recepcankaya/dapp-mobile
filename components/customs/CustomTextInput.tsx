@@ -67,13 +67,12 @@ const CustomTextInput = ({
 
 const styles = StyleSheet.create({
   input: {
-    width: 250,
+    width: 302,
     height: 40,
     borderColor: "transparent",
     borderWidth: 1,
     borderRadius: 10,
     paddingLeft: 10,
-    marginTop: 0,
     marginBottom: 25,
   },
 });

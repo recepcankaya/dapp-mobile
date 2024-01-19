@@ -1,4 +1,7 @@
-import { LinearGradient } from "expo-linear-gradient";
+/**
+ * Component for resetting password.
+ * This component allows the user to reset their password by entering a new password and confirming it.
+ */
 import React, { useState } from "react";
 import {
   View,
@@ -7,10 +10,12 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import CustomTextInput from "../../customs/CustomTextInput";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import CustomGradientButton from "../../customs/CustomGradientButton";
+import CustomTextInput from "../../customs/CustomTextInput";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
