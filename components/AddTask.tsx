@@ -63,7 +63,7 @@ const AddTask = () => {
     const data = {
       user: user_id,
       title: title,
-      startDate: new Date(),
+      local_time: new Date().toISOString().slice(0, -1),
       category: categoryType,
     };
 
@@ -85,6 +85,7 @@ const AddTask = () => {
       .catch((error) => {
         console.log(error.response);
         setErrorMessage(error.message);
+        console.log(new Date().toISOString().slice(0, -1))
       });
   };
 

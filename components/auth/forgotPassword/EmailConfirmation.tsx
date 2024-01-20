@@ -3,7 +3,7 @@
  * This component allows the user to confirm their email address.
  */
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -14,19 +14,48 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { PasswordTokenContext } from "../../context/PasswordTokenContext";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
+import axios from 'axios'; 
+
+const api = axios.create({
+  baseURL: "https://akikoko.pythonanywhere.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 const EmailConfirmation = () => {
-  const [email, setEmail] = useState("");
+  const [email_temp, setEmail_temp] = useState("");
+  const { passwordToken,setPasswordToken } = useContext(PasswordTokenContext);
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    navigation.navigate("Reset Confirmation");
+  
+    try {
+      const response = await api.post('/user/password_reset/', {
+        email: email_temp,
+      });
+  
+      if (response.status === 200) {
+        // Navigate to the "Reset Confirmation" page if the request is successful
+        setPasswordToken(response.data.token);
+        
+        navigation.navigate("Reset Confirmation");
+      } else {
+        // Handle error
+        console.error('Failed to reset password');
+      }
+    } catch (error) {
+      // Handle error
+      console.error(error);
+    }
+  
     setLoading(false);
   };
 
@@ -47,8 +76,8 @@ const EmailConfirmation = () => {
           placeholder="john.doe@example.com"
           secureTextEntry={false}
           inputMode="email"
-          value={email}
-          onChangeText={setEmail}
+          value={email_temp}
+          onChangeText={setEmail_temp}
         />
       </View>
       <View style={styles.buttonContainer}>

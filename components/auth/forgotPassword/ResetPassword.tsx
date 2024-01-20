@@ -17,6 +17,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://akikoko.pythonanywhere.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -24,9 +32,34 @@ const ResetPassword = () => {
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    navigation.navigate("Login");
+  
+    if (password !== passwordConfirmation) {
+      console.error('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+  
+    try {
+      const response = await api.post('/user/password_reset_confirm/', {
+        
+        password: password,
+      });
+  
+      if (response.status === 200) {
+        // Navigate to the "Login" page if the request is successful
+        navigation.navigate("Login");
+      } else {
+        // Handle error
+        console.error('Failed to reset password');
+      }
+    } catch (error) {
+      // Handle error
+      console.error(error);
+      console.log((error as any).response);
+    }
+  
     setLoading(false);
   };
 

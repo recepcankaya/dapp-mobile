@@ -2,7 +2,7 @@
  * Represents the Code/Token Confirmation component.
  * This component checks the code sent to the user's email address.
  */
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -13,19 +13,24 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { PasswordTokenContext } from "../../context/PasswordTokenContext";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 
 const ResetConfirmation = () => {
+  const { passwordToken,setPasswordToken } = useContext(PasswordTokenContext);
   const [code, setCode] = useState("");
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = () => {
     setLoading(true);
-    navigation.navigate("Reset Password");
+    //if statement for check code and passwordToken are equal
+    if (passwordToken === code) {
+      navigation.navigate("Reset Password");
+    }
     setLoading(false);
   };
   return (
@@ -44,7 +49,7 @@ const ResetConfirmation = () => {
         <CustomTextInput
           placeholder=""
           secureTextEntry={false}
-          inputMode="numeric"
+          inputMode="text"
           value={code}
           onChangeText={setCode}
         />
