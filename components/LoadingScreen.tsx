@@ -4,38 +4,13 @@ import { View, StyleSheet, Animated, Easing, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoadingScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-  //async code
-  // useEffect(() => {
-  //   const checkAuthStatus = async () => {
-  //     const tokens = await AsyncStorage.getItem('authTokens');
-  //     if (tokens) {
-  //       // Parse the stringified tokens back into an object
-  //       const parsedTokens = JSON.parse(tokens);
-  //       console.log(parsedTokens);
-  //       // Validate the tokens if necessary
-  //       // Navigate to the main app
-  //       navigation.navigate('ProfileTab');
-  //     } else {
-  //       // Navigate to the login screen
-  //       navigation.navigate('Register');
-  //     }
-  //   };
-
-  //   // Add a 5-second delay before checking the auth status
-  //   const timeoutId = setTimeout(checkAuthStatus, 5000);
-
-  //   // Clear the timeout when the component unmounts
-  //   return () => clearTimeout(timeoutId);
-  // }, [navigation]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate("newLogin");
+      navigation.navigate("Login");
     }, 5000); // 5 seconds
 
     return () => clearTimeout(timer); // cleanup on unmount
@@ -125,7 +100,7 @@ const LoadingScreen = () => {
               styles.loadingLogo,
               { transform: [{ rotate: spin }, { translateY: spring }] },
             ]}
-            source={require("../assets/LadderLogo.png")}
+            source={require("./assets/LadderLogo.png")}
           />
         </View>
       </View>
