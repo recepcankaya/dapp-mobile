@@ -367,7 +367,7 @@ export default function NewProfile() {
               style={{
                 alignItems: "center",
                 marginBottom: 15,
-                left: width * 0.17,
+                left: width * 0.17-2,
               }}>
               <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
                 <Rect
