@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
@@ -31,7 +32,7 @@ const missionItemHeight = width / 3.8333;
 function ActiveMissions() {
   const { tokens } = useContext(TokenContext);
   const [missions, setMissions] = useState<any[]>([]);
-  const [copyOfMissions, setCopyOfMissions] = useState<any[]>(missions);
+  
   const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
   const { username } = useContext(UserContext);
 
@@ -41,15 +42,7 @@ function ActiveMissions() {
     console.log("selectedDate", selectedDate);
   }, [selectedDate]);
 
-  // const [missions, setMissions] = useState([
-  //   { isCompleted: false, title: "swim 1 hour" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  //   { isCompleted: true, title: "Mission 2" },
-  //   { isCompleted: false, title: "Mission 3" },
-  // ]);
+
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -58,12 +51,9 @@ function ActiveMissions() {
     },
   });
 
-  const onChangeDate = (date: any) => {
-    console.log('date', date);
-    setFilteredMissions(
-      copyOfMissions.filter((mission) => mission.startDate === date)
-    );
-  }
+
+
+
 
   const getMissions = async () => {
     const url = "/user/mission_list/"; // replace with the actual endpoint
@@ -75,6 +65,7 @@ function ActiveMissions() {
     try {
       const response = await api.get(url, { headers });
       setMissions(response.data);
+      setFilteredMissions(response.data)
     } catch (error) {
       console.error(error);
       if ((error as any).response) {
@@ -89,6 +80,7 @@ function ActiveMissions() {
     }
   };
 
+
   useFocusEffect(
     React.useCallback(() => {
       getMissions();
@@ -102,7 +94,7 @@ function ActiveMissions() {
     };
 
     try {
-      const response = await axios.patch(url, id, { headers });
+      const response = await axios.patch(url, { local_time: new Date().toISOString().slice(0, -1) }, { headers });
       if (response.status === 200) {
         console.log(response.data);
         Alert.alert(response.data.message);
@@ -126,6 +118,12 @@ function ActiveMissions() {
       }
     }
   };
+
+  const onChangeDate = (date: any) => {
+    setFilteredMissions(
+      missions.filter((mission) => mission.startDate != null && (mission.startDate.split(' ')[0] === date))
+    );
+  }
 
   const missionsRenderItem = ({ item, index }: any) => {
     return (
@@ -182,7 +180,7 @@ function ActiveMissions() {
                       ry={19}
                       fill="#D9D9D9"
                       fillOpacity={0.7}
-                      // shapeRendering="crispEdges"
+                    // shapeRendering="crispEdges"
                     />
                   </G>
                   <Path
@@ -251,20 +249,25 @@ function ActiveMissions() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <View style={{ height: 120 }}>
+      <View style={{ height: 100 }}>
         <Agenda
           selected={selectedDate}
-          onDayPress={(day: any) => setSelectedDate(day.dateString)}
+          onDayPress={(day: any) => {
+            setSelectedDate(day.dateString);
+            onChangeDate(day.dateString);
+          }}
         />
       </View>
-      <FlatList
-        data={filteredMissions}
-        extraData={filteredMissions}
-        renderItem={({ item, index }) => missionsRenderItem({ item, index })}
-        style={styles.missionsList}
-        contentContainerStyle={{ alignItems: "center" }}
-        ListHeaderComponent={missionsHeaderComponent()}
-      />
+      <View style={{ flex: 1, paddingBottom: 46 ,marginBottom:15}}>
+        <FlatList
+          data={filteredMissions}
+          extraData={filteredMissions}
+          renderItem={({ item, index }) => missionsRenderItem({ item, index })}
+          style={styles.missionsList}
+          contentContainerStyle={{ alignItems: "center" }}
+          ListHeaderComponent={missionsHeaderComponent()}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -272,19 +275,20 @@ function ActiveMissions() {
 const screenWidth = Dimensions.get("screen").width;
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
+
   container: {
     flex: 1,
     backgroundColor: "#0C0C0C",
+    paddingBottom: 40,
+    paddingTop: StatusBar.currentHeight,
+    height: 40,
   },
   text: {
     color: Colors.white,
   },
   missionsList: {
     paddingTop: 20,
+    paddingBottom: 50
   },
   missionsListHeader: { height: 100, width: screenWidth - 50 },
   missionsListHeaderTop: {
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
   missionItemContainer: {
     width: "100%",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
     height: missionItemHeight,
   },
   missionsItem: {

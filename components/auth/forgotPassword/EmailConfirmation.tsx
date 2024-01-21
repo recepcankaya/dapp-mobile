@@ -10,6 +10,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -19,7 +20,9 @@ import { PasswordTokenContext } from "../../context/PasswordTokenContext";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
-import axios from 'axios'; 
+import axios from 'axios';
+
+const { width, height } = Dimensions.get("window");
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -30,22 +33,22 @@ const api = axios.create({
 
 const EmailConfirmation = () => {
   const [email_temp, setEmail_temp] = useState("");
-  const { passwordToken,setPasswordToken } = useContext(PasswordTokenContext);
+  const { passwordToken, setPasswordToken } = useContext(PasswordTokenContext);
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = async () => {
     setLoading(true);
-  
+
     try {
       const response = await api.post('/user/password_reset/', {
         email: email_temp,
       });
-  
+
       if (response.status === 200) {
         // Navigate to the "Reset Confirmation" page if the request is successful
         setPasswordToken(response.data.token);
-        
+
         navigation.navigate("Reset Confirmation");
       } else {
         // Handle error
@@ -54,8 +57,9 @@ const EmailConfirmation = () => {
     } catch (error) {
       // Handle error
       console.error(error);
+      console.log((error as any).response);
     }
-  
+
     setLoading(false);
   };
 
@@ -80,10 +84,12 @@ const EmailConfirmation = () => {
           onChangeText={setEmail_temp}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Confirm" isLoading={isLoading} />
-        </TouchableOpacity>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleSubmit}>
+            <CustomGradientButton text="Confirm" isLoading={isLoading} />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -116,12 +122,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   buttonContainer: {
-    position: "absolute",
-    right: 0,
+    right: -width/3.5,  //fixed to right according to screen size
     bottom: 0,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    flex: 1,
+
   },
 });
 

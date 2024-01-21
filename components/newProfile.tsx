@@ -17,6 +17,7 @@ import Svg, {
   Circle,
   Pattern,
   Use,
+  G,
 } from "react-native-svg";
 import { UserContext } from "./context/UserContext";
 
@@ -24,6 +25,7 @@ import CustomConnectWallet from "./customs/CustomConnectWallet";
 import { ThirdwebProvider } from "@thirdweb-dev/react-native";
 import axios from "axios";
 import { TokenContext } from "./context/TokenContext";
+
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -94,27 +96,25 @@ const UserIcon = () => (
   </Svg>
 );
 
-// SVG component for the timezone-location icon
-const TimezoneIcon = () => (
-  <Svg width="35" height="35" viewBox="0 0 37 38" fill="none">
-    <Path
-      d="M1 15C1 29 18.5 36 18.5 36C18.5 36 36 29 36 15C36 7.27083 28.1688 1 18.5 1C8.83125 1 1 7.27083 1 15Z"
-      stroke="#0C0C0C"
-      strokeWidth="2"
-    />
-    <Path
-      d="M18.5 19.7833C21.8247 19.7833 24.52 17.5373 24.52 14.7667C24.52 11.996 21.8247 9.75 18.5 9.75C15.1752 9.75 12.48 11.996 12.48 14.7667C12.48 17.5373 15.1752 19.7833 18.5 19.7833Z"
-      stroke="#0C0C0C"
-      strokeWidth="2"
-    />
-  </Svg>
+// SVG component for the email icon
+const EmailIcon = () => (
+  <Svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+    <G transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)" fill="#000000">
+        <Path d="M36 384 c-9 -8 -16 -28 -16 -44 0 -24 13 -36 101 -94 56 -36 109 -66
+        119 -66 10 0 59 27 109 60 l92 60 -3 -97 -3 -98 -195 0 -195 0 -3 83 c-4 105
+        -22 108 -22 3 0 -115 -8 -111 220 -111 158 0 191 3 204 16 23 23 23 265 0 288
+        -23 24 -385 24 -408 0z m402 -34 c2 -22 -11 -34 -93 -88 -52 -34 -99 -62 -105
+        -62 -6 0 -53 28 -105 63 -69 45 -95 68 -95 83 0 11 3 24 7 28 4 3 93 5 197 4
+        l191 -3 3 -25z"/>
+    </G>
+</Svg>
 );
 
 export default function NewProfile() {
   const [tempUsername, setTempUsername] = useState("");
-  const [location, setLocation] = useState("");
   const { username, setUsername } = useContext(UserContext);
   const { tokens } = useContext(TokenContext);
+  const [ email, setEmail ] = useState("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -127,7 +127,7 @@ export default function NewProfile() {
 
         if (response.status === 200) {
           setUsername(response.data.username);
-          setLocation(response.data.timeZone);
+          setEmail(response.data.email);
           console.log(tempUsername);
         } else {
           Alert.alert("Error", "Failed to get user details");
@@ -347,10 +347,10 @@ export default function NewProfile() {
                 fontWeight: "400",
                 letterSpacing: 0.44,
               }}>
-              UTC +{location}
+              {email}
             </Text>
-            <View style={{ position: "absolute", top: 15, right: 10 }}>
-              <TimezoneIcon />
+            <View style={{ position: "absolute", top: 7, right: 10 }}>
+              <EmailIcon />
             </View>
           </View>
           <View
