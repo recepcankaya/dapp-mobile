@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     right: -width/3.5,  //fixed to right according to screen size
     bottom: 0,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
 
   },

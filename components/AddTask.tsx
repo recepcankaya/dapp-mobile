@@ -121,7 +121,7 @@ const AddTask = () => {
               </LinearGradient>
             </View>
           </View>
-          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <View style={{justifyContent: 'flex-end' }}>
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={createMission}>
                 <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
@@ -221,8 +221,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   buttonContainer: {
-    right: -width / 3.5,  //fixed to right according to screen size
-    bottom: height/3.5,
+    position:"absolute",
+    right: 0,  //fixed to right according to screen size
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
   },

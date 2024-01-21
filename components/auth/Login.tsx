@@ -148,7 +148,7 @@ const Login = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={{ justifyContent: 'flex-end' }}>
+        <View style={{flex:1, justifyContent: 'flex-end' }}>
           <View style={styles.loginButtonContainer}>
             <TouchableOpacity onPress={handleLogin}>
               <CustomGradientButton text="Login" isLoading={isLoading} />
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   loginButtonContainer: {
     right: -width / 3.5,  //fixed to right according to screen size
-    bottom: height / 3.5,   //fixed to bottom according to screen size
+    bottom: 0,   //fixed to bottom according to screen size
     justifyContent: "center",
     alignItems: "center",
   },
