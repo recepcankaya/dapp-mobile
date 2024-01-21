@@ -256,7 +256,7 @@ export default function NewProfile() {
         <View style={styles.rectangles}>
           <View
             style={{ marginBottom: 15, marginTop: 30, alignItems: "center" }}>
-            <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
+            <Svg width="347" height="71" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
                 y="1.5"
@@ -311,7 +311,7 @@ export default function NewProfile() {
             </View>
           </View>
           <View style={{ marginBottom: 15, alignItems: "center" }}>
-            <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
+            <Svg width="347" height="71" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
                 y="1.5"
@@ -447,7 +447,10 @@ const styles = StyleSheet.create({
   rectangles: {
     position: "absolute",
     top: 195 + 40, // 40px below the "Profile" text
-    left: 25, // Aligned -15 px with the "Profile" text
+    left: width/6, // Aligned -15 px with the "Profile" text
+    width: "70%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputText: {
     position: "absolute",
