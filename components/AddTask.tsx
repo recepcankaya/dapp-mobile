@@ -121,7 +121,7 @@ const AddTask = () => {
               </LinearGradient>
             </View>
           </View>
-          <View style={{justifyContent: 'flex-end' }}>
+          <View style={{flex:1, justifyContent: 'flex-end' }}>
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={createMission}>
                 <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
