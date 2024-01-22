@@ -8,6 +8,9 @@ import {
   Alert,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Dimensions,
+  KeyboardAvoidingViewBase,
+  KeyboardAvoidingViewComponent,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,6 +26,8 @@ import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomTextInput from "../customs/CustomTextInput";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import useLoading from "../hooks/useLoading";
+
+const { width, height } = Dimensions.get("window");
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -73,14 +78,16 @@ const Login = () => {
       }
       setLoading(false);
     } catch (error: any) {
-      Alert.alert("Error", error.message);
+      Alert.alert("Error", error);
+      console.log(error)
       setLoading(false);
     }
   };
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={[styles.container, { flex: 1 }]}>
+        <KeyboardAvoidingView behavior="padding">
         <LinearGradient
           colors={["#B80DCA", "#4035CB"]}
           start={{ x: 0, y: 0 }}
@@ -122,6 +129,7 @@ const Login = () => {
             </TouchableOpacity>
           </View>
         </View>
+        </KeyboardAvoidingView>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don`t you have account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Sign up")}>
@@ -139,12 +147,15 @@ const Login = () => {
             </MaskedView>
           </TouchableOpacity>
         </View>
-        <View style={styles.loginButtonContainer}>
-          <TouchableOpacity onPress={handleLogin}>
-            <CustomGradientButton text="Login" isLoading={isLoading} />
-          </TouchableOpacity>
+
+        <View style={{flex:1, justifyContent: 'flex-end' }}>
+          <View style={styles.loginButtonContainer}>
+            <TouchableOpacity onPress={handleLogin}>
+              <CustomGradientButton text="Login" isLoading={isLoading} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </>
   );
 };
@@ -212,12 +223,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   loginButtonContainer: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
+    right: -width / 3.5,  //fixed to right according to screen size
+    bottom: 0,   //fixed to bottom according to screen size
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
   },
 });
 

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -19,8 +20,10 @@ import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 
+const { width, height } = Dimensions.get("window");
+
 const ResetConfirmation = () => {
-  const { passwordToken,setPasswordToken } = useContext(PasswordTokenContext);
+  const { passwordToken, setPasswordToken } = useContext(PasswordTokenContext);
   const [code, setCode] = useState("");
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -54,10 +57,12 @@ const ResetConfirmation = () => {
           onChangeText={setCode}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Confirm" isLoading={isLoading} />
-        </TouchableOpacity>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleSubmit}>
+            <CustomGradientButton text="Confirm" isLoading={isLoading} />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -90,12 +95,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   buttonContainer: {
-    position: "absolute",
-    right: 0,
+    right: -width/3.5,  //fixed to right according to screen size
     bottom: 0,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    flex: 1,
+
   },
 });
 

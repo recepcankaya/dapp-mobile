@@ -9,6 +9,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +19,8 @@ import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 import axios from "axios";
+
+const { width, height } = Dimensions.get("window");
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -29,24 +32,38 @@ const api = axios.create({
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleSubmit = async () => {
     setLoading(true);
-  
+
     if (password !== passwordConfirmation) {
-      console.error('Passwords do not match');
+      setErrorMessage('The passwords you entered do not match. Please try again.');
       setLoading(false);
       return;
     }
-  
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMessage('Password should include at least 1 number and 1 letter. Please try again.');
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setErrorMessage('Password should be at least 8 characters. Please try again.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await api.post('/user/password_reset_confirm/', {
-        
+        email: "erbat1@hotmail.com",
         password: password,
       });
-  
+
       if (response.status === 200) {
         // Navigate to the "Login" page if the request is successful
         navigation.navigate("Login");
@@ -59,7 +76,7 @@ const ResetPassword = () => {
       console.error(error);
       console.log((error as any).response);
     }
-  
+
     setLoading(false);
   };
 
@@ -90,11 +107,14 @@ const ResetPassword = () => {
           value={passwordConfirmation}
           onChangeText={setPasswordConfirmation}
         />
+         {errorMessage && <Text style={{color: '#B80DCA'}}>{errorMessage}</Text>}
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSubmit}>
-          <CustomGradientButton text="Change" isLoading={isLoading} />
-        </TouchableOpacity>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleSubmit}>
+            <CustomGradientButton text="Change" isLoading={isLoading} />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -127,12 +147,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   buttonContainer: {
-    position: "absolute",
-    right: 0,
+    right: -width / 3.5,  //fixed to right according to screen size
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
   },
 });
 

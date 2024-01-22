@@ -7,6 +7,7 @@ import {
   StatusBar,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,6 +19,8 @@ import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
+
+const { width, height } = Dimensions.get("window");
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -61,8 +64,8 @@ const Signup = () => {
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
-            "\n" +
-            error.response.data.username?.[0]
+          "\n" +
+          error.response.data.username?.[0]
         );
       } else {
         console.log("error2");
@@ -112,10 +115,12 @@ const Signup = () => {
           />
           <CustomConnectWallet style={{ width: 250 }} />
         </View>
-        <View style={styles.signUpButtonContainer}>
-          <TouchableOpacity onPress={handleRegister}>
-            <CustomGradientButton text="Sign up" isLoading={isLoading} />
-          </TouchableOpacity>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <View style={styles.signUpButtonContainer}>
+            <TouchableOpacity onPress={handleRegister}>
+              <CustomGradientButton text="Sign up" isLoading={isLoading} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </>
@@ -152,12 +157,10 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   signUpButtonContainer: {
-    position: "absolute",
-    right: 0,
+    right: -width / 3.5,  //fixed to right according to screen size
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
   },
   input: {
     width: 250,

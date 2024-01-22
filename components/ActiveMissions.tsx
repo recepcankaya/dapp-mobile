@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
   StatusBar,
+  FlatList,
   Dimensions,
   TouchableOpacity,
   Alert,
-  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -19,27 +19,27 @@ import Svg, {
   Ellipse,
   G,
 } from "react-native-svg";
+import { Agenda } from "react-native-calendars";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
+import { MissionContext } from "./context/MissionContext";
 import { TokenContext } from "./context/TokenContext";
-import Calendar from "./customs/calendar";
+import { UserContext } from "./context/UserContext";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
-
 function ActiveMissions() {
   const { tokens } = useContext(TokenContext);
   const [missions, setMissions] = useState<any[]>([]);
-  const [copyOfMissions, setCopyOfMissions] = useState<any[]>(missions);
-  const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
 
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
+  const { username } = useContext(UserContext);
+
+  const [selectedDate, setSelectedDate] = useState();
 
   useEffect(() => {
-    console.log("filteredMissions", filteredMissions);
-    console.log("missions", missions);
-    setFilteredMissions(missions);
-  }, [filteredMissions, missions]);
+    console.log("selectedDate", selectedDate);
+  }, [selectedDate]);
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -47,25 +47,6 @@ function ActiveMissions() {
       "Content-Type": "application/json",
     },
   });
-
-  const onChangeDate = (date: Date) => {
-    console.log("test", new Date());
-    console.log("new Date()", date);
-    console.log(
-      "filteredMissions",
-      copyOfMissions.filter((mission) => mission.startDate > date)
-    );
-    setFilteredMissions(
-      copyOfMissions.filter(
-        (mission) =>
-          mission.startDate > date &&
-          mission.startDate <
-            new Date(date.getFullYear(), date.getMonth(), date.getDay() + 1)
-      )
-    );
-
-    // setFilteredMissions(copyOfMissions);
-  };
 
   const getMissions = async () => {
     const url = "/user/mission_list/"; // replace with the actual endpoint
@@ -76,8 +57,8 @@ function ActiveMissions() {
 
     try {
       const response = await api.get(url, { headers });
-      console.log("missions", response.data);
       setMissions(response.data);
+      setFilteredMissions(response.data);
     } catch (error) {
       console.error(error);
       if ((error as any).response) {
@@ -105,7 +86,11 @@ function ActiveMissions() {
     };
 
     try {
-      const response = await axios.patch(url, id, { headers });
+      const response = await axios.patch(
+        url,
+        { local_time: new Date().toISOString().slice(0, -1) },
+        { headers }
+      );
       if (response.status === 200) {
         console.log(response.data);
         Alert.alert(response.data.message);
@@ -130,6 +115,15 @@ function ActiveMissions() {
     }
   };
 
+  const onChangeDate = (date: any) => {
+    setFilteredMissions(
+      missions.filter(
+        (mission) =>
+          mission.startDate != null && mission.startDate.split(" ")[0] === date
+      )
+    );
+  };
+
   const missionsRenderItem = ({ item, index }: any) => {
     return (
       <View style={styles.missionItemContainer}>
@@ -138,8 +132,7 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}
-        >
+          style={{ position: "absolute" }}>
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -153,8 +146,7 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse"
-            >
+              gradientUnits="userSpaceOnUse">
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -163,8 +155,7 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}
-          >
+            onPress={() => completeMission(item.id)}>
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -200,8 +191,7 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse"
-                  >
+                    gradientUnits="userSpaceOnUse">
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -254,28 +244,25 @@ function ActiveMissions() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <Calendar
-        onChangeDate={(date) => {
-          console.log("date-active missions", date);
-          const formattedDate = `${date.year}-${date.month}-${date.day}`;
-          setSelectedDate(new Date(formattedDate));
-          onChangeDate(new Date(formattedDate));
-        }}
-      />
-      {/* <View style={{ height: 120 }}>
+      <View style={{ height: 100 }}>
         <Agenda
           selected={selectedDate}
-          onDayPress={(day: any) => setSelectedDate(day.dateString)}
+          onDayPress={(day: any) => {
+            setSelectedDate(day.dateString);
+            onChangeDate(day.dateString);
+          }}
         />
-      </View> */}
-      <FlatList
-        data={filteredMissions}
-        extraData={filteredMissions}
-        renderItem={({ item, index }) => missionsRenderItem({ item, index })}
-        style={styles.missionsList}
-        contentContainerStyle={{ alignItems: "center" }}
-        ListHeaderComponent={missionsHeaderComponent()}
-      />
+      </View>
+      <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
+        <FlatList
+          data={filteredMissions}
+          extraData={filteredMissions}
+          renderItem={({ item, index }) => missionsRenderItem({ item, index })}
+          style={styles.missionsList}
+          contentContainerStyle={{ alignItems: "center" }}
+          ListHeaderComponent={missionsHeaderComponent()}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -283,19 +270,19 @@ function ActiveMissions() {
 const screenWidth = Dimensions.get("screen").width;
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
   container: {
     flex: 1,
     backgroundColor: "#0C0C0C",
+    paddingBottom: 40,
+    paddingTop: StatusBar.currentHeight,
+    height: 40,
   },
   text: {
     color: Colors.white,
   },
   missionsList: {
     paddingTop: 20,
+    paddingBottom: 50,
   },
   missionsListHeader: { height: 100, width: screenWidth - 50 },
   missionsListHeaderTop: {
@@ -320,7 +307,7 @@ const styles = StyleSheet.create({
   missionItemContainer: {
     width: "100%",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
     height: missionItemHeight,
   },
   missionsItem: {
