@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+// import { days, months, years } from ".";
 
 const { width } = Dimensions.get("screen");
 const segmentsLength = 10;
@@ -78,12 +79,14 @@ const CalendarAnimation = (props: CalendarAnimationProps) => {
         onScrollEndDrag={backToDays}>
         <View style={styles.spacer}></View>
         {data.map((item, index) => {
+          console.log("x-1");
           const animatedStyle = useAnimatedStyle(() => {
+            console.log("x-4");
             return {
               height: segmentHeight + animatedValues[index].value * 70,
             };
           });
-
+          console.log("x-2");
           const animatedTextStyle = useAnimatedStyle(() => {
             return {
               color:
@@ -94,6 +97,7 @@ const CalendarAnimation = (props: CalendarAnimationProps) => {
                 index === selectedDataIndex ? withTiming(20) : withTiming(18),
             };
           });
+          console.log("x-3");
           return (
             <Animated.View style={[styles.item, animatedStyle]} key={index}>
               <Animated.Text style={[styles.itemText, animatedTextStyle]}>

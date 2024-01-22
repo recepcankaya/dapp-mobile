@@ -9,6 +9,7 @@ import {
 import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
 
 import CalendarAnimation from "./CalendarAnimation";
+import CalendarAnimationv2 from "./CalendarAnimationv2";
 
 const { width } = Dimensions.get("screen");
 
@@ -47,27 +48,41 @@ const CalendarBackground = () => {
 };
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  { index: 0, key: 0, text: "January" },
+  { index: 1, key: 1, text: "February" },
+  { index: 2, key: 2, text: "March" },
+  { index: 3, key: 3, text: "April" },
+  { index: 4, key: 4, text: "May" },
+  { index: 5, key: 5, text: "June" },
+  { index: 6, key: 6, text: "July" },
+  { index: 7, key: 7, text: "August" },
+  { index: 8, key: 8, text: "September" },
+  { index: 9, key: 9, text: "October" },
+  { index: 10, key: 10, text: "November" },
+  { index: 11, key: 11, text: "December" },
+  { index: 12, key: 12, text: "" },
+  { index: 13, key: 13, text: "" },
 ];
-const years = ["2024", "2025", "2026"];
-const days = Array.from({ length: 31 }, (_, index) => (index + 1).toString());
+const years = [
+  { index: 0, key: 0, text: "2024" },
+  { index: 1, key: 1, text: "2025" },
+  { index: 2, key: 2, text: "2026" },
+  { index: 3, key: 3, text: "" },
+  { index: 4, key: 4, text: "" },
+];
+
+const days = Array.from({ length: 33 }, (_, index) => ({
+  index,
+  key: index,
+  text: (index + 1).toString(),
+}));
 
 type CalendarProps = {
-  onChangeDate: (date: Date) => void;
+  onChangeDate: (date: { year: string; month: string; day: string }) => void;
 };
 
 const Calendar = ({ onChangeDate }: CalendarProps) => {
+  // This is the state that consists of the index of the year, month and day in their respective arrays. Initially, it is set to the current date index in the arrays.
   // This is the state that consists of year, month and day for the calendar. Initially, it is set to the current date.
   const [currentDate, setCurrentDate] = useState<{
     year: string;
@@ -75,7 +90,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     day: string;
   }>({
     year: new Date().getFullYear().toString(),
-    month: months[new Date().getMonth()],
+    month: months[new Date().getMonth()].text,
     day: new Date().getDate().toString(),
   });
 
@@ -85,10 +100,12 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     monthIndex: number;
     dayIndex: number;
   }>({
-    yearIndex: years.findIndex((y) => y === currentDate.year),
-    monthIndex: months.findIndex((m) => m === currentDate.month),
-    dayIndex: days.findIndex((d) => d === currentDate.day),
+    yearIndex: years.findIndex((y) => y.text === currentDate.year),
+    monthIndex: months.findIndex((m) => m.text === currentDate.month),
+    dayIndex: days.findIndex((d) => d.text.toString() === currentDate.day),
   });
+
+  //add onChangeDate
 
   // There are three tabs in the calendar: "day", "month", and "year".
   const [dateTab, setDateTab] = useState<"day" | "month" | "year">("day");
@@ -116,14 +133,15 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     <View style={styles.container}>
       <CalendarBackground />
       {dateTab === "day" && (
-        <CalendarAnimation
+        <CalendarAnimationv2
           onChangeValue={(value: string) => {
             console.log("dayValue", value);
             setCurrentDate({ ...currentDate, day: value });
             setCurrentDateIndex({
               ...currentDateIndex,
-              dayIndex: days.findIndex((d) => d === value),
+              dayIndex: days.findIndex((d) => d.text === value),
             });
+            onChangeDate(currentDate);
           }}
           initialIndex={currentDateIndex.dayIndex}
           backToDays={backToDays}
@@ -131,14 +149,21 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
         />
       )}
       {dateTab === "month" && (
-        <CalendarAnimation
+        <CalendarAnimationv2
           onChangeValue={(value: string) => {
-            console.log("monthValue", value);
-            setCurrentDate({ ...currentDate, month: value });
+            console.log(
+              "monthValue",
+              months.findIndex((m) => m.text === value) + 1
+            );
+            setCurrentDate({
+              ...currentDate,
+              month: (months.findIndex((m) => m.text === value) + 1).toString(),
+            });
             setCurrentDateIndex({
               ...currentDateIndex,
-              monthIndex: months.findIndex((m) => m === value),
+              monthIndex: months.findIndex((m) => m.text === value),
             });
+            onChangeDate(currentDate);
           }}
           backToDays={backToDays}
           data={months}
@@ -146,14 +171,15 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
         />
       )}
       {dateTab === "year" && (
-        <CalendarAnimation
+        <CalendarAnimationv2
           onChangeValue={(value: string) => {
             console.log("yearValue", value);
             setCurrentDate({ ...currentDate, year: value });
             setCurrentDateIndex({
               ...currentDateIndex,
-              yearIndex: years.findIndex((y) => y === value),
+              yearIndex: years.findIndex((y) => y.text === value),
             });
+            onChangeDate(currentDate);
           }}
           initialIndex={currentDateIndex.yearIndex}
           backToDays={backToDays}
@@ -164,7 +190,9 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
         <TouchableOpacity
           onPress={() => changeDateTab("month")}
           style={styles.buttons}>
-          <Text style={styles.buttonsText}>{currentDate.month}</Text>
+          <Text style={styles.buttonsText}>
+            {months[parseInt(currentDate.month) - 1]?.text}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => changeDateTab("year")}
