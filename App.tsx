@@ -84,7 +84,6 @@ function ProfileTabNavigator() {
           null,
         ],
         tabBarIcon: ({ focused, color, size }) => {
-          console.log("focused", focused);
           let isProfile;
           let isActiveMissions;
           let isCategories;
@@ -260,9 +259,8 @@ function App() {
             </UserIdProvider>
           </UserProvider>
         </TokenProvider>
-      </PasswordTokenProvider >
+      </PasswordTokenProvider>
     </ThirdwebProvider>
-
   );
 }
 
