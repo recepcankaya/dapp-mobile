@@ -35,7 +35,7 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [timezone, setTimezone] = useState("1");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
@@ -47,7 +47,7 @@ const Register = () => {
       const response = await api.post("/user/register/", {
         username,
         password,
-        timeZone: timezone,
+        email,
         wallet: userAddress,
       });
 
@@ -149,6 +149,44 @@ const Register = () => {
                 placeholderTextColor="#0C0C0C"
                 value={username}
                 onChangeText={setUsername}
+                autoCapitalize="none"
+              />
+            </View>
+          </LinearGradient>
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            colors={["#B80DCA", "#4035CB"]}
+            style={{
+              marginBottom: 20, // 15px below the "Sign Up" text
+              width: 302,
+              height: 63,
+              borderRadius: 10,
+              padding: 3, // This will be the width of your border
+            }}>
+            <View
+              style={{
+                flex: 1,
+                borderRadius: 10, // make sure this matches the borderRadius of the LinearGradient
+                backgroundColor: "#D9D9D9", // or whatever your button's background color is
+                justifyContent: "center", // Center the text vertically
+                alignItems: "flex-start", // Center the text horizontally
+                paddingLeft: 10,
+              }}>
+              <Text
+                style={{
+                  color: "#D9D9D9",
+                  fontFamily: "Inter",
+                  fontSize: 20,
+                  fontStyle: "italic",
+                  fontWeight: "600",
+                }}></Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#0C0C0C"
+                value={email}
+                onChangeText={setEmail}
                 autoCapitalize="none"
               />
             </View>

@@ -88,14 +88,13 @@ const LoginInner = () => {
               );
             });
           navigation.navigate("ProfileTab");
-          
         } else {
           Alert.alert("Error", "Login failed");
         }
       })
       .catch((error) => {
-        Alert.alert("Error", error.message);
-        setErrorMessage(error.message);
+        Alert.alert("Error", "Login failed");
+        console.log(error);
       });
   };
   /**

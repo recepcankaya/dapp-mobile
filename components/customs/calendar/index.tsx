@@ -8,15 +8,9 @@ import {
 } from "react-native";
 import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
 
-import DayCalendar from "./dayCalendar";
-import MonthCalendar from "./monthCalendar";
-import YearCalendar from "./yearCalendar";
+import CalendarAnimation from "./CalendarAnimation";
 
 const { width } = Dimensions.get("screen");
-
-interface CalendarProps {
-  onChangeDate: (date: Date) => void;
-}
 
 const CalendarBackground = () => {
   return (
@@ -66,113 +60,117 @@ const months = [
   "November",
   "December",
 ];
-const years = ["2022", "2023", "2024"];
-const days = Array.from({ length: 31 }, (_, index) => index + 1);
+const years = ["2024", "2025", "2026"];
+const days = Array.from({ length: 31 }, (_, index) => (index + 1).toString());
 
-const Calendar = (props: CalendarProps) => {
-  const [year, setYear] = useState<number>(new Date().getFullYear());
-  const [month, setMonth] = useState<string>(months[new Date().getMonth()]);
-  const [day, setDay] = useState<number>(new Date().getDate());
-  const [selectedMonth, setSelectedMonth] = useState<string>("");
-  const [selectedYear, setSelectedYear] = useState<number>();
-  const [dayInitialIndex, setDayInitialIndex] = useState<number>(0);
-  const [monthInitialIndex, setMonthInitialIndex] = useState<number>(0);
-  const [yearInitialIndex, setYearInitialIndex] = useState<number>(0);
-  const [dateType, setDateType] = useState(0);
-  const { onChangeDate } = props;
+type CalendarProps = {
+  onChangeDate: (date: Date) => void;
+};
 
-  useEffect(() => {
-    const date = new Date(
-      parseInt(years[yearInitialIndex]),
-      months.findIndex((item) => item === months[monthInitialIndex]),
-      days[dayInitialIndex + 1]
-    );
-    onChangeDate(date);
-  }, [dayInitialIndex, monthInitialIndex, yearInitialIndex]);
+const Calendar = ({ onChangeDate }: CalendarProps) => {
+  // This is the state that consists of year, month and day for the calendar. Initially, it is set to the current date.
+  const [currentDate, setCurrentDate] = useState<{
+    year: string;
+    month: string;
+    day: string;
+  }>({
+    year: new Date().getFullYear().toString(),
+    month: months[new Date().getMonth()],
+    day: new Date().getDate().toString(),
+  });
 
-  useEffect(() => {
+  // This is the state that consists of the index of the year, month and day in their respective arrays. Initially, it is set to the current date index in the arrays.
+  const [currentDateIndex, setCurrentDateIndex] = useState<{
+    yearIndex: number;
+    monthIndex: number;
+    dayIndex: number;
+  }>({
+    yearIndex: years.findIndex((y) => y === currentDate.year),
+    monthIndex: months.findIndex((m) => m === currentDate.month),
+    dayIndex: days.findIndex((d) => d === currentDate.day),
+  });
+
+  // There are three tabs in the calendar: "day", "month", and "year".
+  const [dateTab, setDateTab] = useState<"day" | "month" | "year">("day");
+  const [selectedData, setSelectedData] = useState<string>("");
+  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
+
+  /**
+   * Changes the active date tab.
+   *
+   * @param tab - The tab to set as active. Can be "day", "month", or "year".
+   */
+  const changeDateTab = (tab: "day" | "month" | "year") => {
+    setDateTab(tab);
+    console.log("The chosen tab is: ", tab);
+  };
+
+  /**
+   * Navigates back to the "day" tab after a delay.
+   */
+  const backToDays = () => {
     setTimeout(() => {
-      setSelectedMonth(month);
-      setDayInitialIndex(dayInitialIndex);
-    }, 3000);
-  }, [month]);
+      setSelectedData(
+        dateTab === "day"
+          ? days[selectedDataIndex]
+          : dateTab === "month"
+            ? months[selectedDataIndex]
+            : years[selectedDataIndex]
+      );
+      handleDateChange(selectedData);
+      setDateTab("day");
+    }, 2250);
+  };
 
-  useEffect(() => {
-    if (selectedMonth !== undefined && selectedMonth === month) {
-      setDateType(0);
+  const handleDateChange = (value: string) => {
+    if (dateTab === "day") {
+      setCurrentDate({ ...currentDate, day: value });
+      setCurrentDateIndex({
+        ...currentDateIndex,
+        dayIndex: days.findIndex((d) => d === value),
+      });
+    } else if (dateTab === "month") {
+      setCurrentDate({ ...currentDate, month: value });
+      setCurrentDateIndex({
+        ...currentDateIndex,
+        monthIndex: months.findIndex((m) => m === value),
+      });
+    } else {
+      setCurrentDate({ ...currentDate, year: value });
+      setCurrentDateIndex({
+        ...currentDateIndex,
+        yearIndex: years.findIndex((y) => y === value),
+      });
     }
-  }, [selectedMonth]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setSelectedYear(year);
-      setDayInitialIndex(dayInitialIndex);
-    }, 3000);
-  }, [year]);
-
-  useEffect(() => {
-    if (selectedYear !== undefined && selectedYear === year) setDateType(0);
-  }, [selectedYear]);
-
-  useEffect(() => {
-    setDateType(0);
-    setDayInitialIndex(0);
-    setMonthInitialIndex(0);
-    setYearInitialIndex(0);
-  }, []);
-
-  useEffect(() => {
-    if (dateType === 0) {
-      console.log("day", day);
-      setDayInitialIndex(days.indexOf(day));
-    } else if (dateType === 1) {
-      console.log("month", month);
-      setMonthInitialIndex(months.indexOf(month));
-    } else if (dateType === 2) {
-      console.log("year", year);
-      setYearInitialIndex(years.indexOf(year.toString()));
-    }
-  }, [dateType]);
+  };
 
   return (
     <View style={styles.container}>
       <CalendarBackground />
-      {dateType === 0 && (
-        <DayCalendar
-          onChangeDayValue={(value: number) => {
-            console.log("dayValue", value);
-            setDay(days[value - 1]);
-            setDayInitialIndex(value - 1);
-          }}
-          dayInitialIndex={dayInitialIndex}
-        />
-      )}
-      {dateType === 1 && (
-        <MonthCalendar
-          onChangeMonthValue={(value: string) => {
-            console.log("monthValue", value);
-            setMonth(value);
-            setMonthInitialIndex(months.findIndex((m) => m === value));
-          }}
-          monthInitialIndex={monthInitialIndex}
-        />
-      )}
-      {dateType === 2 && (
-        <YearCalendar
-          onChangeYearValue={(value: string) => {
-            console.log("yearValue", value);
-            setYear(Number(value));
-            setYearInitialIndex(years.findIndex((y) => y === value));
-          }}
-          yearInitialIndex={yearInitialIndex}
-        />
-      )}
+      <CalendarAnimation
+        onChangeValue={handleDateChange}
+        backToDays={backToDays}
+        data={dateTab === "day" ? days : dateTab === "month" ? months : years}
+        initialIndex={
+          dateTab === "day"
+            ? currentDateIndex.dayIndex
+            : dateTab === "month"
+              ? currentDateIndex.monthIndex
+              : currentDateIndex.yearIndex
+        }
+        setSelectedDataIndex={setSelectedDataIndex}
+        selectedDataIndex={selectedDataIndex}
+      />
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={() => setDateType(1)} style={styles.buttons}>
-          <Text style={styles.buttonsText}>{month}</Text>
+        <TouchableOpacity
+          onPress={() => changeDateTab("month")}
+          style={styles.buttons}>
+          <Text style={styles.buttonsText}>{currentDate.month}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setDateType(2)} style={styles.buttons}>
-          <Text style={styles.buttonsText}>{year}</Text>
+        <TouchableOpacity
+          onPress={() => changeDateTab("year")}
+          style={styles.buttons}>
+          <Text style={styles.buttonsText}>{currentDate.year}</Text>
         </TouchableOpacity>
       </View>
     </View>

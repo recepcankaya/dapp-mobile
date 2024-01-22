@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
-// import { ScrollView } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   withTiming,
@@ -8,72 +7,55 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-interface Props {
-  onChangeDayValue: (value: number) => void;
-  dayInitialIndex: number;
-}
-
 const { width } = Dimensions.get("screen");
-const segmentsLength = 31;
-const segmentWidth = 32;
+const segmentsLength = 10;
+const segmentWidth = 50;
 const segmentHeight = 60;
-const segmentSpacing = 16;
+const segmentSpacing = 25;
 const snapSegment = segmentWidth + segmentSpacing;
 const spacerWidth = (width - segmentWidth) / 2;
 const halfSegmentHeight = segmentHeight / 2;
 
-const DayCalendar = (props: Props) => {
-  const { onChangeDayValue, dayInitialIndex } = props;
+type CalendarAnimationProps = {
+  onChangeValue: (value: string) => void;
+  initialIndex: number;
+  data: string[];
+  backToDays: () => void;
+  setSelectedDataIndex: React.Dispatch<React.SetStateAction<number>>;
+  selectedDataIndex: number;
+};
+
+const CalendarAnimation = (props: CalendarAnimationProps) => {
+  const {
+    onChangeValue,
+    initialIndex,
+    data,
+    backToDays,
+    setSelectedDataIndex,
+    selectedDataIndex,
+  } = props;
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const [selectedData, setSelectedData] = useState<number>();
-  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
-  const data: number[] = Array.from(
-    { length: segmentsLength },
-    (_, index) => index + 1
-  );
   const animatedValues = data.map(() => useSharedValue(0));
-
-  useEffect(() => {
-    if (selectedDataIndex !== undefined) {
-      setSelectedData(data[selectedDataIndex]);
-    }
-  }, [selectedDataIndex]);
-
-  useEffect(() => {
-    if (selectedData) {
-      onChangeDayValue(selectedData);
-    }
-  }, [selectedData]);
-
-  useEffect(() => {
-    console.log("selectedDataIndex", selectedDataIndex);
-    console.log("dayInitialIndex-daySlider", dayInitialIndex);
-    scrollViewRef.current?.scrollTo({
-      x: dayInitialIndex * snapSegment,
-      animated: true,
-    });
-  }, []);
 
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const selected = Math.round(offsetX / snapSegment) + 1;
-    setSelectedDataIndex(selected - 1);
-    data.forEach((item, index) => {
-      const start = (index + 3) * snapSegment - spacerWidth;
-      const end = (index + 4) * snapSegment - spacerWidth;
-      const distanceToCenter = Math.abs(offsetX - (start + end));
-      const translateY = Math.max(0, halfSegmentHeight - distanceToCenter);
-      const timingValues = [29, 30, 24, 14, -3];
-      for (let i = -4; i <= 4; i++) {
-        const index = selectedDataIndex + i;
-        if (animatedValues[index]) {
-          animatedValues[index].value = withSpring(
-            (translateY + timingValues[Math.abs(i)]) / halfSegmentHeight
-          );
-        }
+    const selected = Math.round(offsetX / snapSegment);
+    setSelectedDataIndex(selected);
+
+    for (let i = -4; i <= 4; i++) {
+      const index = selected + i;
+      if (index >= 0 && index < data.length && animatedValues[index]) {
+        const start = (index + 3) * snapSegment - spacerWidth;
+        const end = (index + 4) * snapSegment - spacerWidth;
+        const distanceToCenter = Math.abs(offsetX - (start + end));
+        const translateY = Math.max(0, halfSegmentHeight - distanceToCenter);
+        const timingValues = [29, 26, 9, -9, -26];
+        animatedValues[index].value = withSpring(
+          (translateY + timingValues[Math.abs(i)]) / halfSegmentHeight
+        );
       }
-    });
+    }
   };
 
   return (
@@ -87,7 +69,7 @@ const DayCalendar = (props: Props) => {
         style={styles.scrollView}
         bounces={false}
         onScroll={handleScroll}
-      >
+        onScrollEndDrag={backToDays}>
         <View style={styles.spacer}></View>
         {data.map((item, index) => {
           const animatedStyle = useAnimatedStyle(() => {
@@ -100,10 +82,10 @@ const DayCalendar = (props: Props) => {
             return {
               color:
                 index === selectedDataIndex
-                  ? withTiming("black")
+                  ? withTiming("red")
                   : withTiming("white"),
               fontSize:
-                index === selectedDataIndex ? withTiming(25) : withTiming(20),
+                index === selectedDataIndex ? withTiming(20) : withTiming(18),
             };
           });
           return (
@@ -118,16 +100,15 @@ const DayCalendar = (props: Props) => {
       </ScrollView>
       <View
         style={{
-          width: 33,
+          width: 70,
           height: 50,
           backgroundColor: "#D9D9D9",
           position: "absolute",
           top: 90,
-          left: width / 2 - segmentSpacing,
+          left: width / 2 - 35,
           zIndex: -10,
           borderRadius: 80,
-        }}
-      ></View>
+        }}></View>
     </View>
   );
 };
@@ -139,6 +120,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: 170,
+    marginTop: 30,
   },
   spacer: {
     width: spacerWidth - segmentSpacing,
@@ -147,13 +129,12 @@ const styles = StyleSheet.create({
   item: {
     width: segmentWidth,
     marginRight: segmentSpacing,
-    justifyContent: "flex-end",
-
+    justifyContent: "center",
     alignItems: "center",
   },
   itemText: {
-    fontSize: 20,
+    fontSize: 15,
   },
 });
 
-export default DayCalendar;
+export default CalendarAnimation;
