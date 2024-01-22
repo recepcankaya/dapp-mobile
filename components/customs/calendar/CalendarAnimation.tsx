@@ -32,9 +32,17 @@ const CalendarAnimation = (props: CalendarAnimationProps) => {
 
   const animatedValues = data.map(() => useSharedValue(0));
 
-  if (!data) {
-    return <Text>Loading...</Text>;
-  }
+  useEffect(() => {
+    if (selectedDataIndex !== undefined) {
+      setSelectedData(data[selectedDataIndex]);
+    }
+  }, [selectedDataIndex]);
+
+  useEffect(() => {
+    if (selectedData) {
+      onChangeValue(selectedData);
+    }
+  }, [selectedData]);
 
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;

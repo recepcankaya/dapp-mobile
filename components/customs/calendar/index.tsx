@@ -112,46 +112,54 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     }, 2250);
   };
 
-  const handleCurrentDateChange = (value: string) => {
-    if (dateTab === "day") {
-      setCurrentDate({ ...currentDate, day: value });
-      setCurrentDateIndex({
-        ...currentDateIndex,
-        dayIndex: days.findIndex((d) => d === value),
-      });
-    } else if (dateTab === "month") {
-      setCurrentDate({ ...currentDate, month: value });
-      setCurrentDateIndex({
-        ...currentDateIndex,
-        monthIndex: months.findIndex((m) => m === value),
-      });
-    } else {
-      setCurrentDate({ ...currentDate, year: value });
-      setCurrentDateIndex({
-        ...currentDateIndex,
-        yearIndex: years.findIndex((y) => y === value),
-      });
-    }
-  };
-
   return (
     <View style={styles.container}>
       <CalendarBackground />
-      {/* @todo - `tab` değiştiği zaman data prop' u boş olarak gidiyor. Bundan dolayı `undefined: length` hatası alınıyor. bu arada ayrı ayrı datalar prop olarak gönderildiği zaman sıkıntı yok. tek proptan gidince sıkıntı oluşuyor. önceliğimiz tek component üzerinden geçirmek olsun. Yok, illa ki üç farklı koşul ve component gerekiyor. O zaman öyle yaparız. Ya da üç tane ayrı component yazmak yerine şu da yapılabilir 
-        dateTab === "day" ? <CalendarAnimation data={days} /> : dateTab === "months" ? <CalendarAnimation data={months} /> : <CalendarAnimation data={years} />
-      */}
-      <CalendarAnimation
-        onChangeValue={handleCurrentDateChange}
-        backToDays={backToDays}
-        data={dateTab === "day" ? days : dateTab === "month" ? months : years}
-        initialIndex={
-          dateTab === "day"
-            ? currentDateIndex.dayIndex
-            : dateTab === "month"
-              ? currentDateIndex.monthIndex
-              : currentDateIndex.yearIndex
-        }
-      />
+      {dateTab === "day" && (
+        <CalendarAnimation
+          onChangeValue={(value: string) => {
+            console.log("dayValue", value);
+            setCurrentDate({ ...currentDate, day: value });
+            setCurrentDateIndex({
+              ...currentDateIndex,
+              dayIndex: days.findIndex((d) => d === value),
+            });
+          }}
+          initialIndex={currentDateIndex.dayIndex}
+          backToDays={backToDays}
+          data={days}
+        />
+      )}
+      {dateTab === "month" && (
+        <CalendarAnimation
+          onChangeValue={(value: string) => {
+            console.log("monthValue", value);
+            setCurrentDate({ ...currentDate, month: value });
+            setCurrentDateIndex({
+              ...currentDateIndex,
+              monthIndex: months.findIndex((m) => m === value),
+            });
+          }}
+          backToDays={backToDays}
+          data={months}
+          initialIndex={currentDateIndex.monthIndex}
+        />
+      )}
+      {dateTab === "year" && (
+        <CalendarAnimation
+          onChangeValue={(value: string) => {
+            console.log("yearValue", value);
+            setCurrentDate({ ...currentDate, year: value });
+            setCurrentDateIndex({
+              ...currentDateIndex,
+              yearIndex: years.findIndex((y) => y === value),
+            });
+          }}
+          initialIndex={currentDateIndex.yearIndex}
+          backToDays={backToDays}
+          data={years}
+        />
+      )}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={() => changeDateTab("month")}
