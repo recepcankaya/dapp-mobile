@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView, Text } from "react-native";
 import Animated, {
   useSharedValue,
   withTiming,
@@ -21,22 +21,20 @@ type CalendarAnimationProps = {
   initialIndex: number;
   data: string[];
   backToDays: () => void;
-  setSelectedDataIndex: React.Dispatch<React.SetStateAction<number>>;
-  selectedDataIndex: number;
 };
 
 const CalendarAnimation = (props: CalendarAnimationProps) => {
-  const {
-    onChangeValue,
-    initialIndex,
-    data,
-    backToDays,
-    setSelectedDataIndex,
-    selectedDataIndex,
-  } = props;
+  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
+  const [selectedData, setSelectedData] = useState<string>("");
+
   const scrollViewRef = useRef<ScrollView>(null);
+  const { onChangeValue, initialIndex, data, backToDays } = props;
 
   const animatedValues = data.map(() => useSharedValue(0));
+
+  if (!data) {
+    return <Text>Loading...</Text>;
+  }
 
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;

@@ -92,8 +92,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
 
   // There are three tabs in the calendar: "day", "month", and "year".
   const [dateTab, setDateTab] = useState<"day" | "month" | "year">("day");
-  const [selectedData, setSelectedData] = useState<string>("");
-  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
 
   /**
    * Changes the active date tab.
@@ -110,19 +108,11 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
    */
   const backToDays = () => {
     setTimeout(() => {
-      setSelectedData(
-        dateTab === "day"
-          ? days[selectedDataIndex]
-          : dateTab === "month"
-            ? months[selectedDataIndex]
-            : years[selectedDataIndex]
-      );
-      handleDateChange(selectedData);
       setDateTab("day");
     }, 2250);
   };
 
-  const handleDateChange = (value: string) => {
+  const handleCurrentDateChange = (value: string) => {
     if (dateTab === "day") {
       setCurrentDate({ ...currentDate, day: value });
       setCurrentDateIndex({
@@ -147,8 +137,11 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
   return (
     <View style={styles.container}>
       <CalendarBackground />
+      {/* @todo - `tab` değiştiği zaman data prop' u boş olarak gidiyor. Bundan dolayı `undefined: length` hatası alınıyor. bu arada ayrı ayrı datalar prop olarak gönderildiği zaman sıkıntı yok. tek proptan gidince sıkıntı oluşuyor. önceliğimiz tek component üzerinden geçirmek olsun. Yok, illa ki üç farklı koşul ve component gerekiyor. O zaman öyle yaparız. Ya da üç tane ayrı component yazmak yerine şu da yapılabilir 
+        dateTab === "day" ? <CalendarAnimation data={days} /> : dateTab === "months" ? <CalendarAnimation data={months} /> : <CalendarAnimation data={years} />
+      */}
       <CalendarAnimation
-        onChangeValue={handleDateChange}
+        onChangeValue={handleCurrentDateChange}
         backToDays={backToDays}
         data={dateTab === "day" ? days : dateTab === "month" ? months : years}
         initialIndex={
@@ -158,8 +151,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
               ? currentDateIndex.monthIndex
               : currentDateIndex.yearIndex
         }
-        setSelectedDataIndex={setSelectedDataIndex}
-        selectedDataIndex={selectedDataIndex}
       />
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
