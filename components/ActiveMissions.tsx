@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
@@ -32,7 +31,7 @@ const missionItemHeight = width / 3.8333;
 function ActiveMissions() {
   const { tokens } = useContext(TokenContext);
   const [missions, setMissions] = useState<any[]>([]);
-  
+
   const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
   const { username } = useContext(UserContext);
 
@@ -42,18 +41,12 @@ function ActiveMissions() {
     console.log("selectedDate", selectedDate);
   }, [selectedDate]);
 
-
-
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
     headers: {
       "Content-Type": "application/json",
     },
   });
-
-
-
-
 
   const getMissions = async () => {
     const url = "/user/mission_list/"; // replace with the actual endpoint
@@ -65,7 +58,7 @@ function ActiveMissions() {
     try {
       const response = await api.get(url, { headers });
       setMissions(response.data);
-      setFilteredMissions(response.data)
+      setFilteredMissions(response.data);
     } catch (error) {
       console.error(error);
       if ((error as any).response) {
@@ -80,7 +73,6 @@ function ActiveMissions() {
     }
   };
 
-
   useFocusEffect(
     React.useCallback(() => {
       getMissions();
@@ -94,7 +86,11 @@ function ActiveMissions() {
     };
 
     try {
-      const response = await axios.patch(url, { local_time: new Date().toISOString().slice(0, -1) }, { headers });
+      const response = await axios.patch(
+        url,
+        { local_time: new Date().toISOString().slice(0, -1) },
+        { headers }
+      );
       if (response.status === 200) {
         console.log(response.data);
         Alert.alert(response.data.message);
@@ -121,9 +117,12 @@ function ActiveMissions() {
 
   const onChangeDate = (date: any) => {
     setFilteredMissions(
-      missions.filter((mission) => mission.startDate != null && (mission.startDate.split(' ')[0] === date))
+      missions.filter(
+        (mission) =>
+          mission.startDate != null && mission.startDate.split(" ")[0] === date
+      )
     );
-  }
+  };
 
   const missionsRenderItem = ({ item, index }: any) => {
     return (
@@ -133,8 +132,7 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}
-        >
+          style={{ position: "absolute" }}>
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -148,8 +146,7 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse"
-            >
+              gradientUnits="userSpaceOnUse">
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -158,8 +155,7 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}
-          >
+            onPress={() => completeMission(item.id)}>
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -180,7 +176,7 @@ function ActiveMissions() {
                       ry={19}
                       fill="#D9D9D9"
                       fillOpacity={0.7}
-                    // shapeRendering="crispEdges"
+                      // shapeRendering="crispEdges"
                     />
                   </G>
                   <Path
@@ -195,8 +191,7 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse"
-                  >
+                    gradientUnits="userSpaceOnUse">
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -258,7 +253,7 @@ function ActiveMissions() {
           }}
         />
       </View>
-      <View style={{ flex: 1, paddingBottom: 46 ,marginBottom:15}}>
+      <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
           data={filteredMissions}
           extraData={filteredMissions}
@@ -275,7 +270,6 @@ function ActiveMissions() {
 const screenWidth = Dimensions.get("screen").width;
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#0C0C0C",
@@ -288,7 +282,7 @@ const styles = StyleSheet.create({
   },
   missionsList: {
     paddingTop: 20,
-    paddingBottom: 50
+    paddingBottom: 50,
   },
   missionsListHeader: { height: 100, width: screenWidth - 50 },
   missionsListHeaderTop: {
