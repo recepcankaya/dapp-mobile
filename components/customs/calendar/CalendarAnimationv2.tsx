@@ -84,7 +84,7 @@ const EllipticalScroll = ({
   initialIndex,
   onChangeValue,
 }: CalendarAnimationProps) => {
-  const [selectedDataIndex, setSelectedDataIndex] = useState(Number(new Date().toISOString().slice(8,10)));
+  const [selectedDataIndex, setSelectedDataIndex] = useState(0);
   const sharedOffsetX = useSharedValue(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
