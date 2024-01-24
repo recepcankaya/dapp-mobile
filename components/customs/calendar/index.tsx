@@ -80,7 +80,7 @@ const days = Array.from({ length: 33 }, (_, index) => ({
 }));
 
 type CalendarProps = {
-  onChangeDate: (date: { year: string; month: string; day: string }) => void;
+  onChangeDate: (date: { yearIndex: number; monthIndex: number; dayIndex: number }) => void;
 };
 
 const Calendar = ({ onChangeDate }: CalendarProps) => {
@@ -138,20 +138,22 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
         <CalendarAnimationv2
           onChangeValue={(value: string) => {
             console.log("dayValue", value);
-            setCurrentDate({ ...currentDate, day: value });
-            setCurrentDateIndex({
+            const newDate = { ...currentDate, day: value };
+            const newDateIndex = {
               ...currentDateIndex,
               dayIndex: days.findIndex((d) => d.text === value),
-            });
-            console.log("currentDate", currentDate);
-            console.log("currentDateIndex", currentDateIndex);
+            };
+
+            setCurrentDate(newDate);
+            setCurrentDateIndex(newDateIndex);
+
             onChangeDate({
-              day: value,
-              month: currentDate.month,
-              year: currentDate.year,
+              yearIndex: newDateIndex.yearIndex,
+              monthIndex: newDateIndex.monthIndex,
+              dayIndex: newDateIndex.dayIndex,
             });
           }}
-          initialIndex={currentDateIndex.dayIndex}
+          initialIndex={days.findIndex((d) => d.text.toString() === new Date().toISOString().slice(8,10))}
           backToDays={backToDays}
           data={days}
         />
@@ -171,11 +173,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
               ...currentDateIndex,
               monthIndex: months.findIndex((m) => m.text === value),
             });
-            onChangeDate({
-              day: currentDate.day,
-              month: (months.findIndex((m) => m.text === value) + 1).toString(),
-              year: currentDate.year,
-            });
+            onChangeDate(currentDateIndex);
           }}
           backToDays={backToDays}
           data={months}
@@ -191,11 +189,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
               ...currentDateIndex,
               yearIndex: years.findIndex((y) => y.text === value),
             });
-            onChangeDate({
-              day: currentDate.day,
-              month: currentDate.month,
-              year: value,
-            });
+            onChangeDate(currentDateIndex);
           }}
           initialIndex={currentDateIndex.yearIndex}
           backToDays={backToDays}
@@ -208,14 +202,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
           style={styles.buttons}
         >
           <Text style={styles.buttonsText}>
-            {
-              //buradaki koşul kaldırılıp başka bir çözüm bulunacak!
-              months[
-                parseInt(currentDate.month) - 1
-                  ? parseInt(currentDate.month) - 1
-                  : 0
-              ].text
-            }
+            {currentDate.month}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

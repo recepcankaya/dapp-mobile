@@ -114,13 +114,7 @@ const AddTask = () => {
     <TokenProvider>
       <UserIdProvider>
         <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-          <Calendar
-            onChangeDate={(date: {
-              year: string;
-              month: string;
-              day: string;
-            }) => onChangeDate(date)}
-          />
+          <Calendar onChangeDate={(date) => console.log("date", date)} />
           <View style={styles.formContainer}>
             <View style={styles.attachContainer}>
               <AddMissionAttachment />

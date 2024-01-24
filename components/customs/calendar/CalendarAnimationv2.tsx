@@ -1,5 +1,12 @@
-import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+/* eslint-disable react/react-in-jsx-scope */
+import { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -77,8 +84,13 @@ const EllipticalScroll = ({
   initialIndex,
   onChangeValue,
 }: CalendarAnimationProps) => {
-  const [selectedDataIndex, setSelectedDataIndex] = useState(0);
+  const [selectedDataIndex, setSelectedDataIndex] = useState(Number(new Date().toISOString().slice(8,10)));
   const sharedOffsetX = useSharedValue(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo({ x: selectedDataIndex * segmentWidth, animated: false });
+  }, []);
 
   useEffect(() => {
     console.log("selectedDataIndex", selectedDataIndex);
@@ -111,6 +123,7 @@ const EllipticalScroll = ({
         style={styles.scrollView}
         onScrollEndDrag={backToDays}
         showsHorizontalScrollIndicator={false}
+        ref={scrollViewRef}
       >
         <View style={styles.spacer}></View>
         {data.map(renderItem)}
@@ -123,7 +136,7 @@ const EllipticalScroll = ({
           position: "absolute",
           top: 90,
           left: width / 2 - 35,
-          zIndex: -10,
+          zIndex: 1,
           borderRadius: 80,
         }}
       ></View>
