@@ -76,17 +76,15 @@ const CalendarAnimation = (props: CalendarAnimationProps) => {
         style={styles.scrollView}
         bounces={false}
         onScroll={handleScroll}
-        onScrollEndDrag={backToDays}>
+        onScrollEndDrag={backToDays}
+      >
         <View style={styles.spacer}></View>
         {data.map((item, index) => {
-          console.log("x-1");
           const animatedStyle = useAnimatedStyle(() => {
-            console.log("x-4");
             return {
               height: segmentHeight + animatedValues[index].value * 70,
             };
           });
-          console.log("x-2");
           const animatedTextStyle = useAnimatedStyle(() => {
             return {
               color:
@@ -118,7 +116,8 @@ const CalendarAnimation = (props: CalendarAnimationProps) => {
           left: width / 2 - 35,
           zIndex: -10,
           borderRadius: 80,
-        }}></View>
+        }}
+      ></View>
     </View>
   );
 };

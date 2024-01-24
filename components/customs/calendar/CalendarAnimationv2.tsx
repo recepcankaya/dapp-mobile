@@ -1,12 +1,5 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useState } from "react";
-import {
-  Dimensions,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -24,7 +17,7 @@ const segmentSpacing = 25;
 const fontSizeMin = 14;
 const fontSizeChange = 6;
 
-const scrollHeight = width * 0.3;
+const scrollHeight = width * 0.4;
 const itemHeight = (fontSizeMin + fontSizeChange) * 2;
 const translateYMax = scrollHeight - itemHeight;
 
