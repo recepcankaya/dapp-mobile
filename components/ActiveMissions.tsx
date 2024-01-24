@@ -25,6 +25,7 @@ import axios from "axios";
 import { MissionContext } from "./context/MissionContext";
 import { TokenContext } from "./context/TokenContext";
 import { UserContext } from "./context/UserContext";
+import Calendar from "./customs/calendar";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -33,9 +34,10 @@ function ActiveMissions() {
   const [missions, setMissions] = useState<any[]>([]);
 
   const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+
   const { username } = useContext(UserContext);
 
-  const [selectedDate, setSelectedDate] = useState();
 
   useEffect(() => {
     console.log("selectedDate", selectedDate);
@@ -115,15 +117,17 @@ function ActiveMissions() {
     }
   };
 
-  const onChangeDate = (date: any) => {
-    setFilteredMissions(
-      missions.filter(
-        (mission) =>
-          mission.startDate != null && mission.startDate.split(" ")[0] === date
-      )
+  const onChangeDate = (date: Date) => {
+    console.log("test", new Date());
+    console.log("new Date()", date);
+    console.log(
+      "filteredMissions",
+      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
     );
-  };
-
+    setFilteredMissions(
+      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
+    );
+      }
   const missionsRenderItem = ({ item, index }: any) => {
     return (
       <View style={styles.missionItemContainer}>
@@ -245,13 +249,16 @@ function ActiveMissions() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={{ height: 100 }}>
-        <Agenda
-          selected={selectedDate}
-          onDayPress={(day: any) => {
-            setSelectedDate(day.dateString);
-            onChangeDate(day.dateString);
-          }}
-        />
+      <Calendar
+        onChangeDate={(date) => {
+          console.log("date-active missions", date);
+          console.log("deneme",new Date().toISOString().slice(8,10))
+          const formattedDate = `${date.yearIndex+2024}-${date.monthIndex+1}-${date.dayIndex+1}`;
+          console.log(formattedDate)
+          setSelectedDate(new Date(formattedDate));
+          onChangeDate(new Date(formattedDate));
+        }}
+      />
       </View>
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
@@ -281,7 +288,7 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   missionsList: {
-    paddingTop: 20,
+    paddingTop: 40,
     paddingBottom: 50,
   },
   missionsListHeader: { height: 100, width: screenWidth - 50 },
@@ -308,10 +315,10 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
-    height: missionItemHeight,
+    minHeight: missionItemHeight,
   },
   missionsItem: {
-    height: 110,
+    minHeight: 110,
     width: screenWidth / 1.1,
     flexDirection: "row",
     alignItems: "center",
