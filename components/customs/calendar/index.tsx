@@ -143,8 +143,10 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
               ...currentDateIndex,
               dayIndex: days.findIndex((d) => d.text === value),
             };
+
             setCurrentDate(newDate);
             setCurrentDateIndex(newDateIndex);
+
             onChangeDate({
               yearIndex: newDateIndex.yearIndex,
               monthIndex: newDateIndex.monthIndex,
