@@ -20,7 +20,8 @@ const CalendarBackground = () => {
       height={180}
       viewBox="0 0 430 180"
       fill="none"
-      style={{ position: "absolute", top: -40 }}>
+      style={{ position: "absolute", top: -40 }}
+    >
       <Defs>
         <LinearGradient
           id="paint0_linear_53_7"
@@ -28,7 +29,8 @@ const CalendarBackground = () => {
           y1="179.358"
           x2="214.36"
           y2="-191.546"
-          gradientUnits="userSpaceOnUse">
+          gradientUnits="userSpaceOnUse"
+        >
           <Stop stopColor="#B80DCA" />
           <Stop offset="1" stopColor="#4035CB" />
         </LinearGradient>
@@ -90,7 +92,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     day: string;
   }>({
     year: new Date().getFullYear().toString(),
-    month: months[new Date().getMonth()].text,
+    month: (months[new Date().getMonth()].index + 1).toString(),
     day: new Date().getDate().toString(),
   });
 
@@ -197,14 +199,16 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={() => changeDateTab("month")}
-          style={styles.buttons}>
+          style={styles.buttons}
+        >
           <Text style={styles.buttonsText}>
             {currentDate.month}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => changeDateTab("year")}
-          style={styles.buttons}>
+          style={styles.buttons}
+        >
           <Text style={styles.buttonsText}>{currentDate.year}</Text>
         </TouchableOpacity>
       </View>

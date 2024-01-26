@@ -26,6 +26,8 @@ import * as Font from "expo-font";
 import { UserContext } from "./context/UserContext";
 import { UserIdContext, UserIdProvider } from "./context/UserIdContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Calendar from "./customs/calendar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
@@ -52,7 +54,8 @@ const api = axios.create({
 
 const AddTask = () => {
   const route = useRoute();
-  const { categoryType }: any = route.params;
+  // const { categoryType }: any = route.params;
+  const categoryType: any = "Art";
   console.log("category", categoryType);
   const { username } = useContext(UserContext) || {}; // Add null check and default empty object
   const { user_id } = useContext(UserIdContext);
@@ -61,12 +64,16 @@ const AddTask = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
 
+  const [taskDate, setTastDate] = useState<string>(
+    new Date().toISOString().slice(0, -1)
+  );
+
   const createMission = () => {
     const url = "/mission/create/";
     const data = {
       user: user_id,
       title: title,
-      local_time: new Date().toISOString().slice(0, -1),
+      local_time: taskDate,
       category: categoryType,
     };
 
@@ -89,14 +96,25 @@ const AddTask = () => {
       .catch((error) => {
         console.log(error.response);
         setErrorMessage(error.message);
-        console.log(new Date().toISOString().slice(0, -1))
+        console.log(new Date().toISOString().slice(0, -1));
       });
+  };
+
+  const onChangeDate = (date: { year: string; month: string; day: string }) => {
+    const year = parseInt(date.year);
+    const month = parseInt(date.month) - 1;
+    const day = parseInt(date.day) + 1;
+    const newDate = new Date(year, month, day);
+    console.log("onChangeDate", date);
+    console.log("New Date", newDate.toISOString().slice(0, -1));
+    setTastDate(newDate.toISOString().slice(0, -1));
   };
 
   return (
     <TokenProvider>
       <UserIdProvider>
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+          <Calendar onChangeDate={(date) => console.log("date", date)} />
           <View style={styles.formContainer}>
             <View style={styles.attachContainer}>
               <AddMissionAttachment />
@@ -121,7 +139,7 @@ const AddTask = () => {
               </LinearGradient>
             </View>
           </View>
-          <View style={{flex:1, justifyContent: 'flex-end' }}>
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={createMission}>
                 <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
@@ -134,7 +152,13 @@ const AddTask = () => {
                     strokeWidth="7"
                   />
                   <Defs>
-                    <SvgLinearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                    <SvgLinearGradient
+                      id="gradient"
+                      x1="0"
+                      y1="0"
+                      x2="1"
+                      y2="0"
+                    >
                       <Stop offset="0%" stopColor="#B80DCA" />
                       <Stop offset="100%" stopColor="#4035CB" />
                     </SvgLinearGradient>
@@ -155,7 +179,7 @@ const AddTask = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </UserIdProvider>
     </TokenProvider>
   );
@@ -164,7 +188,7 @@ const AddTask = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    // paddingTop: StatusBar.currentHeight,
     backgroundColor: "#050505",
   },
   attachContainer: {
@@ -173,7 +197,7 @@ const styles = StyleSheet.create({
     top: -20,
   },
   formContainer: {
-    marginTop: 150,
+    marginTop: 10,
   },
   circleContainer: {
     flexDirection: "row",
@@ -195,14 +219,16 @@ const styles = StyleSheet.create({
   formGradientBorder: {
     padding: 3,
     borderRadius: 20,
-    height: 427,
+    height: 327, //height of the form
     width: 364,
+    zIndex: 0,
   },
   form: {
-    height: 420,
+    height: 320, //height of the form
     width: 357,
     backgroundColor: "#1E1E1E",
     borderRadius: 20,
+    zIndex: 0,
   },
   textHeading: {
     color: "#EFEEEE",
@@ -221,11 +247,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   buttonContainer: {
-    position:"absolute",
-    right: 0,  //fixed to right according to screen size
+    position: "absolute",
+    right: 0, //fixed to right according to screen size
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1,
   },
 });
 
