@@ -20,8 +20,7 @@ const CalendarBackground = () => {
       height={180}
       viewBox="0 0 430 180"
       fill="none"
-      style={{ position: "absolute", top: -40 }}
-    >
+      style={{ position: "absolute", top: -40 }}>
       <Defs>
         <LinearGradient
           id="paint0_linear_53_7"
@@ -29,8 +28,7 @@ const CalendarBackground = () => {
           y1="179.358"
           x2="214.36"
           y2="-191.546"
-          gradientUnits="userSpaceOnUse"
-        >
+          gradientUnits="userSpaceOnUse">
           <Stop stopColor="#B80DCA" />
           <Stop offset="1" stopColor="#4035CB" />
         </LinearGradient>
@@ -80,7 +78,11 @@ const days = Array.from({ length: 33 }, (_, index) => ({
 }));
 
 type CalendarProps = {
-  onChangeDate: (date: { yearIndex: number; monthIndex: number; dayIndex: number }) => void;
+  onChangeDate: (date: {
+    yearIndex: number;
+    monthIndex: number;
+    dayIndex: number;
+  }) => void;
 };
 
 const Calendar = ({ onChangeDate }: CalendarProps) => {
@@ -92,7 +94,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     day: string;
   }>({
     year: new Date().getFullYear().toString(),
-    month: (months[new Date().getMonth()].index + 1).toString(),
+    month: months[new Date().getMonth()].text,
     day: new Date().getDate().toString(),
   });
 
@@ -106,8 +108,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
     monthIndex: months.findIndex((m) => m.text === currentDate.month),
     dayIndex: days.findIndex((d) => d.text.toString() === currentDate.day),
   });
-
-  //add onChangeDate
 
   // There are three tabs in the calendar: "day", "month", and "year".
   const [dateTab, setDateTab] = useState<"day" | "month" | "year">("day");
@@ -153,7 +153,9 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
               dayIndex: newDateIndex.dayIndex,
             });
           }}
-          initialIndex={days.findIndex((d) => d.text.toString() === new Date().toISOString().slice(8,10))}
+          initialIndex={days.findIndex(
+            (d) => d.text.toString() === new Date().toISOString().slice(8, 10)
+          )}
           backToDays={backToDays}
           data={days}
         />
@@ -167,7 +169,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
             );
             setCurrentDate({
               ...currentDate,
-              month: (months.findIndex((m) => m.text === value) + 1).toString(),
+              month: value,
             });
             setCurrentDateIndex({
               ...currentDateIndex,
@@ -199,16 +201,12 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={() => changeDateTab("month")}
-          style={styles.buttons}
-        >
-          <Text style={styles.buttonsText}>
-            {currentDate.month}
-          </Text>
+          style={styles.buttons}>
+          <Text style={styles.buttonsText}>{currentDate.month}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => changeDateTab("year")}
-          style={styles.buttons}
-        >
+          style={styles.buttons}>
           <Text style={styles.buttonsText}>{currentDate.year}</Text>
         </TouchableOpacity>
       </View>

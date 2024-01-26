@@ -5,6 +5,7 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import Animated, {
@@ -89,7 +90,10 @@ const EllipticalScroll = ({
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    scrollViewRef.current?.scrollTo({ x: selectedDataIndex * segmentWidth, animated: false });
+    scrollViewRef.current?.scrollTo({
+      x: selectedDataIndex * segmentWidth,
+      animated: false,
+    });
   }, []);
 
   useEffect(() => {
@@ -123,8 +127,7 @@ const EllipticalScroll = ({
         style={styles.scrollView}
         onScrollEndDrag={backToDays}
         showsHorizontalScrollIndicator={false}
-        ref={scrollViewRef}
-      >
+        ref={scrollViewRef}>
         <View style={styles.spacer}></View>
         {data.map(renderItem)}
       </ScrollView>
@@ -136,10 +139,8 @@ const EllipticalScroll = ({
           position: "absolute",
           top: 90,
           left: width / 2 - 35,
-          zIndex: 1,
           borderRadius: 80,
-        }}
-      ></View>
+        }}></View>
     </View>
   );
 };
@@ -157,6 +158,7 @@ const styles = StyleSheet.create({
   scrollView: {
     width,
     height: scrollHeight,
+    zIndex: 10,
   },
   scrollContent: {},
   spacer: {
