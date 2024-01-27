@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -26,6 +27,9 @@ import { MissionContext } from "./context/MissionContext";
 import { TokenContext } from "./context/TokenContext";
 import { UserContext } from "./context/UserContext";
 import Calendar from "./customs/calendar";
+import ConfettiCannon from "react-native-confetti-cannon";
+import { Text } from "@thirdweb-dev/react-native";
+import Confetti from "./customs/confetti";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -38,6 +42,8 @@ function ActiveMissions() {
 
   const { username } = useContext(UserContext);
 
+  const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
+  const confettiCannonRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
     console.log("selectedDate", selectedDate);
@@ -97,6 +103,9 @@ function ActiveMissions() {
         console.log(response.data);
         Alert.alert(response.data.message);
         getMissions();
+        //confettiyi patlat
+        setConfettiVisible(true);
+        confettiCannonRef.current?.start();
       }
     } catch (error) {
       //console.error(error);
@@ -122,12 +131,20 @@ function ActiveMissions() {
     console.log("new Date()", date);
     console.log(
       "filteredMissions",
-      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
+      missions.filter(
+        (mission) =>
+          mission.startDate != null &&
+          mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)
+      )
     );
     setFilteredMissions(
-      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
+      missions.filter(
+        (mission) =>
+          mission.startDate != null &&
+          mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)
+      )
     );
-      }
+  };
   const missionsRenderItem = ({ item, index }: any) => {
     return (
       <View style={styles.missionItemContainer}>
@@ -136,7 +153,8 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}>
+          style={{ position: "absolute" }}
+        >
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -150,7 +168,8 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse">
+              gradientUnits="userSpaceOnUse"
+            >
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -159,7 +178,8 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}>
+            onPress={() => completeMission(item.id)}
+          >
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -195,7 +215,8 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -248,18 +269,39 @@ function ActiveMissions() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      {confettiVisible && (
+        // <ConfettiCannon
+        //   count={200}
+        //   origin={{ x: 0, y: 0 }}
+        //   onAnimationStart={() => setConfettiVisible(true)}
+        //   onAnimationEnd={() => setConfettiVisible(false)}
+        // />
+        <Confetti
+          ref={confettiCannonRef}
+          onAnimationEnd={() => setConfettiVisible(false)}
+        />
+      )}
       <View style={{ height: 100 }}>
-      <Calendar
-        onChangeDate={(date) => {
-          console.log("date-active missions", date);
-          console.log("deneme",new Date().toISOString().slice(8,10))
-          const formattedDate = `${date.yearIndex+2024}-${date.monthIndex+1}-${date.dayIndex+1}`;
-          console.log(formattedDate)
-          setSelectedDate(new Date(formattedDate));
-          onChangeDate(new Date(formattedDate));
+        <Calendar
+          onChangeDate={(date) => {
+            console.log("date-active missions", date);
+            console.log("deneme", new Date().toISOString().slice(8, 10));
+            const formattedDate = `${date.yearIndex + 2024}-${
+              date.monthIndex + 1
+            }-${date.dayIndex + 1}`;
+            console.log(formattedDate);
+            setSelectedDate(new Date(formattedDate));
+            onChangeDate(new Date(formattedDate));
+          }}
+        />
+      </View>
+      <Button
+        title="test"
+        onPress={() => {
+          setConfettiVisible(true);
+          confettiCannonRef.current?.start();
         }}
       />
-      </View>
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
           data={filteredMissions}
