@@ -22,3 +22,6 @@ web-build/
 .env.local
 
 /.yalc
+
+upload_certificate.pem
+/android/app/app-relesea.aab
