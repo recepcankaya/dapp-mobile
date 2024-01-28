@@ -124,8 +124,7 @@ const AddTask = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 colors={["#B80DCA", "#4035CB"]}
-                style={styles.formGradientBorder}
-              >
+                style={styles.formGradientBorder}>
                 <View style={styles.form}>
                   <Text style={styles.textHeading}>Add Mission</Text>
                   <TextInput
@@ -157,8 +156,7 @@ const AddTask = () => {
                       x1="0"
                       y1="0"
                       x2="1"
-                      y2="0"
-                    >
+                      y2="0">
                       <Stop offset="0%" stopColor="#B80DCA" />
                       <Stop offset="100%" stopColor="#4035CB" />
                     </SvgLinearGradient>
