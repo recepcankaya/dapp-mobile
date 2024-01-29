@@ -122,12 +122,12 @@ function ActiveMissions() {
     console.log("new Date()", date);
     console.log(
       "filteredMissions",
-      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
+      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)))
     );
     setFilteredMissions(
-      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1,10) == date.toISOString().slice(1,10)))
+      missions.filter((mission) => mission.startDate != null && (mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)))
     );
-      }
+  }
   const missionsRenderItem = ({ item, index }: any) => {
     return (
       <View style={styles.missionItemContainer}>
@@ -180,7 +180,7 @@ function ActiveMissions() {
                       ry={19}
                       fill="#D9D9D9"
                       fillOpacity={0.7}
-                      // shapeRendering="crispEdges"
+                    // shapeRendering="crispEdges"
                     />
                   </G>
                   <Path
@@ -224,6 +224,10 @@ function ActiveMissions() {
             <CustomText style={styles.missionText}>{item.title}</CustomText>
             <View style={{ flex: 2.5 }}></View>
           </View>
+          <View style={styles.missionNumber}>
+            <CustomText style={styles.missionNumberText}>{item.numberOfDays}</CustomText>
+            <CustomText style={styles.missionNumberText}>{21}</CustomText>
+          </View>
           <TouchableOpacity style={styles.missionsItemOptions}>
             <View style={styles.missionsItemOption}></View>
             <View style={[styles.missionsItemOption]}></View>
@@ -249,16 +253,16 @@ function ActiveMissions() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={{ height: 100 }}>
-      <Calendar
-        onChangeDate={(date) => {
-          console.log("date-active missions", date);
-          console.log("deneme",new Date().toISOString().slice(8,10))
-          const formattedDate = `${date.yearIndex+2024}-${date.monthIndex+1}-${date.dayIndex+1}`;
-          console.log(formattedDate)
-          setSelectedDate(new Date(formattedDate));
-          onChangeDate(new Date(formattedDate));
-        }}
-      />
+        <Calendar
+          onChangeDate={(date) => {
+            console.log("date-active missions", date);
+            console.log("deneme", new Date().toISOString().slice(8, 10))
+            const formattedDate = `${date.yearIndex + 2024}-${date.monthIndex + 1}-${date.dayIndex + 1}`;
+            console.log(formattedDate)
+            setSelectedDate(new Date(formattedDate));
+            onChangeDate(new Date(formattedDate));
+          }}
+        />
       </View>
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
@@ -358,6 +362,20 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 10,
   },
+  missionNumber: {
+    height: 30,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    position: "absolute",
+    top: 12,
+    left: 0,
+  },
+  missionNumberText: {
+    color: "#4035CB",
+    fontSize: 15,
+  },
+
 });
 
 export default ActiveMissions;
