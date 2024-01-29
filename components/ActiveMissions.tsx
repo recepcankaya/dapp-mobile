@@ -139,6 +139,8 @@ function ActiveMissions() {
       )
     );
   };
+  }
+
   const missionsRenderItem = ({ item, index }: any) => {
     return (
       <View style={styles.missionItemContainer}>
@@ -194,7 +196,7 @@ function ActiveMissions() {
                       ry={19}
                       fill="#D9D9D9"
                       fillOpacity={0.7}
-                      // shapeRendering="crispEdges"
+                    // shapeRendering="crispEdges"
                     />
                   </G>
                   <Path
@@ -239,6 +241,10 @@ function ActiveMissions() {
             <CustomText style={styles.missionText}>{item.title}</CustomText>
             <View style={{ flex: 2.5 }}></View>
           </View>
+          <View style={styles.missionNumber}>
+            <CustomText style={styles.missionNumberText}>{item.numberOfDays}</CustomText>
+            <CustomText style={styles.missionNumberText}>{21}</CustomText>
+          </View>
           <TouchableOpacity style={styles.missionsItemOptions}>
             <View style={styles.missionsItemOption}></View>
             <View style={[styles.missionsItemOption]}></View>
@@ -278,6 +284,7 @@ function ActiveMissions() {
               date.monthIndex + 1
             }-${date.dayIndex + 1}`;
             console.log(formattedDate);
+
             setSelectedDate(new Date(formattedDate));
             onChangeDate(new Date(formattedDate));
           }}
@@ -381,6 +388,20 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 10,
   },
+  missionNumber: {
+    height: 30,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    position: "absolute",
+    top: 12,
+    left: 0,
+  },
+  missionNumberText: {
+    color: "#4035CB",
+    fontSize: 15,
+  },
+
 });
 
 export default ActiveMissions;
