@@ -7,7 +7,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -20,15 +19,12 @@ import Svg, {
   Ellipse,
   G,
 } from "react-native-svg";
-import { Agenda } from "react-native-calendars";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
-import { MissionContext } from "./context/MissionContext";
 import { TokenContext } from "./context/TokenContext";
 import { UserContext } from "./context/UserContext";
 import Calendar from "./customs/calendar";
 import ConfettiCannon from "react-native-confetti-cannon";
-import { Text } from "@thirdweb-dev/react-native";
 import Confetti from "./customs/confetti";
 
 const { width } = Dimensions.get("screen");
@@ -103,7 +99,6 @@ function ActiveMissions() {
         console.log(response.data);
         Alert.alert(response.data.message);
         getMissions();
-        //confettiyi patlat
         setConfettiVisible(true);
         confettiCannonRef.current?.start();
       }
@@ -125,7 +120,6 @@ function ActiveMissions() {
       }
     }
   };
-
   const onChangeDate = (date: Date) => {
     console.log("test", new Date());
     console.log("new Date()", date);
@@ -270,12 +264,6 @@ function ActiveMissions() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       {confettiVisible && (
-        // <ConfettiCannon
-        //   count={200}
-        //   origin={{ x: 0, y: 0 }}
-        //   onAnimationStart={() => setConfettiVisible(true)}
-        //   onAnimationEnd={() => setConfettiVisible(false)}
-        // />
         <Confetti
           ref={confettiCannonRef}
           onAnimationEnd={() => setConfettiVisible(false)}
@@ -295,13 +283,6 @@ function ActiveMissions() {
           }}
         />
       </View>
-      <Button
-        title="test"
-        onPress={() => {
-          setConfettiVisible(true);
-          confettiCannonRef.current?.start();
-        }}
-      />
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
           data={filteredMissions}
