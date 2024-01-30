@@ -26,6 +26,7 @@ import { ThirdwebProvider } from "@thirdweb-dev/react-native";
 import axios from "axios";
 import { TokenContext } from "./context/TokenContext";
 import CustomTextInput from "./customs/CustomTextInput";
+import CustomInputReadOnly from "./customs/CustomInputReadOnly";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -224,6 +225,7 @@ export default function NewProfile() {
         <View
           style={{
             marginTop: 30,
+            marginBottom: 40,
             alignItems: "center",
             position: "relative",
           }}>
@@ -238,45 +240,13 @@ export default function NewProfile() {
             <UserIcon />
           </View>
         </View>
-        <View style={{ marginBottom: 30, alignItems: "center" }}>
-          <Svg width="302" height="60" viewBox="0 0 302 60" fill="none">
-            <Rect
-              x="1.5"
-              y="1.5"
-              width="299"
-              height="57"
-              rx="18.5"
-              fill="#a0a0a0"
-              stroke="url(#paint0_linear_114_4)"
-              strokeWidth="3"
-            />
-            <Defs>
-              <LinearGradient
-                id="paint0_linear_114_4"
-                x1="173.5"
-                y1="0"
-                x2="173.5"
-                y2="57"
-                gradientUnits="userSpaceOnUse">
-                <Stop stopColor="#B80DCA" />
-                <Stop offset="1" stopColor="#4035CB" />
-              </LinearGradient>
-            </Defs>
-          </Svg>
-          <Text
-            style={{
-              position: "absolute",
-              top: 15,
-              left: 20,
-              width: 257,
-              color: "#000",
-              fontFamily: "Rosarivo",
-              fontSize: 22,
-              fontWeight: "400",
-              letterSpacing: 0.44,
-            }}>
-            {email}
-          </Text>
+        <View
+          style={{
+            marginBottom: 40,
+            alignItems: "center",
+            position: "relative",
+          }}>
+          <CustomInputReadOnly placeholder={email} />
           <View style={{ position: "absolute", top: 7, right: 10 }}>
             <EmailIcon />
           </View>
