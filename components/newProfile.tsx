@@ -256,8 +256,9 @@ export default function NewProfile() {
             position: "relative",
             justifyContent: "center",
             alignItems: "center",
+            width: 314,
           }}>
-          <CustomConnectWallet />
+          <CustomConnectWallet style={{ width: "100%" }} />
         </View>
         <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
           <View
