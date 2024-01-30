@@ -25,7 +25,7 @@ import CustomConnectWallet from "./customs/CustomConnectWallet";
 import { ThirdwebProvider } from "@thirdweb-dev/react-native";
 import axios from "axios";
 import { TokenContext } from "./context/TokenContext";
-
+import CustomTextInput from "./customs/CustomTextInput";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -99,22 +99,26 @@ const UserIcon = () => (
 // SVG component for the email icon
 const EmailIcon = () => (
   <Svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-    <G transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)" fill="#000000">
-        <Path d="M36 384 c-9 -8 -16 -28 -16 -44 0 -24 13 -36 101 -94 56 -36 109 -66
+    <G
+      transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
+      fill="#000000">
+      <Path
+        d="M36 384 c-9 -8 -16 -28 -16 -44 0 -24 13 -36 101 -94 56 -36 109 -66
         119 -66 10 0 59 27 109 60 l92 60 -3 -97 -3 -98 -195 0 -195 0 -3 83 c-4 105
         -22 108 -22 3 0 -115 -8 -111 220 -111 158 0 191 3 204 16 23 23 23 265 0 288
         -23 24 -385 24 -408 0z m402 -34 c2 -22 -11 -34 -93 -88 -52 -34 -99 -62 -105
         -62 -6 0 -53 28 -105 63 -69 45 -95 68 -95 83 0 11 3 24 7 28 4 3 93 5 197 4
-        l191 -3 3 -25z"/>
+        l191 -3 3 -25z"
+      />
     </G>
-</Svg>
+  </Svg>
 );
 
 export default function NewProfile() {
   const [tempUsername, setTempUsername] = useState("");
+  const [email, setEmail] = useState("");
   const { username, setUsername } = useContext(UserContext);
   const { tokens } = useContext(TokenContext);
-  const [ email, setEmail ] = useState("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -171,152 +175,133 @@ export default function NewProfile() {
   };
 
   return (
-    <ThirdwebProvider theme="light">
-      <View style={styles.container}>
-        <View style={styles.backIcon}>
-          <BackIcon />
-        </View>
-        <View style={styles.profilePicture}>
-          <ProfilePicture />
-        </View>
-        <Text style={styles.profileText}>Profile</Text>
-        <Svg style={styles.svg} fill="none">
-          {/* top left rectangle */}
-          <Rect
-            x={width * 0.25}
-            y={height * 0.48}
-            width={rectWidth}
-            height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${
-              height * 0.1 + rectHeight / 2
-            })`}
-            fill="url(#paint0_linear_113_6)"
-            stroke="url(#paint1_linear_113_6)"
-            strokeWidth="3"
+    <View style={styles.container}>
+      <View style={styles.profilePicture}>
+        <ProfilePicture />
+      </View>
+      <Text style={styles.profileText}>Profile</Text>
+      <Svg style={styles.svg} fill="none">
+        {/* top left rectangle */}
+        <Rect
+          x={width * 0.25}
+          y={height * 0.48}
+          width={rectWidth}
+          height={rectHeight}
+          transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${
+            height * 0.1 + rectHeight / 2
+          })`}
+          fill="url(#paint0_linear_113_6)"
+          stroke="url(#paint1_linear_113_6)"
+          strokeWidth="3"
+        />
+
+        <Defs>
+          {/* top left rectangle gradients */}
+          <LinearGradient
+            id="paint0_linear_113_6"
+            x1="597.135"
+            y1="0.328125"
+            x2="597.135"
+            y2="238.271"
+            gradientUnits="userSpaceOnUse">
+            <Stop stopColor="#D9D9D9" stopOpacity="0.45" />
+            <Stop offset="1" stopColor="#D9D9D9" stopOpacity="0.15" />
+          </LinearGradient>
+          <LinearGradient
+            id="paint1_linear_113_6"
+            x1="597.135"
+            y1="0.328125"
+            x2="597.135"
+            y2="238.271"
+            gradientUnits="userSpaceOnUse">
+            <Stop stopColor="#B80DCA" />
+            <Stop offset="0.0001" stopColor="#4035CB" />
+          </LinearGradient>
+        </Defs>
+      </Svg>
+      {/* SVG component for inputs */}
+      <View style={styles.rectangles}>
+        <View
+          style={{
+            marginTop: 30,
+            alignItems: "center",
+            position: "relative",
+          }}>
+          <CustomTextInput
+            secureTextEntry={false}
+            placeholder={username}
+            value={tempUsername}
+            onChangeText={(text) => setTempUsername(text)}
+            inputMode="text"
           />
-          {/* bottom right rectangle */}
-          <Rect
-            x={width * 0.75 - rectWidth}
-            y={height * 0.52 - rectHeight}
-            width={rectWidth}
-            height={rectHeight}
-            transform={`rotate(151.109 ${width * 0.9 - rectWidth / 2} ${
-              height * 0.9 - rectHeight / 2
-            })`}
-            fill="url(#paint0_linear_113_5)"
-            stroke="url(#paint1_linear_113_5)"
-            strokeWidth="2"
-          />
-          <Defs>
-            {/* top left rectangle gradients */}
-            <LinearGradient
-              id="paint0_linear_113_6"
-              x1="597.135"
-              y1="0.328125"
-              x2="597.135"
-              y2="238.271"
-              gradientUnits="userSpaceOnUse">
-              <Stop stopColor="#D9D9D9" stopOpacity="0.45" />
-              <Stop offset="1" stopColor="#D9D9D9" stopOpacity="0.15" />
-            </LinearGradient>
-            <LinearGradient
-              id="paint1_linear_113_6"
-              x1="597.135"
-              y1="0.328125"
-              x2="597.135"
-              y2="238.271"
-              gradientUnits="userSpaceOnUse">
-              <Stop stopColor="#B80DCA" />
-              <Stop offset="0.0001" stopColor="#4035CB" />
-            </LinearGradient>
-            {/* bottom right rectangle gradients */}
-            <LinearGradient
-              id="paint0_linear_113_5"
-              x1="217.069"
-              y1="238.238"
-              x2="217.069"
-              y2="476.181"
-              gradientUnits="userSpaceOnUse">
-              <Stop stopColor="#D9D9D9" stopOpacity="0.15" />
-              <Stop offset="1" stopColor="#D9D9D9" stopOpacity="0.65" />
-            </LinearGradient>
-            <LinearGradient
-              id="paint1_linear_113_5"
-              x1="217.069"
-              y1="238.238"
-              x2="217.069"
-              y2="476.181"
-              gradientUnits="userSpaceOnUse">
-              <Stop stopColor="#B80DCA" />
-              <Stop offset="1" stopColor="#4035CB" />
-            </LinearGradient>
-          </Defs>
-        </Svg>
-        {/* SVG component for inputs */}
-        <View style={styles.rectangles}>
-          <View
-            style={{ marginBottom: 15, marginTop: 30, alignItems: "center" }}>
-            <Svg width="347" height="71" viewBox="0 0 347 71" fill="none">
-              <Rect
-                x="1.5"
-                y="1.5"
-                width="344"
-                height="68"
-                rx="18.5"
-                fill="#D9D9D9"
-                stroke="url(#paint0_linear_114_4)"
-                strokeWidth="3"
-              />
-              <Defs>
-                <LinearGradient
-                  id="paint0_linear_114_4"
-                  x1="173.5"
-                  y1="0"
-                  x2="173.5"
-                  y2="71"
-                  gradientUnits="userSpaceOnUse">
-                  <Stop stopColor="#B80DCA" />
-                  <Stop offset="1" stopColor="#4035CB" />
-                </LinearGradient>
-              </Defs>
-            </Svg>
-            <Text
-              style={{
-                position: "absolute",
-                top: 15,
-                left: 20,
-                width: 144,
-                height: 35,
-                color: "#000",
-                fontFamily: "Rosarivo",
-                fontSize: 22,
-                fontWeight: "400",
-                letterSpacing: 0.44,
-              }}></Text>
-            <TextInput
-              style={[
-                styles.inputText,
-                tempUsername
-                  ? { fontStyle: "normal" }
-                  : { fontStyle: "italic" },
-              ]}
-              placeholder={username}
-              placeholderTextColor="#0C0C0C"
-              value={tempUsername}
-              onChangeText={(text) => setTempUsername(text)}
-              autoCapitalize="none"
-            />
-            <View style={{ position: "absolute", top: 15, right: 10 }}>
-              <UserIcon />
-            </View>
+          <View style={{ position: "absolute", top: 15, right: 10 }}>
+            <UserIcon />
           </View>
-          <View style={{ marginBottom: 15, alignItems: "center" }}>
-            <Svg width="347" height="71" viewBox="0 0 347 71" fill="none">
+        </View>
+        <View style={{ marginBottom: 30, alignItems: "center" }}>
+          <Svg width="302" height="60" viewBox="0 0 302 60" fill="none">
+            <Rect
+              x="1.5"
+              y="1.5"
+              width="299"
+              height="57"
+              rx="18.5"
+              fill="#a0a0a0"
+              stroke="url(#paint0_linear_114_4)"
+              strokeWidth="3"
+            />
+            <Defs>
+              <LinearGradient
+                id="paint0_linear_114_4"
+                x1="173.5"
+                y1="0"
+                x2="173.5"
+                y2="57"
+                gradientUnits="userSpaceOnUse">
+                <Stop stopColor="#B80DCA" />
+                <Stop offset="1" stopColor="#4035CB" />
+              </LinearGradient>
+            </Defs>
+          </Svg>
+          <Text
+            style={{
+              position: "absolute",
+              top: 15,
+              left: 20,
+              width: 257,
+              color: "#000",
+              fontFamily: "Rosarivo",
+              fontSize: 22,
+              fontWeight: "400",
+              letterSpacing: 0.44,
+            }}>
+            {email}
+          </Text>
+          <View style={{ position: "absolute", top: 7, right: 10 }}>
+            <EmailIcon />
+          </View>
+        </View>
+        <View
+          style={{
+            position: "relative",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <CustomConnectWallet />
+        </View>
+        <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
+          <View
+            style={{
+              alignItems: "center",
+              marginTop: 100,
+              left: width * 0.17 - 2,
+            }}>
+            <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
                 y="1.5"
-                width="344"
-                height="68"
+                width="204"
+                height="38"
                 rx="18.5"
                 fill="#D9D9D9"
                 stroke="url(#paint0_linear_114_4)"
@@ -338,80 +323,21 @@ export default function NewProfile() {
             <Text
               style={{
                 position: "absolute",
-                top: 15,
-                left: 20,
+                top: 4,
+                left: 64,
                 width: 257,
                 color: "#000",
                 fontFamily: "Rosarivo",
-                fontSize: 22,
+                fontSize: 18,
                 fontWeight: "400",
                 letterSpacing: 0.44,
               }}>
-              {email}
+              Update
             </Text>
-            <View style={{ position: "absolute", top: 7, right: 10 }}>
-              <EmailIcon />
-            </View>
           </View>
-          <View
-            style={{
-              marginBottom: 15,
-              position: "relative",
-              justifyContent: "center",
-              alignItems: "center",
-            }}>
-            <CustomConnectWallet />
-          </View>
-          <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
-            <View
-              style={{
-                alignItems: "center",
-                marginBottom: 15,
-                left: width * 0.17-2,
-              }}>
-              <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
-                <Rect
-                  x="1.5"
-                  y="1.5"
-                  width="204"
-                  height="38"
-                  rx="18.5"
-                  fill="#D9D9D9"
-                  stroke="url(#paint0_linear_114_4)"
-                  strokeWidth="3"
-                />
-                <Defs>
-                  <LinearGradient
-                    id="paint0_linear_114_4"
-                    x1="173.5"
-                    y1="0"
-                    x2="173.5"
-                    y2="71"
-                    gradientUnits="userSpaceOnUse">
-                    <Stop stopColor="#B80DCA" />
-                    <Stop offset="1" stopColor="#4035CB" />
-                  </LinearGradient>
-                </Defs>
-              </Svg>
-              <Text
-                style={{
-                  position: "absolute",
-                  top: 4,
-                  left: 64,
-                  width: 257,
-                  color: "#000",
-                  fontFamily: "Rosarivo",
-                  fontSize: 18,
-                  fontWeight: "400",
-                  letterSpacing: 0.44,
-                }}>
-                Update
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </View>
-    </ThirdwebProvider>
+    </View>
   );
 }
 
@@ -447,8 +373,8 @@ const styles = StyleSheet.create({
   rectangles: {
     position: "absolute",
     top: 195 + 40, // 40px below the "Profile" text
-    left: width/6, // Aligned -15 px with the "Profile" text
-    width: "70%",
+    left: width / 6, // Aligned -15 px with the "Profile" text
+    width: "60%",
     justifyContent: "center",
     alignItems: "center",
   },

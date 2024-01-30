@@ -30,7 +30,7 @@ const CustomTextInput = ({
       colors={["#B80DCA", "#4035CB"]}
       style={{
         marginBottom: 30,
-        height: 63,
+        height: 60,
         borderRadius: 10,
         padding: 3,
       }}>
@@ -46,12 +46,15 @@ const CustomTextInput = ({
           style={{
             color: "#D9D9D9",
             fontFamily: "Inter",
-            fontSize: 20,
+            fontSize: 24,
             fontStyle: "italic",
             fontWeight: "600",
           }}></Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            value ? { fontStyle: "normal" } : { fontStyle: "italic" },
+          ]}
           placeholder={placeholder}
           placeholderTextColor="#0C0C0C"
           value={value}

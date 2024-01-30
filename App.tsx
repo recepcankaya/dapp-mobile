@@ -195,7 +195,8 @@ function App() {
           }),
           smartWalletConfig
         ),
-      ]}>
+      ]}
+      autoConnect={true}>
       <PasswordTokenProvider>
         <TokenProvider>
           <UserProvider>
