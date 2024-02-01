@@ -26,7 +26,7 @@ import {
   localWallet,
 } from "@thirdweb-dev/react-native";
 import ActiveMissions from "./components/ActiveMissions";
-import NewProfile from "./components/newProfile";
+import Profile from "./components/Profile";
 import Categories from "./components/Categories";
 import {
   ActiveMissionsNegativeIcon,
@@ -166,7 +166,7 @@ function ProfileTabNavigator() {
       })}>
       <Tab.Screen name="Categories" component={Categories} />
       <Tab.Screen name="Active Missions" component={ActiveMissions} />
-      <Tab.Screen name="Profile" component={NewProfile} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
@@ -195,7 +195,8 @@ function App() {
           }),
           smartWalletConfig
         ),
-      ]}>
+      ]}
+      autoConnect={true}>
       <PasswordTokenProvider>
         <TokenProvider>
           <UserProvider>
@@ -249,8 +250,8 @@ function App() {
                       options={{ headerShown: false }} // Hide navigation bar
                     />
                     <Stack.Screen
-                      name="NewProfile"
-                      component={NewProfile}
+                      name="Profile"
+                      component={Profile}
                       options={{ headerShown: false }} // Hide navigation bar
                     />
                   </Stack.Navigator>

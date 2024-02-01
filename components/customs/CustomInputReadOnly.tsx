@@ -2,27 +2,10 @@ import { StyleSheet, TextInput, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 type CustomTextInputProps = {
-  secureTextEntry: boolean;
   placeholder: string;
-  value: string;
-  onChangeText: React.Dispatch<React.SetStateAction<string>>;
-  inputMode:
-    | "text"
-    | "decimal"
-    | "numeric"
-    | "tel"
-    | "search"
-    | "email"
-    | "url";
 };
 
-const CustomTextInput = ({
-  secureTextEntry,
-  placeholder,
-  value,
-  onChangeText,
-  inputMode,
-}: CustomTextInputProps) => {
+const CustomInputReadOnly = ({ placeholder }: CustomTextInputProps) => {
   return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
@@ -31,17 +14,10 @@ const CustomTextInput = ({
       style={styles.linearGradient}>
       <View style={styles.inputContainer}>
         <TextInput
-          style={[
-            styles.input,
-            value ? { fontStyle: "normal" } : { fontStyle: "italic" },
-          ]}
+          style={styles.input}
           placeholder={placeholder}
           placeholderTextColor="#0C0C0C"
-          value={value}
-          onChangeText={onChangeText}
-          autoCapitalize="none"
-          secureTextEntry={secureTextEntry}
-          inputMode={inputMode}
+          editable={false}
         />
       </View>
     </LinearGradient>
@@ -57,7 +33,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     borderRadius: 10,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: "#8a8a8a",
     paddingLeft: 10,
   },
   input: {
@@ -71,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomTextInput;
+export default CustomInputReadOnly;

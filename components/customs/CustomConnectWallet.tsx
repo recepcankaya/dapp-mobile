@@ -38,14 +38,14 @@ export default function CustomConnectWallet({
           switchToActiveChain={true}
           hideTestnetFaucet={true}
           displayBalanceToken={{
-            80001: "0x83CA272A33430f3709330c95f64740A1f2dE2c21",
+            80001: "0xB5Ef6aA58dba52fC26eF145C11aaC80b8BAfdEB9",
           }}
           supportedTokens={{
             [80001]: [
               {
-                address: "0x83CA272A33430f3709330c95f64740A1f2dE2c21",
-                name: "LadderIt Token Test1",
-                symbol: "LDTTEST1",
+                address: "0xB5Ef6aA58dba52fC26eF145C11aaC80b8BAfdEB9",
+                name: "LadderIt Test Token 2",
+                symbol: "LDTTEST2",
                 icon: "",
               },
             ],
