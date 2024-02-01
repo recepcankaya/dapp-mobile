@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,21 +6,17 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
-  ActivityIndicator,
-  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { LinearGradient } from "expo-linear-gradient";
 import { useAddress } from "@thirdweb-dev/react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
-
-const { width, height } = Dimensions.get("window");
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -60,19 +56,15 @@ const Signup = () => {
         error.response.data &&
         (error.response.data.email?.[0] || error.response.data.username?.[0])
       ) {
-        console.log("error1");
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
-          "\n" +
-          error.response.data.username?.[0]
+            "\n" +
+            error.response.data.username?.[0]
         );
       } else {
-        console.log("error2");
-        console.log(error.response);
         Alert.alert("Error", error.message);
       }
-      console.log(error.response?.data?.email);
       setLoading(false);
     }
   };
@@ -85,13 +77,12 @@ const Signup = () => {
           colors={["#B80DCA", "#4035CB"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[
-            styles.circle,
-            { width: 650.637, height: 739.49, borderRadius: 739.49 },
-          ]}
+          style={styles.circle}
         />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
+
+          {/* @todo - REFACTOR CUSTOMTEXTINPUT COMPONENTS LATER */}
           <CustomTextInput
             placeholder="Username"
             secureTextEntry={false}
@@ -115,12 +106,10 @@ const Signup = () => {
           />
           <CustomConnectWallet style={{ width: 250 }} />
         </View>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <View style={styles.signUpButtonContainer}>
-            <TouchableOpacity onPress={handleRegister}>
-              <CustomGradientButton text="Sign up" isLoading={isLoading} />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.signUpButtonContainer}>
+          <TouchableOpacity onPress={handleRegister}>
+            <CustomGradientButton text="Sign up" isLoading={isLoading} />
+          </TouchableOpacity>
         </View>
       </View>
     </>
@@ -131,6 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#050505",
   },
   circle: {
@@ -141,11 +131,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -545,
     alignSelf: "center",
+    width: 650.637,
+    height: 739.49,
+    borderRadius: 739.49,
   },
   inputContainer: {
-    flexDirection: "column",
     alignItems: "center",
     marginTop: 190,
+    gap: 30,
   },
   signUpText: {
     color: "#FFF",
@@ -157,20 +150,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   signUpButtonContainer: {
-    right: -width / 3.5,  //fixed to right according to screen size
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    width: 250,
-    height: 40,
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
-    marginTop: 0,
-    marginBottom: 25,
+    alignSelf: "flex-end",
   },
 });
 
