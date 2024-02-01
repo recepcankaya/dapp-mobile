@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -11,12 +10,15 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAddress } from "@thirdweb-dev/react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
+import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -26,21 +28,23 @@ const api = axios.create({
 });
 
 const Signup = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
   const { isLoading, setLoading } = useLoading();
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<SignupFormFields>({
+    resolver: zodResolver(SignupFormSchema),
+  });
 
-  const handleRegister = async () => {
+  const handleRegister: SubmitHandler<SignupFormFields> = async (data) => {
     try {
       setLoading(true);
       const response = await api.post("/user/register/", {
-        username,
-        password,
-        email,
+        ...data,
         wallet: userAddress,
       });
 
@@ -83,31 +87,76 @@ const Signup = () => {
           <Text style={styles.signUpText}>Sign Up</Text>
 
           {/* @todo - REFACTOR CUSTOMTEXTINPUT COMPONENTS LATER */}
-          <CustomTextInput
-            placeholder="Username"
-            secureTextEntry={false}
-            inputMode="text"
-            value={username}
-            onChangeText={setUsername}
-          />
-          <CustomTextInput
-            placeholder="Email"
-            secureTextEntry={false}
-            inputMode="email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <CustomTextInput
-            placeholder="Password"
-            secureTextEntry={true}
-            inputMode="text"
-            value={password}
-            onChangeText={setPassword}
-          />
-          <CustomConnectWallet style={{ width: 250 }} />
+          <View>
+            <Controller
+              control={control}
+              name="username"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <CustomTextInput
+                    placeholder="Username"
+                    secureTextEntry={false}
+                    inputMode="text"
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                );
+              }}
+            />
+            {errors.username && (
+              <Text style={styles.errorMessages}>
+                {errors.username.message}
+              </Text>
+            )}
+          </View>
+          <View>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <CustomTextInput
+                    placeholder="Email"
+                    secureTextEntry={false}
+                    inputMode="email"
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                );
+              }}
+            />
+            {errors.email && (
+              <Text style={styles.errorMessages}>{errors.email.message}</Text>
+            )}
+          </View>
+          <View>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <CustomTextInput
+                    placeholder="Password"
+                    secureTextEntry={true}
+                    inputMode="text"
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                );
+              }}
+            />
+            {errors.password && (
+              <Text style={styles.errorMessages}>
+                {errors.password.message}
+              </Text>
+            )}
+          </View>
+          <View style={{ width: 314 }}>
+            <CustomConnectWallet style={{ width: "100%" }} />
+          </View>
         </View>
         <View style={styles.signUpButtonContainer}>
-          <TouchableOpacity onPress={handleRegister}>
+          <TouchableOpacity onPress={handleSubmit(handleRegister)}>
             <CustomGradientButton text="Sign up" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
@@ -138,7 +187,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     alignItems: "center",
     marginTop: 190,
-    gap: 30,
+    gap: 28,
   },
   signUpText: {
     color: "#FFF",
@@ -146,8 +195,13 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 20,
+    marginBottom: 10,
     alignSelf: "flex-start",
+  },
+  errorMessages: {
+    color: "red",
+    alignSelf: "flex-start",
+    marginTop: 10,
   },
   signUpButtonContainer: {
     alignSelf: "flex-end",
