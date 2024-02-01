@@ -47,7 +47,6 @@ const Signup = () => {
         ...data,
         wallet: userAddress,
       });
-
       if (response.status === 200) {
         navigation.navigate("Login");
       } else {
@@ -153,6 +152,11 @@ const Signup = () => {
           </View>
           <View style={{ width: 314 }}>
             <CustomConnectWallet style={{ width: "100%" }} />
+            {!userAddress && (
+              <Text style={styles.errorMessages}>
+                Please connect your wallet
+              </Text>
+            )}
           </View>
         </View>
         <View style={styles.signUpButtonContainer}>
