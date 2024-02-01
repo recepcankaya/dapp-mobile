@@ -9,23 +9,50 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAddress } from "@thirdweb-dev/react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
+import Circle from "../SVGComponents/Circle";
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
+import { api } from "../utils/api";
 
-const api = axios.create({
-  baseURL: "https://akikoko.pythonanywhere.com/api",
-  headers: {
-    "Content-Type": "application/json",
+const inputArray = [
+  {
+    key: 0,
+    name: "username",
+    placeholder: "Username",
+    secureTextEntry: false,
+    inputMode: "text",
   },
-});
+  {
+    key: 1,
+    name: "email",
+    placeholder: "Email",
+    secureTextEntry: false,
+    inputMode: "email",
+  },
+  {
+    key: 2,
+    name: "password",
+    placeholder: "Password",
+    secureTextEntry: true,
+    inputMode: "text",
+  },
+];
+
+type FieldName = "username" | "email" | "password";
+type FieldInputMode =
+  | "url"
+  | "text"
+  | "email"
+  | "search"
+  | "decimal"
+  | "numeric"
+  | "tel";
 
 const Signup = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -76,85 +103,40 @@ const Signup = () => {
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.container}>
-        <LinearGradient
-          colors={["#B80DCA", "#4035CB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.circle}
-        />
+        <Circle />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
 
-          {/* @todo - REFACTOR CUSTOMTEXTINPUT COMPONENTS LATER */}
-          <View>
-            <Controller
-              control={control}
-              name="username"
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <CustomTextInput
-                    placeholder="Username"
-                    secureTextEntry={false}
-                    inputMode="text"
-                    value={value}
-                    onChangeText={onChange}
-                  />
-                );
-              }}
-            />
-            {errors.username && (
-              <Text style={styles.errorMessages}>
-                {errors.username.message}
-              </Text>
-            )}
-          </View>
-          <View>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <CustomTextInput
-                    placeholder="Email"
-                    secureTextEntry={false}
-                    inputMode="email"
-                    value={value}
-                    onChangeText={onChange}
-                  />
-                );
-              }}
-            />
-            {errors.email && (
-              <Text style={styles.errorMessages}>{errors.email.message}</Text>
-            )}
-          </View>
-          <View>
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <CustomTextInput
-                    placeholder="Password"
-                    secureTextEntry={true}
-                    inputMode="text"
-                    value={value}
-                    onChangeText={onChange}
-                  />
-                );
-              }}
-            />
-            {errors.password && (
-              <Text style={styles.errorMessages}>
-                {errors.password.message}
-              </Text>
-            )}
-          </View>
+          {inputArray.map((item) => (
+            <View key={item.key}>
+              <Controller
+                control={control}
+                name={item.name as FieldName}
+                render={({ field: { onChange, value } }) => {
+                  return (
+                    <CustomTextInput
+                      placeholder={item.placeholder}
+                      secureTextEntry={item.secureTextEntry}
+                      inputMode={item.inputMode as FieldInputMode}
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  );
+                }}
+              />
+              {errors[item.name as FieldName] && (
+                <Text style={styles.errorMessages}>
+                  {errors[item.name as FieldName]?.message}
+                </Text>
+              )}
+            </View>
+          ))}
+
           <View style={{ width: 314 }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
               <Text style={styles.errorMessages}>
-                Please connect your wallet
+                You don't have a wallet connected
               </Text>
             )}
           </View>
@@ -175,18 +157,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#050505",
-  },
-  circle: {
-    transform: [{ rotate: "-179.736deg" }],
-    borderWidth: 5,
-    borderColor: "#B80DCA",
-    backgroundColor: "solid",
-    position: "absolute",
-    top: -545,
-    alignSelf: "center",
-    width: 650.637,
-    height: 739.49,
-    borderRadius: 739.49,
   },
   inputContainer: {
     alignItems: "center",
