@@ -39,34 +39,23 @@ const Login = () => {
         wallet: userAddress,
         password,
       });
-      if (response.status === 200) {
-        console.log(response.data);
-        setTokens({
-          access: response.data.access,
-          refresh: response.data.refresh,
-        });
-        const userDetailRes = await api.get("/user/user_detail/", {
-          headers: {
-            Authorization: `Bearer ${response.data.access}`,
-          },
-        });
-        if (userDetailRes.status === 200) {
-          console.log(userDetailRes.data);
-          const user_id_temp = userDetailRes.data.id;
-          setUserId(user_id_temp);
-          setUsername(userDetailRes.data.username);
-        } else {
-          Alert.alert("Error", "Failed to get user details");
-        }
-        navigation.navigate("ProfileTab");
-      } else {
-        Alert.alert("Error", "Login failed");
-      }
+      setTokens({
+        access: response.data.access,
+        refresh: response.data.refresh,
+      });
+      const userDetailRes = await api.get("/user/user_detail/", {
+        headers: {
+          Authorization: `Bearer ${response.data.access}`,
+        },
+      });
+      const userIdTemp = userDetailRes.data.id;
+      setUserId(userIdTemp);
+      setUsername(userDetailRes.data.username);
       setLoading(false);
+      navigation.navigate("ProfileTab");
     } catch (error: any) {
-      Alert.alert("Error", error);
-      console.log(error);
       setLoading(false);
+      Alert.alert("Error", "Login failed");
     }
   };
   return (
