@@ -181,7 +181,7 @@ function App() {
         smartWallet(walletConnect(), smartWalletConfig),
         smartWallet(trustWallet(), smartWalletConfig),
         smartWallet(rainbowWallet(), smartWalletConfig),
-        smartWallet(localWallet(), smartWalletConfig),
+        // smartWallet(localWallet(), smartWalletConfig),
         smartWallet(
           embeddedWallet({
             auth: {

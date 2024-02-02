@@ -1,36 +1,49 @@
-import { useEffect, useState } from "react";
-import * as Font from "expo-font";
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
 
-interface CustomTextProps {
-  style?: any;
-  children: React.ReactNode;
-}
+type CustomTextProps = {
+  text: string;
+  isItalic: boolean;
+};
 
-const CustomText = (props: CustomTextProps) => {
-  const [fontLoaded, setFontLoaded] = useState(false);
-
-  useEffect(() => {
-    async function loadFont() {
-      await Font.loadAsync({
-        "custom-font": require("../assets/fonts/ZenDots-Regular.ttf"),
-      });
-
-      setFontLoaded(true);
-    }
-
-    loadFont();
-  }, []);
-
-  if (!fontLoaded) {
-    return <Text>Loading...</Text>;
-  }
-
+const CustomText = ({ text, isItalic }: CustomTextProps) => {
   return (
-    <Text style={{ ...props.style, fontFamily: "custom-font" }}>
-      {props.children}
-    </Text>
+    <MaskedView
+      style={{ flexDirection: "row" }}
+      maskElement={
+        <Text
+          style={[
+            styles.forgotPasswordButton,
+            isItalic ? { fontStyle: "italic" } : { fontStyle: "normal" },
+          ]}>
+          {text}
+        </Text>
+      }>
+      <LinearGradient
+        colors={["#B80DCA", "#4035CB"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}>
+        <Text
+          style={[
+            styles.forgotPasswordButton,
+            { opacity: 0 },
+            isItalic ? { fontStyle: "italic" } : { fontStyle: "normal" },
+          ]}>
+          {text}
+        </Text>
+      </LinearGradient>
+    </MaskedView>
   );
 };
+
+const styles = StyleSheet.create({
+  forgotPasswordButton: {
+    color: "#FFF",
+    fontFamily: "Inter",
+    fontSize: 20,
+    fontWeight: "600",
+  },
+});
 
 export default CustomText;

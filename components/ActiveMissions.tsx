@@ -7,10 +7,10 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-import CustomText from "./customs/CustomText";
 import Svg, {
   Path,
   LinearGradient,
@@ -30,20 +30,12 @@ import Confetti from "./customs/confetti";
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
 function ActiveMissions() {
-  const { tokens } = useContext(TokenContext);
-  const [missions, setMissions] = useState<any[]>([]);
-
   const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
+  const [missions, setMissions] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
-
-  const { username } = useContext(UserContext);
-
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
+  const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
-
-  useEffect(() => {
-    console.log("selectedDate", selectedDate);
-  }, [selectedDate]);
 
   const api = axios.create({
     baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -97,10 +89,10 @@ function ActiveMissions() {
       );
       if (response.status === 200) {
         console.log(response.data);
-        Alert.alert(response.data.message);
         getMissions();
         setConfettiVisible(true);
         confettiCannonRef.current?.start();
+        Alert.alert(response.data.message);
       }
     } catch (error) {
       //console.error(error);
@@ -233,14 +225,12 @@ function ActiveMissions() {
           </TouchableOpacity>
           <View style={styles.missionTextContainer}>
             <View style={{ flex: 1 }}></View>
-            <CustomText style={styles.missionText}>{item.title}</CustomText>
+            <Text style={styles.missionText}>{item.title}</Text>
             <View style={{ flex: 2.5 }}></View>
           </View>
           <View style={styles.missionNumber}>
-            <CustomText style={styles.missionNumberText}>
-              {item.numberOfDays}
-            </CustomText>
-            <CustomText style={styles.missionNumberText}>{21}</CustomText>
+            <Text style={styles.missionNumberText}>{item.numberOfDays}</Text>
+            <Text style={styles.missionNumberText}>{21}</Text>
           </View>
           <TouchableOpacity style={styles.missionsItemOptions}>
             <View style={styles.missionsItemOption}></View>
@@ -256,9 +246,7 @@ function ActiveMissions() {
     return (
       <View style={styles.missionsListHeader}>
         <View style={styles.missionsListHeaderTop}>
-          <CustomText style={styles.missionsListHeaderText}>
-            Active Missions
-          </CustomText>
+          <Text style={styles.missionsListHeaderText}>Active Missions</Text>
         </View>
       </View>
     );
@@ -391,12 +379,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     position: "absolute",
-    top: 12,
+    top: 0,
     left: 0,
   },
   missionNumberText: {
     color: "#4035CB",
-    fontSize: 15,
+    fontSize: 18,
   },
 });
 

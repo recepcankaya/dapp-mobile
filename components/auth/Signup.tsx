@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,48 +5,75 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
-  ActivityIndicator,
-  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { LinearGradient } from "expo-linear-gradient";
 import { useAddress } from "@thirdweb-dev/react-native";
-import axios from "axios";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
+import Circle from "../SVGComponents/Circle";
+import { SignupFormSchema, SignupFormFields } from "./signupSchema";
+import { api } from "../utils/api";
 
-const { width, height } = Dimensions.get("window");
-
-const api = axios.create({
-  baseURL: "https://akikoko.pythonanywhere.com/api",
-  headers: {
-    "Content-Type": "application/json",
+const inputArray = [
+  {
+    key: 0,
+    name: "username",
+    placeholder: "Username",
+    secureTextEntry: false,
+    inputMode: "text",
   },
-});
+  {
+    key: 1,
+    name: "email",
+    placeholder: "Email",
+    secureTextEntry: false,
+    inputMode: "email",
+  },
+  {
+    key: 2,
+    name: "password",
+    placeholder: "Password",
+    secureTextEntry: true,
+    inputMode: "text",
+  },
+];
+
+type FieldName = "username" | "email" | "password";
+type FieldInputMode =
+  | "url"
+  | "text"
+  | "email"
+  | "search"
+  | "decimal"
+  | "numeric"
+  | "tel";
 
 const Signup = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
   const { isLoading, setLoading } = useLoading();
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<SignupFormFields>({
+    resolver: zodResolver(SignupFormSchema),
+  });
 
-  const handleRegister = async () => {
+  const handleRegister: SubmitHandler<SignupFormFields> = async (data) => {
     try {
       setLoading(true);
       const response = await api.post("/user/register/", {
-        username,
-        password,
-        email,
+        ...data,
         wallet: userAddress,
       });
-
       if (response.status === 200) {
         navigation.navigate("Login");
       } else {
@@ -60,19 +86,15 @@ const Signup = () => {
         error.response.data &&
         (error.response.data.email?.[0] || error.response.data.username?.[0])
       ) {
-        console.log("error1");
         Alert.alert(
           "Error",
           error.response.data.email?.[0] +
-          "\n" +
-          error.response.data.username?.[0]
+            "\n" +
+            error.response.data.username?.[0]
         );
       } else {
-        console.log("error2");
-        console.log(error.response);
         Alert.alert("Error", error.message);
       }
-      console.log(error.response?.data?.email);
       setLoading(false);
     }
   };
@@ -81,46 +103,48 @@ const Signup = () => {
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.container}>
-        <LinearGradient
-          colors={["#B80DCA", "#4035CB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[
-            styles.circle,
-            { width: 650.637, height: 739.49, borderRadius: 739.49 },
-          ]}
-        />
+        <Circle />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
-          <CustomTextInput
-            placeholder="Username"
-            secureTextEntry={false}
-            inputMode="text"
-            value={username}
-            onChangeText={setUsername}
-          />
-          <CustomTextInput
-            placeholder="Email"
-            secureTextEntry={false}
-            inputMode="email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <CustomTextInput
-            placeholder="Password"
-            secureTextEntry={true}
-            inputMode="text"
-            value={password}
-            onChangeText={setPassword}
-          />
-          <CustomConnectWallet style={{ width: 250 }} />
-        </View>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <View style={styles.signUpButtonContainer}>
-            <TouchableOpacity onPress={handleRegister}>
-              <CustomGradientButton text="Sign up" isLoading={isLoading} />
-            </TouchableOpacity>
+
+          {inputArray.map((item) => (
+            <View key={item.key}>
+              <Controller
+                control={control}
+                name={item.name as FieldName}
+                render={({ field: { onChange, value } }) => {
+                  return (
+                    <CustomTextInput
+                      placeholder={item.placeholder}
+                      secureTextEntry={item.secureTextEntry}
+                      inputMode={item.inputMode as FieldInputMode}
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  );
+                }}
+              />
+              {errors[item.name as FieldName] && (
+                <Text style={styles.errorMessages}>
+                  {errors[item.name as FieldName]?.message}
+                </Text>
+              )}
+            </View>
+          ))}
+
+          <View style={{ width: 314 }}>
+            <CustomConnectWallet style={{ width: "100%" }} />
+            {!userAddress && (
+              <Text style={styles.errorMessages}>
+                You don't have a wallet connected
+              </Text>
+            )}
           </View>
+        </View>
+        <View style={styles.signUpButtonContainer}>
+          <TouchableOpacity onPress={handleSubmit(handleRegister)}>
+            <CustomGradientButton text="Sign up" isLoading={isLoading} />
+          </TouchableOpacity>
         </View>
       </View>
     </>
@@ -131,21 +155,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#050505",
   },
-  circle: {
-    transform: [{ rotate: "-179.736deg" }],
-    borderWidth: 5,
-    borderColor: "#B80DCA",
-    backgroundColor: "solid",
-    position: "absolute",
-    top: -545,
-    alignSelf: "center",
-  },
   inputContainer: {
-    flexDirection: "column",
     alignItems: "center",
     marginTop: 190,
+    gap: 28,
   },
   signUpText: {
     color: "#FFF",
@@ -153,24 +169,16 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 20,
+    marginBottom: 10,
     alignSelf: "flex-start",
   },
-  signUpButtonContainer: {
-    right: -width / 3.5,  //fixed to right according to screen size
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+  errorMessages: {
+    color: "red",
+    alignSelf: "flex-start",
+    marginTop: 10,
   },
-  input: {
-    width: 250,
-    height: 40,
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
-    marginTop: 0,
-    marginBottom: 25,
+  signUpButtonContainer: {
+    alignSelf: "flex-end",
   },
 });
 
