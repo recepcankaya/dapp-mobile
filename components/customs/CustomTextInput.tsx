@@ -1,5 +1,6 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 type CustomTextInputProps = {
   secureTextEntry: boolean;
@@ -50,24 +51,25 @@ const CustomTextInput = ({
 
 const styles = StyleSheet.create({
   linearGradient: {
-    height: 60,
-    borderRadius: 10,
-    padding: 3,
+    height: 60*heightConstant,
+    borderRadius: 10*radiusConstant,
+    padding: 3*radiusConstant,
+    marginTop: 10*heightConstant,
   },
   inputContainer: {
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 10*radiusConstant,
     backgroundColor: "#D9D9D9",
-    paddingLeft: 10,
+    paddingLeft: 10*widthConstant,
   },
   input: {
-    width: 302,
-    height: 60,
+    width: 302*widthConstant,
+    height: 55*heightConstant,
     borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
-    fontSize: 22,
+    borderWidth: 1*radiusConstant,
+    borderRadius: 10*radiusConstant,
+    paddingLeft: 10*widthConstant,
+    fontSize: 22*radiusConstant,
   },
 });
 

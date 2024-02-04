@@ -21,6 +21,7 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import CustomText from "../customs/CustomText";
 import { api } from "../utils/api";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -76,7 +77,7 @@ const Login = () => {
             />
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25 }}>
+              style={{ marginTop: 25*heightConstant }}>
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
@@ -106,36 +107,37 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputContainer: {
-    marginTop: 250,
+    marginTop: 250*heightConstant,
     width: "80%",
   },
   loginText: {
-    marginBottom: 25,
+    marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   passwordContainer: {
     width: "100%",
-    marginTop: 30,
+    marginTop: 30*heightConstant,
   },
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 90,
+    marginTop: 90*heightConstant,
   },
   signupText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20,
+    fontSize: 20*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   loginButtonContainer: {
     alignSelf: "flex-end",
+    right: -20*widthConstant,
   },
 });
 

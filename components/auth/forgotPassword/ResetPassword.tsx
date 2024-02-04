@@ -19,6 +19,7 @@ import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 import axios from "axios";
+import {heightConstant, radiusConstant, widthConstant} from "../../customs/CustomResponsiveScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -88,7 +89,7 @@ const ResetPassword = () => {
         end={{ x: 1, y: 1 }}
         style={[
           styles.circle,
-          { width: 650.637, height: 739.49, borderRadius: 739.49 },
+          { width: 650.637*widthConstant, height: 739.49*heightConstant, borderRadius: 739.49*radiusConstant },
         ]}
       />
       <View style={styles.input}>
@@ -128,26 +129,26 @@ const styles = StyleSheet.create({
   },
   circle: {
     transform: [{ rotate: "-179.736deg" }],
-    borderWidth: 5,
+    borderWidth: 5*radiusConstant,
     borderColor: "#B80DCA",
     backgroundColor: "solid",
     position: "absolute",
-    top: -545,
+    top: -545*heightConstant,
     alignSelf: "center",
   },
   input: {
-    marginTop: 250,
+    marginTop: 250*heightConstant,
   },
   heading: {
-    marginBottom: 25,
+    marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   buttonContainer: {
-    right: -width / 3.5,  //fixed to right according to screen size
+    right: -150*widthConstant,  //fixed to right according to screen size
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",

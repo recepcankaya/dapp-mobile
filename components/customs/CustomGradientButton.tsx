@@ -7,6 +7,7 @@ import Svg, {
 } from "react-native-svg";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 type CustomGradientButtonProps = {
   text: string;
@@ -19,7 +20,7 @@ const CustomGradientButton = ({
 }: CustomGradientButtonProps) => {
   return (
     <>
-      <Svg width="168" height="157" viewBox="0 0 177 157" fill="none">
+      <Svg width={177 * widthConstant} height={157 * heightConstant} viewBox="0 0 177 157" fill="none">
         <Path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -47,7 +48,7 @@ const CustomGradientButton = ({
           maskElement={
             <Text
               style={{
-                fontSize: 26,
+                fontSize: 26*radiusConstant,
                 fontFamily: "Inter",
                 fontStyle: "italic",
               }}>
@@ -60,7 +61,7 @@ const CustomGradientButton = ({
             end={{ x: 1, y: 0 }}>
             <Text
               style={{
-                fontSize: 26,
+                fontSize: 26*radiusConstant,
                 fontFamily: "Inter",
                 fontStyle: "italic",
                 opacity: 0,
@@ -76,20 +77,20 @@ const CustomGradientButton = ({
 
 const styles = StyleSheet.create({
   loginText: {
-    marginBottom: 10,
+    marginBottom: 10*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   buttonText: {
     fontFamily: "Inter",
-    fontSize: 22,
+    fontSize: 22*radiusConstant,
     fontStyle: "italic",
     fontWeight: "400",
-    right: 30,
-    bottom: 40,
+    right: 40*widthConstant,
+    bottom: 40*heightConstant,
     position: "absolute",
     zIndex: 1,
   },

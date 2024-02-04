@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 export default function Circle() {
   return (
@@ -15,14 +16,14 @@ export default function Circle() {
 const styles = StyleSheet.create({
   circle: {
     transform: [{ rotate: "-179.736deg" }],
-    borderWidth: 5,
+    borderWidth: 5*radiusConstant,
     borderColor: "#B80DCA",
     backgroundColor: "solid",
     position: "absolute",
-    top: -545,
+    top: -545*heightConstant,
     alignSelf: "center",
-    width: 650.637,
-    height: 739.49,
-    borderRadius: 739.49,
+    width: 650.637*widthConstant,
+    height: 739.49*heightConstant,
+    borderRadius: 739.49*radiusConstant,
   },
 });

@@ -19,6 +19,7 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 const inputArray = [
   {
@@ -132,7 +133,7 @@ const Signup = () => {
             </View>
           ))}
 
-          <View style={{ width: 314 }}>
+          <View style={{ width: 314*widthConstant }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
               <Text style={styles.errorMessages}>
@@ -160,25 +161,26 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignItems: "center",
-    marginTop: 190,
-    gap: 28,
+    marginTop: 190*heightConstant,
+    gap: 28*heightConstant, // gap weight den mı height dan mı ?
   },
   signUpText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 10,
+    marginBottom: 10*heightConstant,
     alignSelf: "flex-start",
   },
   errorMessages: {
     color: "red",
     alignSelf: "flex-start",
-    marginTop: 10,
+    marginTop: 10*heightConstant,
   },
   signUpButtonContainer: {
     alignSelf: "flex-end",
+    right: -20*widthConstant,
   },
 });
 

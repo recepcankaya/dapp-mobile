@@ -1,6 +1,7 @@
 import { Text, StyleSheet } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 type CustomTextProps = {
   text: string;
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20,
+    fontSize: 20*radiusConstant,
     fontWeight: "600",
   },
 });
