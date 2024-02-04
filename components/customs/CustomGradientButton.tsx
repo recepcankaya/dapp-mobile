@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "400",
-    right: 50*widthConstant,
+    right: 60*widthConstant,
     bottom: 50*heightConstant,
     position: "absolute",
     zIndex: 1,

@@ -250,7 +250,7 @@ export default function Profile() {
             onChangeText={(text) => setTempUsername(text)}
             inputMode="text"
           />
-          <View style={{ position: "absolute", top: 22*heightConstant, right: 10*widthConstant }}>
+          <View style={{ position: "absolute", top: 28*heightConstant, right: 10*widthConstant }}>
             <UserIcon />
           </View>
         </View>
@@ -262,7 +262,7 @@ export default function Profile() {
           }}
         >
           <CustomInputReadOnly placeholder={email} />
-          <View style={{ position: "absolute", top: 7*heightConstant, right: 7*widthConstant }}>
+          <View style={{ position: "absolute", top: 15*heightConstant, right: 7*widthConstant }}>
             <EmailIcon />
           </View>
         </View>
@@ -271,7 +271,7 @@ export default function Profile() {
             position: "relative",
             justifyContent: "center",
             alignItems: "center",
-            width: 314*widthConstant,
+            width: 330*widthConstant,
           }}
         >
           <CustomConnectWallet style={{ width: "100%" }} />
@@ -285,16 +285,16 @@ export default function Profile() {
 
             }}
           >
-            <Svg width={204 * widthConstant} height={38 * heightConstant} viewBox="0 0 204 38" fill="none">
+            <Svg width={214 * widthConstant} height={45 * heightConstant} viewBox="0 0 214 45" fill="none">
               <Rect
-                x="1.5"
-                y="1.5"
-                width="204"
-                height="38"
-                rx="18.5"
+                x="2.5"
+                y="2.5"
+                width="214"
+                height="45"
+                rx="22.5"
                 fill="#D9D9D9"
                 stroke="url(#paint0_linear_114_4)"
-                strokeWidth="3"
+                strokeWidth="4"
               />
               <Defs>
                 <LinearGradient
@@ -313,7 +313,7 @@ export default function Profile() {
             <Text
               style={{
                 position: "absolute",
-                top: 5 * heightConstant,
+                top: 8 * heightConstant,
                 //left: 75 * widthConstant,
                 //width: "100%",
                 color: "#000",

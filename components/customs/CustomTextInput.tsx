@@ -51,7 +51,7 @@ const CustomTextInput = ({
 
 const styles = StyleSheet.create({
   linearGradient: {
-    height: 60*heightConstant,
+    height: 75*heightConstant,
     borderRadius: 10*radiusConstant,
     padding: 3*radiusConstant,
     marginTop: 10*heightConstant,
@@ -63,13 +63,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10*widthConstant,
   },
   input: {
-    width: 302*widthConstant,
-    height: 55*heightConstant,
+    width: 330*widthConstant,
+    height: 65*heightConstant,
     borderColor: "transparent",
     borderWidth: 1*radiusConstant,
     borderRadius: 10*radiusConstant,
     paddingLeft: 10*widthConstant,
-    fontSize: 22*radiusConstant,
+    fontSize: 23*radiusConstant,
   },
 });
 
