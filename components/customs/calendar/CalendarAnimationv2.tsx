@@ -17,7 +17,7 @@ const segmentSpacing = 25;
 const fontSizeMin = 14;
 const fontSizeChange = 6;
 
-const scrollHeight = width * 0.4;
+const scrollHeight = width * 0.34;
 const itemHeight = (fontSizeMin + fontSizeChange) * 2;
 const translateYMax = scrollHeight - itemHeight;
 
@@ -106,7 +106,6 @@ const EllipticalScroll = ({
   return (
     <View style={styles.container}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
         horizontal
         onMomentumScrollEnd={handleScrollEnd}
         onScroll={handleScroll}
@@ -148,7 +147,6 @@ const styles = StyleSheet.create({
     height: scrollHeight,
     zIndex: 10,
   },
-  scrollContent: {},
   spacer: {
     width: spacerWidth - segmentSpacing,
     marginRight: segmentSpacing,

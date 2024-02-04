@@ -20,7 +20,6 @@ import Svg, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfettiCannon from "react-native-confetti-cannon";
-import axios from "axios";
 
 import { TokenContext } from "./context/TokenContext";
 import Calendar from "./customs/calendar";
@@ -30,9 +29,17 @@ import { api } from "./utils/api";
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
 
+type MissionFields = {
+  id: number;
+  title: string;
+  startDate: string;
+  isCompleted: boolean;
+  numberOfDays: number;
+};
+
 function ActiveMissions() {
-  const [missions, setMissions] = useState<any[]>([]);
-  const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
+  const [missions, setMissions] = useState<MissionFields[]>([]);
+  const [filteredMissions, setFilteredMissions] = useState<MissionFields[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
   const { tokens } = useContext(TokenContext);
@@ -52,13 +59,13 @@ function ActiveMissions() {
     }
   };
 
-  const completeMission = async (id: any) => {
+  const completeMission = async (id: number) => {
     try {
-      const url = `${api}/mission/complete/${id}/`;
+      const url = `/mission/complete/${id}/`;
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
       };
-      const response = await axios.patch(
+      const response = await api.patch(
         url,
         { local_time: new Date().toISOString().slice(0, -1) },
         { headers }
@@ -239,12 +246,9 @@ function ActiveMissions() {
       <View style={{ height: 100 }}>
         <Calendar
           onChangeDate={(date) => {
-            console.log("date-active missions", date);
-            console.log("deneme", new Date().toISOString().slice(8, 10));
             const formattedDate = `${date.yearIndex + 2024}-${
               date.monthIndex + 1
             }-${date.dayIndex + 1}`;
-            console.log(formattedDate);
 
             setSelectedDate(new Date(formattedDate));
             onChangeDate(new Date(formattedDate));
