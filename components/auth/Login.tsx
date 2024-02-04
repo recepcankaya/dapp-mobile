@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25*radiusConstant,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20*radiusConstant,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },

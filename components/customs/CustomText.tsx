@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20*radiusConstant,
+    fontSize: 30*radiusConstant,
     fontWeight: "600",
   },
 });

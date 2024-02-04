@@ -20,7 +20,8 @@ const CustomGradientButton = ({
 }: CustomGradientButtonProps) => {
   return (
     <>
-      <Svg width={177 * widthConstant} height={157 * heightConstant} viewBox="0 0 177 157" fill="none">
+    
+      <Svg width={197 * widthConstant} height={177 * heightConstant} viewBox="0 0 177 157" fill="none">
         <Path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -80,17 +81,17 @@ const styles = StyleSheet.create({
     marginBottom: 10*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25*radiusConstant,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   buttonText: {
     fontFamily: "Inter",
-    fontSize: 22*radiusConstant,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "400",
-    right: 40*widthConstant,
-    bottom: 40*heightConstant,
+    right: 50*widthConstant,
+    bottom: 50*heightConstant,
     position: "absolute",
     zIndex: 1,
   },

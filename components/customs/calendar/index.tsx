@@ -10,6 +10,7 @@ import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
 
 import CalendarAnimation from "./CalendarAnimation";
 import CalendarAnimationv2 from "./CalendarAnimationv2";
+import { widthConstant, heightConstant, radiusConstant } from "../CustomResponsiveScreen";
 
 const { width } = Dimensions.get("screen");
 
@@ -216,7 +217,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 180,
+    height: 180 * heightConstant,
   },
   sliderContainer: {
     flex: 1,
@@ -226,18 +227,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
-    left: width / 2 - 50,
-    top: 10,
+    left: (width / 2) - (83.5 / 2),
+    top: 20 * heightConstant,
     zIndex: 100,
   },
   buttons: {
-    height: 30,
-    width: 100,
+    height: 45 * heightConstant,
+    width: 100 * widthConstant,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonsText: {
-    fontSize: 20,
+    fontSize: 25 * radiusConstant,
     color: "white",
   },
 });

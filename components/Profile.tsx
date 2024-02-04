@@ -154,6 +154,12 @@ export default function Profile() {
   }, [username]);
 
   const changeUsername = async (newUsername: string) => {
+    // Trim the newUsername and check if it's not empty
+    if (newUsername.trim() === '') {
+      Alert.alert("No Changes", "Your username stay same.");
+      return;
+    }
+  
     try {
       const response = await api.patch(
         "/user/profile_update/",
@@ -166,6 +172,7 @@ export default function Profile() {
           },
         }
       );
+  
       if (response.status === 200) {
         setUsername(newUsername); // Update the temporary username
         Alert.alert("Success", "Username updated successfully");
@@ -350,7 +357,7 @@ const styles = StyleSheet.create({
     marginLeft: 55 * widthConstant,
     color: "#EFEEEE",
     fontFamily: "Rosarivo",
-    fontSize: 20 * radiusConstant,
+    fontSize: 25 * radiusConstant,
     fontWeight: "400",
     letterSpacing: 2,
   },

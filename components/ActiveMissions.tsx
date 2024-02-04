@@ -26,6 +26,7 @@ import { UserContext } from "./context/UserContext";
 import Calendar from "./customs/calendar";
 import ConfettiCannon from "react-native-confetti-cannon";
 import Confetti from "./customs/confetti";
+import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -299,9 +300,6 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     height: 40,
   },
-  text: {
-    color: Colors.white,
-  },
   missionsList: {
     paddingTop: 40,
     paddingBottom: 50,
@@ -320,7 +318,7 @@ const styles = StyleSheet.create({
   },
   missionsListHeaderText: {
     color: Colors.white,
-    fontSize: 25,
+    fontSize: 35 * radiusConstant,
   },
   missionsListAddButton: {
     color: Colors.white,
@@ -356,7 +354,8 @@ const styles = StyleSheet.create({
   },
   missionText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 30 * radiusConstant,
+    left: 17 - (48.3 / 2),
   },
   missionsItemOptions: {
     borderRadius: 10,

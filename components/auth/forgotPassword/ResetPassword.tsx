@@ -95,14 +95,14 @@ const ResetPassword = () => {
       <View style={styles.input}>
         <Text style={styles.heading}>Reset Password</Text>
         <CustomTextInput
-          placeholder=""
+          placeholder="New Password"
           secureTextEntry={true}
           inputMode="text"
           value={password}
           onChangeText={setPassword}
         />
         <CustomTextInput
-          placeholder=""
+          placeholder="New Password"
           secureTextEntry={true}
           inputMode="text"
           value={passwordConfirmation}
@@ -143,12 +143,12 @@ const styles = StyleSheet.create({
     marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25*radiusConstant,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   buttonContainer: {
-    right: -150*widthConstant,  //fixed to right according to screen size
+    right: -140*widthConstant,  //fixed to right according to screen size
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
