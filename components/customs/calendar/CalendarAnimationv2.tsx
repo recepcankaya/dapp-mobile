@@ -25,7 +25,7 @@ const segmentSpacing = 25;
 const fontSizeMin = 14;
 const fontSizeChange = 6;
 
-const scrollHeight = width * 0.4;
+const scrollHeight = width * 0.4 - 40;
 const itemHeight = (fontSizeMin + fontSizeChange) * 2;
 const translateYMax = scrollHeight - itemHeight;
 

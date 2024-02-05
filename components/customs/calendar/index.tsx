@@ -14,11 +14,13 @@ import { widthConstant, heightConstant, radiusConstant } from "../CustomResponsi
 
 const { width } = Dimensions.get("screen");
 
+const scrollHeight = width * 0.4;
+
 const CalendarBackground = () => {
   return (
     <Svg
       width={width}
-      height={180}
+      height={scrollHeight}
       viewBox="0 0 430 180"
       fill="none"
       style={{ position: "absolute", top: -40 }}>
