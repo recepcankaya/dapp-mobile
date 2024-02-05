@@ -204,7 +204,7 @@ function App() {
             <UserIdProvider>
               <MissionProvider>
                 <NavigationContainer>
-                  <Stack.Navigator initialRouteName="Loading">
+                  <Stack.Navigator initialRouteName="ProfileTab">
                     <Stack.Screen
                       name="Loading"
                       component={LoadingScreen}

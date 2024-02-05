@@ -15,6 +15,12 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
+import {
+  radiusConstant,
+  heightConstant,
+  widthConstant,
+} from "../CustomResponsiveScreen";
+
 const { width } = Dimensions.get("screen");
 const segmentQty = 5;
 const segmentWidth = Math.round(width / segmentQty); // snapToInterval is buggy  with non integers.
@@ -22,8 +28,8 @@ const halfWidth = width * 0.5;
 const spacerWidth = (width - segmentWidth) / 2;
 const segmentSpacing = 25;
 
-const fontSizeMin = 14;
-const fontSizeChange = 6;
+const fontSizeMin = 14 * radiusConstant;
+const fontSizeChange = 6 * radiusConstant;
 
 const scrollHeight = width * 0.4 - 40;
 const itemHeight = (fontSizeMin + fontSizeChange) * 2;
@@ -36,12 +42,6 @@ type CalendarAnimationProps = {
   backToDays: () => void;
 };
 
-const sampleList = Array.from({ length: 30 }, (_, index) => ({
-  index,
-  key: index,
-  text: (index + 1) % 5 ? index + 1 : "buzz",
-}));
-
 const getEllipseYAbs = (x: any, semiX: any, semiY: any) => {
   "worklet";
   return Math.sqrt((1 - (x - semiX) ** 2 / semiX ** 2) * semiY ** 2);
@@ -50,7 +50,7 @@ const getEllipseYAbs = (x: any, semiX: any, semiY: any) => {
 const getYOnEllipseDown = (localX: any) => {
   "worklet";
   if (localX < 0 || width < localX) return 0;
-  return getEllipseYAbs(localX, halfWidth, translateYMax);
+  return getEllipseYAbs(localX, halfWidth, translateYMax) + heightConstant;
 };
 
 const AnimatedItem = (item: any) => {
@@ -127,20 +127,22 @@ const EllipticalScroll = ({
         style={styles.scrollView}
         onScrollEndDrag={backToDays}
         showsHorizontalScrollIndicator={false}
-        ref={scrollViewRef}>
+        ref={scrollViewRef}
+      >
         <View style={styles.spacer}></View>
         {data.map(renderItem)}
       </ScrollView>
       <View
         style={{
-          width: 70,
-          height: 50,
+          width: 70 * widthConstant,
+          height: 50 * heightConstant,
           backgroundColor: "#D9D9D9",
           position: "absolute",
-          top: 90,
-          left: width / 2 - 35,
-          borderRadius: 80,
-        }}></View>
+          top: scrollHeight - 50 * heightConstant,
+          left: width / 2 - (70 * widthConstant) / 2,
+          borderRadius: 80 * radiusConstant,
+        }}
+      ></View>
     </View>
   );
 };
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     width: segmentWidth,
   },
   scrollView: {
-    width,
+    width: width,
     height: scrollHeight,
     zIndex: 10,
   },
