@@ -1,13 +1,5 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -17,7 +9,7 @@ import Animated, {
 
 const { width } = Dimensions.get("screen");
 const segmentQty = 5;
-const segmentWidth = Math.round(width / segmentQty); // snapToInterval is buggy  with non integers.
+const segmentWidth = Math.round(width / segmentQty);
 const halfWidth = width * 0.5;
 const spacerWidth = (width - segmentWidth) / 2;
 const segmentSpacing = 25;
@@ -25,22 +17,9 @@ const segmentSpacing = 25;
 const fontSizeMin = 14;
 const fontSizeChange = 6;
 
-const scrollHeight = width * 0.4;
+const scrollHeight = width * 0.34;
 const itemHeight = (fontSizeMin + fontSizeChange) * 2;
 const translateYMax = scrollHeight - itemHeight;
-
-type CalendarAnimationProps = {
-  onChangeValue: (value: string) => void;
-  initialIndex: number;
-  data: { index: number; key: number; text: string }[];
-  backToDays: () => void;
-};
-
-const sampleList = Array.from({ length: 30 }, (_, index) => ({
-  index,
-  key: index,
-  text: (index + 1) % 5 ? index + 1 : "buzz",
-}));
 
 const getEllipseYAbs = (x: any, semiX: any, semiY: any) => {
   "worklet";
@@ -79,15 +58,33 @@ const AnimatedItem = (item: any) => {
   );
 };
 
+type CalendarAnimationProps = {
+  onChangeValue: (value: string) => void;
+  backToDays: () => void;
+  data: { index: number; key: number; text: string }[];
+};
+
 const EllipticalScroll = ({
   data,
   backToDays,
-  initialIndex,
   onChangeValue,
 }: CalendarAnimationProps) => {
-  const [selectedDataIndex, setSelectedDataIndex] = useState(0);
+  // @todo - there is a bug here. Later fix it.
+  const [selectedDataIndex, setSelectedDataIndex] = useState(
+    data.length === 33 ? data[new Date().getDate() - 1].index : 0
+  );
   const sharedOffsetX = useSharedValue(0);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const handleScroll = ({ nativeEvent }: any, shouldUpdateState = false) => {
+    const { x } = nativeEvent.contentOffset;
+    sharedOffsetX.value = x;
+    if (shouldUpdateState) setSelectedDataIndex(Math.round(x / segmentWidth));
+  };
+
+  const handleScrollEnd = ({ nativeEvent }: any) => {
+    handleScroll({ nativeEvent }, true);
+  };
 
   useEffect(() => {
     scrollViewRef.current?.scrollTo({
@@ -97,20 +94,11 @@ const EllipticalScroll = ({
   }, []);
 
   useEffect(() => {
-    console.log("selectedDataIndex", selectedDataIndex);
     if (selectedDataIndex !== undefined) {
       onChangeValue(data[selectedDataIndex].text);
     }
   }, [selectedDataIndex]);
 
-  const handleScroll = ({ nativeEvent }: any, shouldUpdateState = false) => {
-    const { x } = nativeEvent.contentOffset;
-    sharedOffsetX.value = x;
-    if (shouldUpdateState) setSelectedDataIndex(Math.round(x / segmentWidth));
-  };
-  const handleScrollEnd = ({ nativeEvent }: any) => {
-    handleScroll({ nativeEvent }, true);
-  };
   const renderItem = (item: any) => (
     <AnimatedItem {...item} sharedOffsetX={sharedOffsetX} />
   );
@@ -118,7 +106,6 @@ const EllipticalScroll = ({
   return (
     <View style={styles.container}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
         horizontal
         onMomentumScrollEnd={handleScrollEnd}
         onScroll={handleScroll}
@@ -160,7 +147,6 @@ const styles = StyleSheet.create({
     height: scrollHeight,
     zIndex: 10,
   },
-  scrollContent: {},
   spacer: {
     width: spacerWidth - segmentSpacing,
     marginRight: segmentSpacing,
