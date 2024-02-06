@@ -56,7 +56,7 @@ const Login = () => {
       navigation.navigate("ProfileTab");
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", "Login failed");
+      Alert.alert("Error", error.response.data.non_field_errors[0]);
     }
   };
   return (

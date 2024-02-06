@@ -10,6 +10,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -54,8 +55,7 @@ const EmailConfirmation = () => {
       }
     } catch (error) {
       // Handle error
-      console.error(error);
-      console.log((error as any).response);
+      Alert.alert("Error", (error as any).response.data.error);
     }
 
     setLoading(false);
