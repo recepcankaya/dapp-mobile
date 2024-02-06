@@ -21,7 +21,12 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import CustomText from "../customs/CustomText";
 import { api } from "../utils/api";
-import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "../customs/CustomResponsiveText";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -74,10 +79,13 @@ const Login = () => {
               inputMode="text"
               value={password}
               onChangeText={setPassword}
+              style={styles.passwordInput}
+              containerStyle={styles.passwordInputContainer}
             />
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25*heightConstant }}>
+              style={{ marginTop: 25 * heightConstant }}
+            >
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
@@ -88,7 +96,6 @@ const Login = () => {
             </TouchableOpacity>
           </View>
         </View>
-
         <View style={styles.loginButtonContainer}>
           <TouchableOpacity onPress={handleLogin}>
             <CustomGradientButton text="Login" isLoading={isLoading} />
@@ -107,37 +114,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputContainer: {
-    marginTop: 250*heightConstant,
+    marginTop: 250 * heightConstant,
     width: "80%",
   },
   loginText: {
-    marginBottom: 25*heightConstant,
+    marginBottom: 25 * heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: 30 * radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   passwordContainer: {
     width: "100%",
-    marginTop: 30*heightConstant,
+    marginTop: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 20,
+  },
+  passwordInputContainer: {
+    height: 50,
   },
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 90*heightConstant,
+    marginTop: 90 * heightConstant,
   },
   signupText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25*radiusConstant,
+    // fontSize: 25 * radiusConstant,
+    fontSize: responsiveFontSize(22),
     fontStyle: "italic",
     fontWeight: "700",
   },
   loginButtonContainer: {
     alignSelf: "flex-end",
-    right: -20*widthConstant,
+    right: -20 * widthConstant,
   },
 });
 

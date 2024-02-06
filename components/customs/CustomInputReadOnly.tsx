@@ -1,21 +1,39 @@
-import { StyleSheet, TextInput, View } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
 
 type CustomTextInputProps = {
   placeholder: string;
+  containerStyle?: StyleProp<ViewStyle>;
+  style?: StyleProp<TextStyle>;
 };
 
-const CustomInputReadOnly = ({ placeholder }: CustomTextInputProps) => {
+const CustomInputReadOnly = ({
+  placeholder,
+  containerStyle,
+  style,
+}: CustomTextInputProps) => {
   return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       colors={["#B80DCA", "#4035CB"]}
-      style={styles.linearGradient}>
+      style={[styles.linearGradient, containerStyle]}
+    >
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, style]}
           placeholder={placeholder}
           placeholderTextColor="#0C0C0C"
           editable={false}
