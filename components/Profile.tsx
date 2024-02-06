@@ -32,6 +32,7 @@ import {
   radiusConstant,
   widthConstant,
 } from "./customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "./customs/CustomResponsiveText";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -322,14 +323,11 @@ export default function Profile() {
               alignItems: "center",
               marginTop: 40 * heightConstant,
               //left: 0,
+              height: 45,
+              width: 250,
             }}
           >
-            <Svg
-              width={214 * widthConstant}
-              height={45 * heightConstant}
-              viewBox="0 0 214 45"
-              fill="none"
-            >
+            <Svg width={210} height={60} viewBox="0 0 224 45" fill="none">
               <Rect
                 x="2.5"
                 y="2.5"
@@ -357,12 +355,12 @@ export default function Profile() {
             <Text
               style={{
                 position: "absolute",
-                top: 8 * heightConstant,
+                top: 23.5,
                 //left: 75 * widthConstant,
                 //width: "100%",
                 color: "#000",
                 fontFamily: "Rosarivo",
-                fontSize: 18 * radiusConstant,
+                fontSize: responsiveFontSize(15),
                 fontWeight: "400",
                 letterSpacing: 0.44,
               }}
