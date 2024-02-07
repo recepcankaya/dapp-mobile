@@ -29,6 +29,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Calendar from "./customs/calendar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomGradientButton from "./customs/CustomGradientButton";
+import { getTimeZone } from "react-native-localize";
 
 const { width, height } = Dimensions.get("window");
 
@@ -76,6 +77,7 @@ const AddTask = () => {
       title: title,
       local_time: taskDate,
       category: categoryType,
+      timezone: getTimeZone(),
     };
 
     const headers = {
