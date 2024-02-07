@@ -20,6 +20,7 @@ import Svg, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { getTimeZone } from "react-native-localize";
 
 import { TokenContext } from "./context/TokenContext";
 import Calendar from "./customs/calendar";
@@ -47,7 +48,9 @@ function ActiveMissions() {
 
   const getMissions = async () => {
     try {
-      const url = "/user/mission_list/";
+      const url = `/user/mission_list?local_time=${new Date()
+        .toISOString()
+        .slice(0, -1)}&timezone=${getTimeZone()}`;
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
       };
@@ -67,7 +70,10 @@ function ActiveMissions() {
       };
       const response = await api.patch(
         url,
-        { local_time: new Date().toISOString().slice(0, -1) },
+        {
+          local_time: new Date().toISOString().slice(0, -1),
+          timezone: getTimeZone(),
+        },
         { headers }
       );
       getMissions();
