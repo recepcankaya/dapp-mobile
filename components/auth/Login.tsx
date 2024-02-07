@@ -7,7 +7,7 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAddress } from "@thirdweb-dev/react-native";
 
@@ -52,7 +52,12 @@ const Login = () => {
       setUserId(userIdTemp);
       setUsername(userDetailRes.data.username);
       setLoading(false);
-      navigation.navigate("ProfileTab");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'ProfileTab'}],
+        }),
+      );
     } catch (error: any) {
       setLoading(false);
       Alert.alert("Error", "Login failed");
