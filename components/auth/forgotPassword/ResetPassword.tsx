@@ -9,6 +9,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,65 +17,49 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
+import Circle from "../../SVGComponents/Circle";
 import { api } from "../../utils/api";
 
-import Circle from "../../SVGComponents/Circle";
-
 const ResetPassword = () => {
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
+  /**
+   * Checks the conditions for a valid password.
+   * @param psw - The password to be checked.
+   * @param pswConf - The password confirmation to be checked.
+   */
+  const checkConditions = (psw: string, pswConf: string) => {
+    let errorMessage = "";
+
+    if (psw !== pswConf) {
+      errorMessage = "Passwords do not match";
+    } else if (psw.length < 8) {
+      errorMessage = "Password must be at least 8 characters";
+    } else if (!/[a-z]/i.test(psw) || !/\d/.test(psw)) {
+      errorMessage = "Password must contain both number and character";
+    }
+
+    setError(errorMessage);
+  };
+
   const handleSubmit = async () => {
-    setLoading(true);
-
-    if (password !== passwordConfirmation) {
-      setErrorMessage(
-        "The passwords you entered do not match. Please try again."
-      );
-      setLoading(false);
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
-    if (!passwordRegex.test(password)) {
-      setErrorMessage(
-        "Password should include at least 1 number and 1 letter. Please try again."
-      );
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 8) {
-      setErrorMessage(
-        "Password should be at least 8 characters. Please try again."
-      );
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await api.post("/user/password_reset_confirm/", {
-        email: "erbat1@hotmail.com",
+      setLoading(true);
+      checkConditions(password, passwordConfirmation);
+      await api.post("/user/password_reset_confirm/", {
         password: password,
       });
-
-      if (response.status === 200) {
-        // Navigate to the "Login" page if the request is successful
-        navigation.navigate("Login");
-      } else {
-        // Handle error
-        console.error("Failed to reset password");
-      }
-    } catch (error) {
-      // Handle error
-      console.error(error);
-      console.log((error as any).response);
+      Alert.alert("Password resetted successfully");
+      navigation.navigate("Login");
+      setLoading(false);
+    } catch (error: any) {
+      Alert.alert("Reset Password Failed", error.message);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -83,22 +68,20 @@ const ResetPassword = () => {
       <View style={styles.inputContainer}>
         <Text style={styles.heading}>Reset Password</Text>
         <CustomTextInput
-          placeholder=""
+          placeholder="New Password"
           secureTextEntry={true}
           inputMode="text"
           value={password}
           onChangeText={setPassword}
         />
         <CustomTextInput
-          placeholder=""
+          placeholder="Confirm Password"
           secureTextEntry={true}
           inputMode="text"
           value={passwordConfirmation}
           onChangeText={setPasswordConfirmation}
         />
-        {errorMessage && (
-          <Text style={{ color: "#B80DCA" }}>{errorMessage}</Text>
-        )}
+        {error ? <Text style={styles.errorMessages}>{error}</Text> : null}
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleSubmit}>
@@ -126,6 +109,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
+  },
+  errorMessages: {
+    color: "red",
+    alignSelf: "flex-start",
   },
   buttonContainer: {
     alignSelf: "flex-end",
