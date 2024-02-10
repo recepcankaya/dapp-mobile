@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -5,6 +6,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,6 +21,7 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
+import { BlindEye, OpenEye } from "../SVGComponents/Eyes";
 
 const inputArray = [
   {
@@ -66,8 +69,25 @@ const Signup = () => {
   } = useForm<SignupFormFields>({
     resolver: zodResolver(SignupFormSchema),
   });
-
+  const [passwordConfirmed, setPasswordConfirmed] = useState<boolean>(false);
+  const [passwordConfirmedValue, setPasswordConfirmedValue] =
+    useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const Eyes = () => {
+    return (
+      <TouchableOpacity
+        style={styles.eye}
+        onPress={() => setPasswordVisible(!passwordVisible)}
+      >
+        {passwordVisible ? <OpenEye /> : <BlindEye />}
+      </TouchableOpacity>
+    );
+  };
   const handleRegister: SubmitHandler<SignupFormFields> = async (data) => {
+    if (!passwordConfirmed) {
+      console.log("password not confirmed", passwordConfirmed);
+      return;
+    }
     try {
       setLoading(true);
       const response = await api.post("/user/register/", {
@@ -99,10 +119,21 @@ const Signup = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("errors", errors);
+  }, [errors]);
+
+  const passwordConfirm = (value: string) => {
+    setPasswordConfirmedValue(value);
+    if (value !== control._formValues.password) {
+      setPasswordConfirmed(false);
+    } else setPasswordConfirmed(true);
+  };
+
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
         <Circle />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
@@ -114,13 +145,18 @@ const Signup = () => {
                 name={item.name as FieldName}
                 render={({ field: { onChange, value } }) => {
                   return (
-                    <CustomTextInput
-                      placeholder={item.placeholder}
-                      secureTextEntry={item.secureTextEntry}
-                      inputMode={item.inputMode as FieldInputMode}
-                      value={value}
-                      onChangeText={onChange}
-                    />
+                    <View style={styles.input}>
+                      <CustomTextInput
+                        placeholder={item.placeholder}
+                        secureTextEntry={
+                          item.secureTextEntry ? !passwordVisible : false
+                        }
+                        inputMode={item.inputMode as FieldInputMode}
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                      {item.name === "password" && <Eyes />}
+                    </View>
                   );
                 }}
               />
@@ -131,7 +167,20 @@ const Signup = () => {
               )}
             </View>
           ))}
+          <View style={styles.input}>
+            <CustomTextInput
+              placeholder="Password Confirm"
+              secureTextEntry={!passwordVisible}
+              inputMode={"text"}
+              value={passwordConfirmedValue}
+              onChangeText={(e: any) => passwordConfirm(e)}
+            />
+            <Eyes />
+          </View>
 
+          {!passwordConfirmed && control._formValues.password !== undefined && (
+            <Text style={styles.errorMessages}>Password does not match!</Text>
+          )}
           <View style={{ width: 314 }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
@@ -146,7 +195,7 @@ const Signup = () => {
             <CustomGradientButton text="Sign up" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -162,6 +211,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 190,
     gap: 28,
+  },
+  input: {
+    flexDirection: "row",
   },
   signUpText: {
     color: "#FFF",
@@ -179,6 +231,13 @@ const styles = StyleSheet.create({
   },
   signUpButtonContainer: {
     alignSelf: "flex-end",
+  },
+  eye: {
+    height: 26,
+    width: 26,
+    position: "absolute",
+    top: 17,
+    right: 17,
   },
 });
 
