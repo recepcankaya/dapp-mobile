@@ -21,6 +21,8 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import CustomText from "../customs/CustomText";
 import { api } from "../utils/api";
+import { Eyes } from "../SVGComponents/Eyes";
+import { z } from "zod";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -31,6 +33,7 @@ const Login = () => {
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
   const { isLoading, setLoading } = useLoading();
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -72,16 +75,23 @@ const Login = () => {
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
           <View style={styles.passwordContainer}>
-            <CustomTextInput
-              secureTextEntry
-              placeholder="Password"
-              inputMode="text"
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={styles.password}>
+              <CustomTextInput
+                secureTextEntry={!passwordVisible}
+                placeholder="Password"
+                inputMode="text"
+                value={password}
+                onChangeText={setPassword}
+              />
+              <Eyes
+                passwordVisible={passwordVisible}
+                setPasswordVisible={setPasswordVisible}
+              />
+            </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25 }}>
+              style={{ marginTop: 25 }}
+            >
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
@@ -123,9 +133,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   passwordContainer: {
-    width: "100%",
     marginTop: 30,
   },
+  password: {},
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -141,6 +151,13 @@ const styles = StyleSheet.create({
   },
   loginButtonContainer: {
     alignSelf: "flex-end",
+  },
+  eye: {
+    height: 26,
+    width: 26,
+    position: "absolute",
+    top: 17,
+    right: 17,
   },
 });
 

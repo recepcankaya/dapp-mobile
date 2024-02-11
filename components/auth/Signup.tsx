@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -5,6 +6,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,6 +21,7 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
+import { Eyes } from "../SVGComponents/Eyes";
 
 const inputArray = [
   {
@@ -42,9 +45,16 @@ const inputArray = [
     secureTextEntry: true,
     inputMode: "text",
   },
+  {
+    key: 3,
+    name: "confirmPassword",
+    placeholder: "Confirm Password",
+    secureTextEntry: true,
+    inputMode: "text",
+  },
 ];
 
-type FieldName = "username" | "email" | "password";
+type FieldName = "username" | "email" | "password" | "confirmPassword";
 type FieldInputMode =
   | "url"
   | "text"
@@ -66,6 +76,7 @@ const Signup = () => {
   } = useForm<SignupFormFields>({
     resolver: zodResolver(SignupFormSchema),
   });
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleRegister: SubmitHandler<SignupFormFields> = async (data) => {
     try {
@@ -102,36 +113,51 @@ const Signup = () => {
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
         <Circle />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
 
-          {inputArray.map((item) => (
-            <View key={item.key}>
-              <Controller
-                control={control}
-                name={item.name as FieldName}
-                render={({ field: { onChange, value } }) => {
-                  return (
-                    <CustomTextInput
-                      placeholder={item.placeholder}
-                      secureTextEntry={item.secureTextEntry}
-                      inputMode={item.inputMode as FieldInputMode}
-                      value={value}
-                      onChangeText={onChange}
-                    />
-                  );
-                }}
-              />
-              {errors[item.name as FieldName] && (
-                <Text style={styles.errorMessages}>
-                  {errors[item.name as FieldName]?.message}
-                </Text>
-              )}
-            </View>
-          ))}
-
+          {inputArray.map(
+            (item) => (
+              console.log("item", item),
+              (
+                <View key={item.key}>
+                  <Controller
+                    control={control}
+                    name={item.name as FieldName}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <View style={styles.input}>
+                          <CustomTextInput
+                            placeholder={item.placeholder}
+                            secureTextEntry={
+                              item.secureTextEntry ? !passwordVisible : false
+                            }
+                            inputMode={item.inputMode as FieldInputMode}
+                            value={value}
+                            onChangeText={onChange}
+                          />
+                          {(item.name === "password" ||
+                            item.name === "confirmPassword") && (
+                            <Eyes
+                              passwordVisible={passwordVisible}
+                              setPasswordVisible={setPasswordVisible}
+                            />
+                          )}
+                        </View>
+                      );
+                    }}
+                  />
+                  {errors[item.name as FieldName] && (
+                    <Text style={styles.errorMessages}>
+                      {errors[item.name as FieldName]?.message}
+                    </Text>
+                  )}
+                </View>
+              )
+            )
+          )}
           <View style={{ width: 314 }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
@@ -146,7 +172,7 @@ const Signup = () => {
             <CustomGradientButton text="Sign up" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -162,6 +188,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 190,
     gap: 28,
+  },
+  input: {
+    flexDirection: "row",
   },
   signUpText: {
     color: "#FFF",
