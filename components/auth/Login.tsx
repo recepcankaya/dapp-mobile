@@ -22,7 +22,6 @@ import Circle from "../SVGComponents/Circle";
 import CustomText from "../customs/CustomText";
 import { api } from "../utils/api";
 import { Eyes } from "../SVGComponents/Eyes";
-import { z } from "zod";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -58,8 +57,8 @@ const Login = () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'ProfileTab'}],
-        }),
+          routes: [{ name: "ProfileTab" }],
+        })
       );
     } catch (error: any) {
       setLoading(false);
@@ -90,8 +89,7 @@ const Login = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25 }}
-            >
+              style={{ marginTop: 25 }}>
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
