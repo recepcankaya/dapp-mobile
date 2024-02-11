@@ -18,12 +18,15 @@ import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 import Circle from "../../SVGComponents/Circle";
+
 import { api } from "../../utils/api";
+import { useEmailStore } from "../../store/emailConfirmStore";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState<string>("");
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const email = useEmailStore((state) => state.email);
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -51,6 +54,7 @@ const ResetPassword = () => {
       setLoading(true);
       checkConditions(password, passwordConfirmation);
       await api.post("/user/password_reset_confirm/", {
+        email: email,
         password: password,
       });
       Alert.alert("Password resetted successfully");
