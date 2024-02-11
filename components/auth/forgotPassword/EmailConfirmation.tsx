@@ -3,7 +3,6 @@
  * This component allows the user to confirm their email address.
  */
 
-import { useContext } from "react";
 import {
   View,
   Text,
@@ -14,7 +13,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { PasswordTokenContext } from "../../context/PasswordTokenContext";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
@@ -22,12 +20,15 @@ import useLoading from "../../hooks/useLoading";
 import Circle from "../../SVGComponents/Circle";
 
 import { useEmailStore } from "../../store/emailConfirmStore";
+import { usePasswordTokenStore } from "../../store/passwordTokenStore";
 import { api } from "../../utils/api";
 
 const EmailConfirmation = () => {
   const email = useEmailStore((state) => state.email);
   const updateEmail = useEmailStore((state) => state.updateEmail);
-  const { setPasswordToken } = useContext(PasswordTokenContext);
+  const updatePasswordToken = usePasswordTokenStore(
+    (state) => state.updatePasswordToken
+  );
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -37,7 +38,7 @@ const EmailConfirmation = () => {
       const response = await api.post("/user/password_reset/", {
         email: email,
       });
-      setPasswordToken(response.data.token);
+      updatePasswordToken(response.data.token);
       navigation.navigate("Reset Confirmation");
       setLoading(false);
     } catch (error: any) {
