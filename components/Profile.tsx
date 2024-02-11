@@ -233,7 +233,7 @@ export default function Profile() {
             secureTextEntry={false}
             placeholder={username}
             value={tempUsername}
-            onChangeText={(text) => setTempUsername(text)}
+            onChangeText={(text: string) => setTempUsername(text)}
             inputMode="text"
           />
           <View style={{ position: "absolute", top: 15, right: 10 }}>
