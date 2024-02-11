@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,7 +21,7 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
-import { BlindEye, OpenEye } from "../SVGComponents/Eyes";
+import { Eyes } from "../SVGComponents/Eyes";
 
 const inputArray = [
   {
@@ -45,9 +45,16 @@ const inputArray = [
     secureTextEntry: true,
     inputMode: "text",
   },
+  {
+    key: 3,
+    name: "confirmPassword",
+    placeholder: "Confirm Password",
+    secureTextEntry: true,
+    inputMode: "text",
+  },
 ];
 
-type FieldName = "username" | "email" | "password";
+type FieldName = "username" | "email" | "password" | "confirmPassword";
 type FieldInputMode =
   | "url"
   | "text"
@@ -69,25 +76,9 @@ const Signup = () => {
   } = useForm<SignupFormFields>({
     resolver: zodResolver(SignupFormSchema),
   });
-  const [passwordConfirmed, setPasswordConfirmed] = useState<boolean>(false);
-  const [passwordConfirmedValue, setPasswordConfirmedValue] =
-    useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const Eyes = () => {
-    return (
-      <TouchableOpacity
-        style={styles.eye}
-        onPress={() => setPasswordVisible(!passwordVisible)}
-      >
-        {passwordVisible ? <OpenEye /> : <BlindEye />}
-      </TouchableOpacity>
-    );
-  };
+
   const handleRegister: SubmitHandler<SignupFormFields> = async (data) => {
-    if (!passwordConfirmed) {
-      console.log("password not confirmed", passwordConfirmed);
-      return;
-    }
     try {
       setLoading(true);
       const response = await api.post("/user/register/", {
@@ -119,17 +110,6 @@ const Signup = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("errors", errors);
-  }, [errors]);
-
-  const passwordConfirm = (value: string) => {
-    setPasswordConfirmedValue(value);
-    if (value !== control._formValues.password) {
-      setPasswordConfirmed(false);
-    } else setPasswordConfirmed(true);
-  };
-
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
@@ -138,48 +118,45 @@ const Signup = () => {
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
 
-          {inputArray.map((item) => (
-            <View key={item.key}>
-              <Controller
-                control={control}
-                name={item.name as FieldName}
-                render={({ field: { onChange, value } }) => {
-                  return (
-                    <View style={styles.input}>
-                      <CustomTextInput
-                        placeholder={item.placeholder}
-                        secureTextEntry={
-                          item.secureTextEntry ? !passwordVisible : false
-                        }
-                        inputMode={item.inputMode as FieldInputMode}
-                        value={value}
-                        onChangeText={onChange}
-                      />
-                      {item.name === "password" && <Eyes />}
-                    </View>
-                  );
-                }}
-              />
-              {errors[item.name as FieldName] && (
-                <Text style={styles.errorMessages}>
-                  {errors[item.name as FieldName]?.message}
-                </Text>
-              )}
-            </View>
-          ))}
-          <View style={styles.input}>
-            <CustomTextInput
-              placeholder="Password Confirm"
-              secureTextEntry={!passwordVisible}
-              inputMode={"text"}
-              value={passwordConfirmedValue}
-              onChangeText={(e: any) => passwordConfirm(e)}
-            />
-            <Eyes />
-          </View>
-
-          {!passwordConfirmed && control._formValues.password !== undefined && (
-            <Text style={styles.errorMessages}>Password does not match!</Text>
+          {inputArray.map(
+            (item) => (
+              console.log("item", item),
+              (
+                <View key={item.key}>
+                  <Controller
+                    control={control}
+                    name={item.name as FieldName}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <View style={styles.input}>
+                          <CustomTextInput
+                            placeholder={item.placeholder}
+                            secureTextEntry={
+                              item.secureTextEntry ? !passwordVisible : false
+                            }
+                            inputMode={item.inputMode as FieldInputMode}
+                            value={value}
+                            onChangeText={onChange}
+                          />
+                          {(item.name === "password" ||
+                            item.name === "confirmPassword") && (
+                            <Eyes
+                              passwordVisible={passwordVisible}
+                              setPasswordVisible={setPasswordVisible}
+                            />
+                          )}
+                        </View>
+                      );
+                    }}
+                  />
+                  {errors[item.name as FieldName] && (
+                    <Text style={styles.errorMessages}>
+                      {errors[item.name as FieldName]?.message}
+                    </Text>
+                  )}
+                </View>
+              )
+            )
           )}
           <View style={{ width: 314 }}>
             <CustomConnectWallet style={{ width: "100%" }} />
@@ -231,13 +208,6 @@ const styles = StyleSheet.create({
   },
   signUpButtonContainer: {
     alignSelf: "flex-end",
-  },
-  eye: {
-    height: 26,
-    width: 26,
-    position: "absolute",
-    top: 17,
-    right: 17,
   },
 });
 

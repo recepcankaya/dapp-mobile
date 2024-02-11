@@ -1,6 +1,7 @@
 import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
+import { TouchableOpacity, StyleSheet } from "react-native";
 
-export const OpenEye = () => {
+const OpenEye = () => {
   return (
     <Svg width="26" height="26" viewBox="0 0 26 26" fill="none">
       <Rect width="26" height="26" fill="url(#pattern0)" />
@@ -24,7 +25,7 @@ export const OpenEye = () => {
   );
 };
 
-export const BlindEye = () => {
+const BlindEye = () => {
   return (
     <Svg width="26" height="26" viewBox="0 0 26 26" fill="none">
       <Rect width="26" height="26" fill="url(#pattern0)" />
@@ -47,3 +48,29 @@ export const BlindEye = () => {
     </Svg>
   );
 };
+
+interface EyesProps {
+  passwordVisible: boolean;
+  setPasswordVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const Eyes = ({ passwordVisible, setPasswordVisible }: EyesProps) => {
+  return (
+    <TouchableOpacity
+      style={styles.eye}
+      onPress={() => setPasswordVisible(!passwordVisible)}
+    >
+      {passwordVisible ? <OpenEye /> : <BlindEye />}
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  eye: {
+    height: 26,
+    width: 26,
+    position: "absolute",
+    top: 17,
+    right: 17,
+  },
+});

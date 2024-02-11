@@ -21,7 +21,8 @@ import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
 import CustomText from "../customs/CustomText";
 import { api } from "../utils/api";
-import { BlindEye, OpenEye } from "../SVGComponents/Eyes";
+import { Eyes } from "../SVGComponents/Eyes";
+import { z } from "zod";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -33,16 +34,6 @@ const Login = () => {
   const userAddress = useAddress();
   const { isLoading, setLoading } = useLoading();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const Eyes = () => {
-    return (
-      <TouchableOpacity
-        style={styles.eye}
-        onPress={() => setPasswordVisible(!passwordVisible)}
-      >
-        {passwordVisible ? <OpenEye /> : <BlindEye />}
-      </TouchableOpacity>
-    );
-  };
 
   const handleLogin = async () => {
     try {
@@ -87,7 +78,10 @@ const Login = () => {
                 value={password}
                 onChangeText={setPassword}
               />
-              <Eyes />
+              <Eyes
+                passwordVisible={passwordVisible}
+                setPasswordVisible={setPasswordVisible}
+              />
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
@@ -136,8 +130,7 @@ const styles = StyleSheet.create({
   passwordContainer: {
     marginTop: 30,
   },
-  password: {
-  },
+  password: {},
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
