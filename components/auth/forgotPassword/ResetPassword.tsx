@@ -18,6 +18,7 @@ import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
 import Circle from "../../SVGComponents/Circle";
+import Eyes from "../../SVGComponents/Eyes";
 
 import { api } from "../../utils/api";
 import { useEmailStore } from "../../store/emailConfirmStore";
@@ -25,6 +26,9 @@ import { useEmailStore } from "../../store/emailConfirmStore";
 const ResetPassword = () => {
   const [password, setPassword] = useState<string>("");
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
+    useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const email = useEmailStore((state) => state.email);
   const { isLoading, setLoading } = useLoading();
@@ -53,13 +57,19 @@ const ResetPassword = () => {
     try {
       setLoading(true);
       checkConditions(password, passwordConfirmation);
-      await api.post("/user/password_reset_confirm/", {
-        email: email,
-        password: password,
-      });
-      Alert.alert("Password resetted successfully");
-      navigation.navigate("Login");
-      setLoading(false);
+      if (error.length > 0) {
+        setLoading(false);
+        setError("");
+        return;
+      } else {
+        await api.post("/user/password_reset_confirm/", {
+          email: email,
+          password: password,
+        });
+        setLoading(false);
+        Alert.alert("Password resetted successfully");
+        navigation.navigate("Login");
+      }
     } catch (error: any) {
       Alert.alert("Reset Password Failed", error.message);
       setLoading(false);
@@ -71,20 +81,32 @@ const ResetPassword = () => {
       <Circle />
       <View style={styles.inputContainer}>
         <Text style={styles.heading}>Reset Password</Text>
-        <CustomTextInput
-          placeholder="New Password"
-          secureTextEntry={true}
-          inputMode="text"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <CustomTextInput
-          placeholder="Confirm Password"
-          secureTextEntry={true}
-          inputMode="text"
-          value={passwordConfirmation}
-          onChangeText={setPasswordConfirmation}
-        />
+        <View>
+          <CustomTextInput
+            placeholder="New Password"
+            secureTextEntry={passwordVisible ? false : true}
+            inputMode="text"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Eyes
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
+          />
+        </View>
+        <View>
+          <CustomTextInput
+            placeholder="Confirm Password"
+            secureTextEntry={passwordConfirmationVisible ? false : true}
+            inputMode="text"
+            value={passwordConfirmation}
+            onChangeText={setPasswordConfirmation}
+          />
+          <Eyes
+            passwordVisible={passwordConfirmationVisible}
+            setPasswordVisible={setPasswordConfirmationVisible}
+          />
+        </View>
         {error ? <Text style={styles.errorMessages}>{error}</Text> : null}
       </View>
       <View style={styles.buttonContainer}>

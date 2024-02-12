@@ -10,8 +10,7 @@ const OpenEye = () => {
           id="pattern0"
           patternContentUnits="objectBoundingBox"
           width="1"
-          height="1"
-        >
+          height="1">
           <Use xlinkHref="#image0_680_6" transform="scale(0.0111111)" />
         </Pattern>
         <Image
@@ -34,8 +33,7 @@ const BlindEye = () => {
           id="pattern0"
           patternContentUnits="objectBoundingBox"
           width="1"
-          height="1"
-        >
+          height="1">
           <Use xlinkHref="#image0_680_5" transform="scale(0.0111111)" />
         </Pattern>
         <Image
@@ -54,12 +52,11 @@ interface EyesProps {
   setPasswordVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Eyes = ({ passwordVisible, setPasswordVisible }: EyesProps) => {
+const Eyes = ({ passwordVisible, setPasswordVisible }: EyesProps) => {
   return (
     <TouchableOpacity
       style={styles.eye}
-      onPress={() => setPasswordVisible(!passwordVisible)}
-    >
+      onPress={() => setPasswordVisible((prev) => !prev)}>
       {passwordVisible ? <OpenEye /> : <BlindEye />}
     </TouchableOpacity>
   );
@@ -74,3 +71,5 @@ const styles = StyleSheet.create({
     right: 17,
   },
 });
+
+export default Eyes;
