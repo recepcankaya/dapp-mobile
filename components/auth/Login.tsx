@@ -17,12 +17,12 @@ import { UserIdContext } from "../context/UserIdContext";
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomTextInput from "../customs/CustomTextInput";
 import CustomGradientButton from "../customs/CustomGradientButton";
+import CustomText from "../customs/CustomText";
 import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
-import CustomText from "../customs/CustomText";
+import Eyes from "../SVGComponents/Eyes";
+
 import { api } from "../utils/api";
-import { Eyes } from "../SVGComponents/Eyes";
-import { z } from "zod";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -58,8 +58,8 @@ const Login = () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'ProfileTab'}],
-        }),
+          routes: [{ name: "ProfileTab" }],
+        })
       );
     } catch (error: any) {
       setLoading(false);
@@ -75,7 +75,7 @@ const Login = () => {
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
           <View style={styles.passwordContainer}>
-            <View style={styles.password}>
+            <View>
               <CustomTextInput
                 secureTextEntry={!passwordVisible}
                 placeholder="Password"
@@ -90,8 +90,7 @@ const Login = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25 }}
-            >
+              style={{ marginTop: 25 }}>
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
@@ -135,7 +134,6 @@ const styles = StyleSheet.create({
   passwordContainer: {
     marginTop: 30,
   },
-  password: {},
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -151,13 +149,6 @@ const styles = StyleSheet.create({
   },
   loginButtonContainer: {
     alignSelf: "flex-end",
-  },
-  eye: {
-    height: 26,
-    width: 26,
-    position: "absolute",
-    top: 17,
-    right: 17,
   },
 });
 

@@ -2,119 +2,121 @@
  * Component for resetting password.
  * This component allows the user to reset their password by entering a new password and confirming it.
  */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
+  Alert,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
-import axios from "axios";
+import Circle from "../../SVGComponents/Circle";
+import Eyes from "../../SVGComponents/Eyes";
 
-const { width, height } = Dimensions.get("window");
-
-const api = axios.create({
-  baseURL: "https://akikoko.pythonanywhere.com/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+import { api } from "../../utils/api";
+import { useEmailStore } from "../../store/emailConfirmStore";
 
 const ResetPassword = () => {
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
+    useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const email = useEmailStore((state) => state.email);
   const { isLoading, setLoading } = useLoading();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
+  /**
+   * Checks the conditions for a valid password.
+   *
+   * @param psw - The password to be checked.
+   * @param pswConf - The password confirmation to be checked.
+   * @returns If there is an error return false, otherwise return true.
+   */
+  const checkConditions = (psw: string, pswConf: string): boolean => {
+    let errorMessage = "";
+
+    if (psw !== pswConf) {
+      errorMessage = "Passwords do not match";
+    } else if (psw.length < 8) {
+      errorMessage = "Password must be at least 8 characters";
+    } else if (!/[a-z]/i.test(psw) || !/\d/.test(psw)) {
+      errorMessage = "Password must contain both number and character";
+    }
+
+    setError(errorMessage);
+
+    return errorMessage ? false : true;
+  };
+
   const handleSubmit = async () => {
-    setLoading(true);
-
-    if (password !== passwordConfirmation) {
-      setErrorMessage('The passwords you entered do not match. Please try again.');
-      setLoading(false);
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
-    if (!passwordRegex.test(password)) {
-      setErrorMessage('Password should include at least 1 number and 1 letter. Please try again.');
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 8) {
-      setErrorMessage('Password should be at least 8 characters. Please try again.');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await api.post('/user/password_reset_confirm/', {
-        email: "erbat1@hotmail.com",
-        password: password,
-      });
-
-      if (response.status === 200) {
-        // Navigate to the "Login" page if the request is successful
-        navigation.navigate("Login");
+      setLoading(true);
+      const isValid = checkConditions(password, passwordConfirmation);
+      if (!isValid) {
+        setLoading(false);
+        setError("");
+        return;
       } else {
-        // Handle error
-        console.error('Failed to reset password');
+        await api.post("/user/password_reset_confirm/", {
+          email: email,
+          password: password,
+        });
+        setLoading(false);
+        Alert.alert("Password resetted successfully");
+        navigation.navigate("Login");
       }
-    } catch (error) {
-      // Handle error
-      console.error(error);
-      console.log((error as any).response);
+    } catch (error: any) {
+      Alert.alert("Reset Password Failed", error.message);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={["#B80DCA", "#4035CB"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          styles.circle,
-          { width: 650.637, height: 739.49, borderRadius: 739.49 },
-        ]}
-      />
-      <View style={styles.input}>
+      <Circle />
+      <View style={styles.inputContainer}>
         <Text style={styles.heading}>Reset Password</Text>
-        <CustomTextInput
-          placeholder=""
-          secureTextEntry={true}
-          inputMode="text"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <CustomTextInput
-          placeholder=""
-          secureTextEntry={true}
-          inputMode="text"
-          value={passwordConfirmation}
-          onChangeText={setPasswordConfirmation}
-        />
-         {errorMessage && <Text style={{color: '#B80DCA'}}>{errorMessage}</Text>}
-      </View>
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleSubmit}>
-            <CustomGradientButton text="Change" isLoading={isLoading} />
-          </TouchableOpacity>
+        <View>
+          <CustomTextInput
+            placeholder="New Password"
+            secureTextEntry={passwordVisible ? false : true}
+            inputMode="text"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Eyes
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
+          />
         </View>
+        <View>
+          <CustomTextInput
+            placeholder="Confirm Password"
+            secureTextEntry={passwordConfirmationVisible ? false : true}
+            inputMode="text"
+            value={passwordConfirmation}
+            onChangeText={setPasswordConfirmation}
+          />
+          <Eyes
+            passwordVisible={passwordConfirmationVisible}
+            setPasswordVisible={setPasswordConfirmationVisible}
+          />
+        </View>
+        {error ? <Text style={styles.errorMessages}>{error}</Text> : null}
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleSubmit}>
+          <CustomGradientButton text="Change" isLoading={isLoading} />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -124,33 +126,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#050505",
   },
-  circle: {
-    transform: [{ rotate: "-179.736deg" }],
-    borderWidth: 5,
-    borderColor: "#B80DCA",
-    backgroundColor: "solid",
-    position: "absolute",
-    top: -545,
-    alignSelf: "center",
-  },
-  input: {
+  inputContainer: {
     marginTop: 250,
+    gap: 28,
   },
   heading: {
-    marginBottom: 25,
     color: "#FFF",
     fontFamily: "Inter",
     fontSize: 25,
     fontStyle: "italic",
     fontWeight: "700",
   },
+  errorMessages: {
+    color: "red",
+    alignSelf: "flex-start",
+  },
   buttonContainer: {
-    right: -width / 3.5,  //fixed to right according to screen size
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    alignSelf: "flex-end",
   },
 });
 
