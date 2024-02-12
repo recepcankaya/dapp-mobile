@@ -36,10 +36,12 @@ const ResetPassword = () => {
 
   /**
    * Checks the conditions for a valid password.
+   *
    * @param psw - The password to be checked.
    * @param pswConf - The password confirmation to be checked.
+   * @returns If there is an error return false, otherwise return true.
    */
-  const checkConditions = (psw: string, pswConf: string) => {
+  const checkConditions = (psw: string, pswConf: string): boolean => {
     let errorMessage = "";
 
     if (psw !== pswConf) {
@@ -51,13 +53,15 @@ const ResetPassword = () => {
     }
 
     setError(errorMessage);
+
+    return errorMessage ? false : true;
   };
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      checkConditions(password, passwordConfirmation);
-      if (error.length > 0) {
+      const isValid = checkConditions(password, passwordConfirmation);
+      if (!isValid) {
         setLoading(false);
         setError("");
         return;
