@@ -73,17 +73,12 @@ const AddTask = () => {
   );
 
   const checkMissionsNameExist = (title: string) => {
-    console.log("title", title);
     return missions.some(
       (mission) =>
         mission.title.toLowerCase().replace(/\s/g, "") ===
         title.toLowerCase().replace(/\s/g, "")
     );
   };
-
-  useEffect(() => {
-    console.log("missions", missions);
-  }, []);
 
   const createMission = () => {
     if (checkMissionsNameExist(title)) {

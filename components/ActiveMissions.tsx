@@ -41,26 +41,26 @@ type MissionFields = {
 };
 
 function ActiveMissions() {
-  // const [missions, setMissions] = useState<MissionFields[]>([]);
   const [filteredMissions, setFilteredMissions] = useState<MissionFields[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
   const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
-  const missions = useMissionsStore((state) => state.missions);
+  // let missions: MissionFields[] = ;
+  const [missions, setMissions] = useState<MissionFields[]>(
+    useMissionsStore((state) => state.missions)
+  );
 
   const getMissions = async () => {
     try {
-      console.log("x1");
       const url = `/user/mission_list/?local_time=${new Date()
         .toISOString()
         .slice(0, -1)}&timezone=${getTimeZone()}`;
-      console.log("x2");
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
       };
       const response = await api.get(url, { headers });
-      missions.push(...response.data);
+      setMissions([...missions, ...response.data]);
       setFilteredMissions(response.data);
     } catch (error) {
       Alert.alert("An error occurred while getting missions");
