@@ -1,7 +1,15 @@
 import { create } from "zustand";
 
+type MissionFields = {
+  id: number;
+  title: string;
+  startDate: string;
+  isCompleted: boolean;
+  numberOfDays: number;
+};
+
 type State = {
-  missions: any[];
+  missions: MissionFields[];
 };
 
 type Action = {

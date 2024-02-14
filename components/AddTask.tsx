@@ -66,6 +66,7 @@ const AddTask = () => {
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
+  const missions = useMissionsStore((state) => state.missions);
 
   const [taskDate, setTastDate] = useState<string>(
     new Date().toISOString().slice(0, -1)
@@ -73,19 +74,22 @@ const AddTask = () => {
 
   const checkMissionsNameExist = (title: string) => {
     console.log("title", title);
-    return useMissionsStore
-      .getState()
-      .missions.some(
-        (mission) =>
-          mission.title.toLowerCase().replace(/\s/g, "") ===
-          title.toLowerCase().replace(/\s/g, "")
-      );
+    return missions.some(
+      (mission) =>
+        mission.title.toLowerCase().replace(/\s/g, "") ===
+        title.toLowerCase().replace(/\s/g, "")
+    );
   };
+
+  useEffect(() => {
+    console.log("missions", missions);
+  }, []);
 
   const createMission = () => {
     if (checkMissionsNameExist(title)) {
       Alert.alert(
-        "Oops! You've already added this task. 🙈 Try adding something new!"
+        "Oops!",
+        "You've already added this task. 🙈 Try adding something new!"
       );
       return;
     }
