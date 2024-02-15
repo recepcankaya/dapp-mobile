@@ -46,10 +46,7 @@ function ActiveMissions() {
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
   const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
-  // let missions: MissionFields[] = ;
-  const [missions, setMissions] = useState<MissionFields[]>(
-    useMissionsStore((state) => state.missions)
-  );
+  const missions: MissionFields[] = useMissionsStore((state) => state.missions);
 
   const getMissions = async () => {
     try {
@@ -60,7 +57,7 @@ function ActiveMissions() {
         Authorization: `Bearer ${tokens?.access}`,
       };
       const response = await api.get(url, { headers });
-      setMissions([...missions, ...response.data]);
+      missions.push(...response.data);
       setFilteredMissions(response.data);
     } catch (error) {
       Alert.alert("An error occurred while getting missions");

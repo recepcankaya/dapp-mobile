@@ -18,5 +18,5 @@ type Action = {
 
 export const useMissionsStore = create<State & Action>((set) => ({
   missions: [],
-  updateMissions: (missions) => set(() => ({ missions })),
+  updateMissions: (missions) => set(() => ({ missions: missions })),
 }));
