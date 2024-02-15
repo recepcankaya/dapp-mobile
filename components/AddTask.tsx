@@ -144,8 +144,7 @@ const AddTask = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 colors={["#B80DCA", "#4035CB"]}
-                style={styles.formGradientBorder}
-              >
+                style={styles.formGradientBorder}>
                 <View style={styles.form}>
                   <Text style={styles.textHeading}>Add Mission</Text>
                   <TextInput
