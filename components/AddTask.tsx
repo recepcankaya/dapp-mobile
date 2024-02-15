@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -30,6 +30,7 @@ import Calendar from "./customs/calendar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomGradientButton from "./customs/CustomGradientButton";
 import { getTimeZone } from "react-native-localize";
+import { useMissionsStore } from "./store/missionsStore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -65,12 +66,28 @@ const AddTask = () => {
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
+  const missions = useMissionsStore((state) => state.missions);
 
   const [taskDate, setTastDate] = useState<string>(
     new Date().toISOString().slice(0, -1)
   );
 
+  const checkMissionsNameExist = (title: string) => {
+    return missions.some(
+      (mission) =>
+        mission.title.toLowerCase().replace(/\s/g, "") ===
+        title.toLowerCase().replace(/\s/g, "")
+    );
+  };
+
   const createMission = () => {
+    if (checkMissionsNameExist(title)) {
+      Alert.alert(
+        "Oops!",
+        "You've already added this task. 🙈 Try adding something new!"
+      );
+      return;
+    }
     const url = "/mission/create/";
     const data = {
       user: user_id,
@@ -127,7 +144,8 @@ const AddTask = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 colors={["#B80DCA", "#4035CB"]}
-                style={styles.formGradientBorder}>
+                style={styles.formGradientBorder}
+              >
                 <View style={styles.form}>
                   <Text style={styles.textHeading}>Add Mission</Text>
                   <TextInput
