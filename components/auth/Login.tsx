@@ -63,9 +63,13 @@ const Login = () => {
       );
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", "Login failed");
+      Alert.alert(
+        "Login Failed 😟",
+        String(error.response.data.errorMessage[0])
+      );
     }
   };
+
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />

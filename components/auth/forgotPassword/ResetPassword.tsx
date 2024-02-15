@@ -75,8 +75,11 @@ const ResetPassword = () => {
         navigation.navigate("Login");
       }
     } catch (error: any) {
-      Alert.alert("Reset Password Failed", error.message);
       setLoading(false);
+      Alert.alert(
+        "Reset Password Failed!",
+        error.response.data.errorMessage[0]
+      );
     }
   };
 

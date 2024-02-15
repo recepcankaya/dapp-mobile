@@ -96,21 +96,11 @@ const Signup = () => {
       }
       setLoading(false);
     } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data &&
-        (error.response.data.email?.[0] || error.response.data.username?.[0])
-      ) {
-        Alert.alert(
-          "Error",
-          error.response.data.email?.[0] +
-            "\n" +
-            error.response.data.username?.[0]
-        );
-      } else {
-        Alert.alert("Error", error.message);
-      }
       setLoading(false);
+      Alert.alert(
+        "Registration Failed!",
+        String(error.response.data.errorMessage[0])
+      );
     }
   };
 

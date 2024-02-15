@@ -42,7 +42,7 @@ const EmailConfirmation = () => {
       navigation.navigate("Reset Confirmation");
       setLoading(false);
     } catch (error: any) {
-      Alert.alert("Email Confirmation Failed", error.message);
+      Alert.alert("Email Confirmation Failed", "Invalid email address");
       setLoading(false);
     }
   };

@@ -57,8 +57,8 @@ function ActiveMissions() {
       const response = await api.get(url, { headers });
       setMissions(response.data);
       setFilteredMissions(response.data);
-    } catch (error) {
-      Alert.alert("An error occurred while getting missions");
+    } catch (error: any) {
+      Alert.alert("Oops! 😬", String(error.response.data.errorMessage[0]));
     }
   };
 
@@ -68,7 +68,7 @@ function ActiveMissions() {
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
       };
-      const response = await api.patch(
+      await api.patch(
         url,
         {
           local_time: new Date().toISOString().slice(0, -1),
@@ -79,9 +79,15 @@ function ActiveMissions() {
       getMissions();
       setConfettiVisible(true);
       confettiCannonRef.current?.start();
-      Alert.alert(response.data.message);
-    } catch (error) {
-      Alert.alert("An error occurred while completing the mission");
+      Alert.alert(
+        "You are rocking!",
+        "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
+      );
+    } catch (error: any) {
+      Alert.alert(
+        "You completed today's mission!",
+        "This is good news, but you can't finish it again today. Come back for tomorrow. We will be waiting for you! 🏆🕒"
+      );
     }
   };
 
