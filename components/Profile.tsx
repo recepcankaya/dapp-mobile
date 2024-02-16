@@ -137,12 +137,8 @@ export default function Profile() {
         } else {
           Alert.alert("Error", "Failed to get user details");
         }
-      } catch (error) {
-        console.error(error);
-        Alert.alert(
-          "Error",
-          "An error occurred while trying to get user details"
-        );
+      } catch (error: any) {
+        Alert.alert("Error", String(error.response.data.errorMessage[0]));
       }
     };
 
@@ -169,9 +165,8 @@ export default function Profile() {
       } else {
         Alert.alert("Error", "Failed to update username");
       }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "An error occurred while trying to update username");
+    } catch (error: any) {
+      Alert.alert("Error", String(error.response.data.errorMessage[0]));
     }
   };
 

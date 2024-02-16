@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type MissionFields = {
+export type MissionFields = {
   id: number;
   title: string;
   startDate: string;
