@@ -30,7 +30,7 @@ import Calendar from "./customs/calendar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomGradientButton from "./customs/CustomGradientButton";
 import { getTimeZone } from "react-native-localize";
-import { useMissionsStore } from "./store/missionsStore";
+import { MissionFields, useMissionsStore } from "./store/missionsStore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,31 +57,29 @@ const api = axios.create({
 
 const AddTask = () => {
   const route = useRoute();
-  // const { categoryType }: any = route.params;
-  const categoryType: any = "Art";
-  console.log("category", categoryType);
+  const { categoryType }: any = route.params;
   const { username } = useContext(UserContext) || {}; // Add null check and default empty object
   const { user_id } = useContext(UserIdContext);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
-  const missions = useMissionsStore((state) => state.missions);
+  const missions: MissionFields[] = useMissionsStore((state) => state.missions);
 
   const [taskDate, setTastDate] = useState<string>(
     new Date().toISOString().slice(0, -1)
   );
 
-  const checkMissionsNameExist = (title: string) => {
+  const checkMissionsNameExist = async (title: string) => {
     return missions.some(
-      (mission) =>
-        mission.title.toLowerCase().replace(/\s/g, "") ===
+      (mission: MissionFields) =>
+        mission.title?.toLowerCase().replace(/\s/g, "") ===
         title.toLowerCase().replace(/\s/g, "")
     );
   };
 
-  const createMission = () => {
-    if (checkMissionsNameExist(title)) {
+  const createMission = async () => {
+    if (await checkMissionsNameExist(title)) {
       Alert.alert(
         "Oops!",
         "You've already added this task. 🙈 Try adding something new!"
@@ -144,7 +142,8 @@ const AddTask = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 colors={["#B80DCA", "#4035CB"]}
-                style={styles.formGradientBorder}>
+                style={styles.formGradientBorder}
+              >
                 <View style={styles.form}>
                   <Text style={styles.textHeading}>Add Mission</Text>
                   <TextInput
