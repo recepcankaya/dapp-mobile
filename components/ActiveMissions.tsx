@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useCallback } from "react";
+import { useState, useRef, useContext, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import Svg, {
   Path,
@@ -28,6 +29,7 @@ import Confetti from "./customs/confetti";
 import { api } from "./utils/api";
 
 import { useMissionsStore, MissionFields } from "./store/missionsStore";
+import useLoading from "./hooks/useLoading";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -38,7 +40,9 @@ function ActiveMissions() {
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
   const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
-  const missions = useMissionsStore((state) => state.missions);
+  const missions: MissionFields[] = useMissionsStore((state) => state.missions);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isLoading, setLoading } = useLoading();
 
   const getMissions = async () => {
     try {
@@ -49,7 +53,8 @@ function ActiveMissions() {
         Authorization: `Bearer ${tokens?.access}`,
       };
       const response = await api.get(url, { headers });
-      missions.push(response.data);
+      missions.length = 0;
+      missions.push(...response.data);
       setFilteredMissions(response.data);
     } catch (error: any) {
       Alert.alert("Oops! 😬", String(error.response.data.errorMessage[0]));
@@ -58,6 +63,7 @@ function ActiveMissions() {
 
   const completeMission = async (id: number) => {
     try {
+      setLoading(true);
       const url = `/mission/complete/${id}/`;
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
@@ -70,18 +76,16 @@ function ActiveMissions() {
         },
         { headers }
       );
-      getMissions();
-      setConfettiVisible(true);
+      await getMissions();
       confettiCannonRef.current?.start();
-      Alert.alert(
-        "You are rocking!",
-        "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
-      );
+      setConfettiVisible(true);
+      setLoading(false);
     } catch (error: any) {
       Alert.alert(
         "You completed today's mission!",
         "This is good news, but you can't finish it again today. Come back for tomorrow. We will be waiting for you! 🏆🕒"
       );
+      setLoading(false);
     }
   };
 
@@ -130,7 +134,8 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}>
+          style={{ position: "absolute" }}
+        >
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -144,7 +149,8 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse">
+              gradientUnits="userSpaceOnUse"
+            >
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -153,7 +159,8 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}>
+            onPress={() => completeMission(item.id)}
+          >
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -188,7 +195,8 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -247,7 +255,19 @@ function ActiveMissions() {
         <Confetti
           ref={confettiCannonRef}
           onAnimationEnd={() => setConfettiVisible(false)}
+          onAnimationStart={() =>
+            Alert.alert(
+              "You are rocking!",
+              "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
+            )
+          }
         />
+      )}
+
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size={"large"} color={"#B80DCA"} />
+        </View>
       )}
       <View style={{ height: 100 }}>
         <Calendar
@@ -261,6 +281,7 @@ function ActiveMissions() {
           }}
         />
       </View>
+
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
           data={filteredMissions}
@@ -371,6 +392,17 @@ const styles = StyleSheet.create({
   missionNumberText: {
     color: "#4035CB",
     fontSize: 18,
+  },
+  loadingContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 10,
   },
 });
 

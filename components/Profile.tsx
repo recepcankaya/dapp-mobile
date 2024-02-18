@@ -65,7 +65,8 @@ const ProfilePicture = () => (
         id="pattern0"
         patternContentUnits="objectBoundingBox"
         width="1"
-        height="1">
+        height="1"
+      >
         <Use
           xlinkHref="#image0_113_7"
           transform="translate(0 -0.244186) scale(0.00581395)"
@@ -77,7 +78,8 @@ const ProfilePicture = () => (
         y1="0"
         x2="66.5"
         y2="133"
-        gradientUnits="userSpaceOnUse">
+        gradientUnits="userSpaceOnUse"
+      >
         <Stop stopColor="#B80DCA" />
         <Stop offset="1" stopColor="#4035CB" />
       </LinearGradient>
@@ -102,7 +104,8 @@ const EmailIcon = () => (
   <Svg width="48" height="48" viewBox="0 0 48 48" fill="none">
     <G
       transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
-      fill="#000000">
+      fill="#000000"
+    >
       <Path
         d="M36 384 c-9 -8 -16 -28 -16 -44 0 -24 13 -36 101 -94 56 -36 109 -66
         119 -66 10 0 59 27 109 60 l92 60 -3 -97 -3 -98 -195 0 -195 0 -3 83 c-4 105
@@ -129,7 +132,6 @@ export default function Profile() {
             Authorization: `Bearer ${tokens?.access}`,
           },
         });
-
         if (response.status === 200) {
           setUsername(response.data.username);
           setEmail(response.data.email);
@@ -141,11 +143,12 @@ export default function Profile() {
         Alert.alert("Error", String(error.response.data.errorMessage[0]));
       }
     };
-
     fetchUserDetails();
   }, [username]);
 
   const changeUsername = async (newUsername: string) => {
+    if (tempUsername.length < 3 || username === tempUsername)
+      return Alert.alert("Error", "You didn't change the username!");
     try {
       const response = await api.patch(
         "/user/profile_update/",
@@ -199,7 +202,8 @@ export default function Profile() {
             y1="0.328125"
             x2="597.135"
             y2="238.271"
-            gradientUnits="userSpaceOnUse">
+            gradientUnits="userSpaceOnUse"
+          >
             <Stop stopColor="#D9D9D9" stopOpacity="0.45" />
             <Stop offset="1" stopColor="#D9D9D9" stopOpacity="0.15" />
           </LinearGradient>
@@ -209,7 +213,8 @@ export default function Profile() {
             y1="0.328125"
             x2="597.135"
             y2="238.271"
-            gradientUnits="userSpaceOnUse">
+            gradientUnits="userSpaceOnUse"
+          >
             <Stop stopColor="#B80DCA" />
             <Stop offset="0.0001" stopColor="#4035CB" />
           </LinearGradient>
@@ -223,7 +228,8 @@ export default function Profile() {
             marginBottom: 40,
             alignItems: "center",
             position: "relative",
-          }}>
+          }}
+        >
           <CustomTextInput
             secureTextEntry={false}
             placeholder={username}
@@ -240,7 +246,8 @@ export default function Profile() {
             marginBottom: 40,
             alignItems: "center",
             position: "relative",
-          }}>
+          }}
+        >
           <CustomInputReadOnly placeholder={email} />
           <View style={{ position: "absolute", top: 7, right: 10 }}>
             <EmailIcon />
@@ -252,7 +259,8 @@ export default function Profile() {
             justifyContent: "center",
             alignItems: "center",
             width: 314,
-          }}>
+          }}
+        >
           <CustomConnectWallet style={{ width: "100%" }} />
         </View>
         <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
@@ -261,7 +269,8 @@ export default function Profile() {
               alignItems: "center",
               marginTop: 100,
               left: width * 0.17 - 2,
-            }}>
+            }}
+          >
             <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
               <Rect
                 x="1.5"
@@ -280,7 +289,8 @@ export default function Profile() {
                   y1="0"
                   x2="173.5"
                   y2="71"
-                  gradientUnits="userSpaceOnUse">
+                  gradientUnits="userSpaceOnUse"
+                >
                   <Stop stopColor="#B80DCA" />
                   <Stop offset="1" stopColor="#4035CB" />
                 </LinearGradient>
@@ -297,7 +307,8 @@ export default function Profile() {
                 fontSize: 18,
                 fontWeight: "400",
                 letterSpacing: 0.44,
-              }}>
+              }}
+            >
               Update
             </Text>
           </View>
