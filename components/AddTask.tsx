@@ -64,13 +64,13 @@ const AddTask = () => {
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const { tokens } = useContext(TokenContext); // replace AuthContext with your actual context
-  const missions: MissionFields[] = useMissionsStore((state) => state.missions);
+  const missions = useMissionsStore((state) => state.missions);
 
   const [taskDate, setTastDate] = useState<string>(
     new Date().toISOString().slice(0, -1)
   );
 
-  const checkMissionsNameExist = async (title: string) => {
+  const checkMissionsNameExist = (title: string) => {
     return missions.some(
       (mission: MissionFields) =>
         mission.title?.toLowerCase().replace(/\s/g, "") ===
@@ -79,7 +79,7 @@ const AddTask = () => {
   };
 
   const createMission = async () => {
-    if (await checkMissionsNameExist(title)) {
+    if (checkMissionsNameExist(title)) {
       Alert.alert(
         "Oops!",
         "You've already added this task. 🙈 Try adding something new!"
@@ -99,23 +99,39 @@ const AddTask = () => {
       Authorization: `Bearer ${tokens?.access}`,
     };
 
-    api
-      .post(url, data, { headers })
-      .then((response) => {
-        if (response.status === 201) {
-          console.log(new Date().toISOString().slice(0, -1));
-          Alert.alert("Success", "Mission created");
-          setTitle("");
-          navigation.navigate("Active Missions");
-        } else {
-          // Handle other status codes here
-        }
-      })
-      .catch((error) => {
-        console.log(error.response);
-        setErrorMessage(error.message);
+    // api
+    //   .post(url, data, { headers })
+    //   .then((response) => {
+    //     if (response.status === 201) {
+    //       console.log(new Date().toISOString().slice(0, -1));
+    //       Alert.alert("Success", "Mission created");
+    //       setTitle("");
+    //       navigation.navigate("Active Missions");
+    //     } else {
+    //       // Handle other status codes here
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response);
+    //     setErrorMessage(error.message);
+    //     console.log(new Date().toISOString().slice(0, -1));
+    //   });
+
+    try {
+      const response = await api.post(url, data, { headers });
+      if (response.status === 201) {
         console.log(new Date().toISOString().slice(0, -1));
-      });
+        Alert.alert("Success", "Mission created");
+        setTitle("");
+        navigation.navigate("Active Missions");
+      } else {
+        // Handle other status codes here
+      }
+    } catch (error: any) {
+      console.log(error.response);
+      setErrorMessage(error.message);
+      console.log(new Date().toISOString().slice(0, -1));
+    }
   };
 
   const onChangeDate = (date: { year: string; month: string; day: string }) => {

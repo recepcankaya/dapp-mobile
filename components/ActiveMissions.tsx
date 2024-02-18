@@ -29,6 +29,7 @@ import Confetti from "./customs/confetti";
 import { api } from "./utils/api";
 
 import { useMissionsStore, MissionFields } from "./store/missionsStore";
+import useLoading from "./hooks/useLoading";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -40,7 +41,8 @@ function ActiveMissions() {
   const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
   const missions: MissionFields[] = useMissionsStore((state) => state.missions);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isLoading, setLoading } = useLoading();
 
   const getMissions = async () => {
     try {
@@ -61,8 +63,7 @@ function ActiveMissions() {
 
   const completeMission = async (id: number) => {
     try {
-      setIsLoading(true);
-      setConfettiVisible(true);
+      setLoading(true);
       const url = `/mission/complete/${id}/`;
       const headers = {
         Authorization: `Bearer ${tokens?.access}`,
@@ -75,18 +76,17 @@ function ActiveMissions() {
         },
         { headers }
       );
-      await getMissions().finally(() => confettiCannonRef.current?.start());
-      Alert.alert(
-        "You are rocking!",
-        "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
-      );
+      await getMissions();
+      confettiCannonRef.current?.start();
+      setConfettiVisible(true);
+      setLoading(false);
     } catch (error: any) {
       Alert.alert(
         "You completed today's mission!",
         "This is good news, but you can't finish it again today. Come back for tomorrow. We will be waiting for you! 🏆🕒"
       );
+      setLoading(false);
     }
-    setIsLoading(false);
   };
 
   /**
@@ -255,6 +255,12 @@ function ActiveMissions() {
         <Confetti
           ref={confettiCannonRef}
           onAnimationEnd={() => setConfettiVisible(false)}
+          onAnimationStart={() =>
+            Alert.alert(
+              "You are rocking!",
+              "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
+            )
+          }
         />
       )}
 
