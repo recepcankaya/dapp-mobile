@@ -147,6 +147,8 @@ export default function Profile() {
   }, [username]);
 
   const changeUsername = async (newUsername: string) => {
+    if (tempUsername.length < 3 || username === tempUsername)
+      return Alert.alert("Error", "You didn't change the username!");
     try {
       const response = await api.patch(
         "/user/profile_update/",
@@ -261,10 +263,7 @@ export default function Profile() {
         >
           <CustomConnectWallet style={{ width: "100%" }} />
         </View>
-        <TouchableOpacity
-          onPress={() => changeUsername(tempUsername)}
-          disabled={tempUsername.length < 3 || username === tempUsername}
-        >
+        <TouchableOpacity onPress={() => changeUsername(tempUsername)}>
           <View
             style={{
               alignItems: "center",
