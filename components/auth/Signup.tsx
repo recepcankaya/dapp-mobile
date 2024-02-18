@@ -24,6 +24,7 @@ import Eyes from "../SVGComponents/Eyes";
 
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 const inputArray = [
   {
@@ -156,7 +157,7 @@ const Signup = () => {
               )}
             </View>
           ))}
-          <View style={{ width: 314 }}>
+          <View style={{ width: 314*widthConstant }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
               <Text style={styles.errorMessages}>
@@ -186,27 +187,28 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignItems: "center",
-    marginTop: 190,
-    gap: 20,
+    marginTop: 190*heightConstant,
+    gap: 28*heightConstant, // gap weight den mı height dan mı ?
   },
   signUpText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 25*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 10,
+    marginBottom: 10*heightConstant,
     alignSelf: "flex-start",
     marginLeft: 40,
   },
   errorMessages: {
     color: "red",
     alignSelf: "flex-start",
-    marginTop: 5,
+    marginTop: 10*heightConstant,
   },
   signUpButtonContainer: {
     marginTop: 40,
     alignSelf: "flex-end",
+    right: -20*widthConstant,
   },
 });
 

@@ -29,6 +29,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Calendar from "./customs/calendar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomGradientButton from "./customs/CustomGradientButton";
+import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
 import { getTimeZone } from "react-native-localize";
 import { MissionFields, useMissionsStore } from "./store/missionsStore";
 
@@ -194,60 +195,50 @@ const styles = StyleSheet.create({
   attachContainer: {
     margin: "auto",
     alignItems: "center",
-    top: -20,
+    top: -20 * heightConstant,
   },
   formContainer: {
     // marginTop: 10,
   },
-  circleContainer: {
-    flexDirection: "row",
-    gap: 65,
-    marginTop: -80,
-    zIndex: -1,
-  },
-  circle: {
-    height: 90,
-    width: 90,
-    backgroundColor: "#050505",
-    borderRadius: 50,
-  },
+
   gradientFormContainer: {
     alignItems: "center",
-    marginTop: -100,
+    marginTop: -100 * heightConstant,
     zIndex: -2,
   },
   formGradientBorder: {
-    padding: 3,
-    borderRadius: 20,
-    height: 327, //height of the form
-    width: 364,
+    padding: 3.5 * widthConstant,
+    borderRadius: 25 * radiusConstant,
+    height: 347 * heightConstant, //height of the form
+    width: 364 * widthConstant,
     zIndex: 0,
   },
   form: {
-    height: 320, //height of the form
-    width: 357,
+    height: 340 * heightConstant, //height of the form
+    width: 357 * widthConstant,
     backgroundColor: "#1E1E1E",
-    borderRadius: 20,
+    borderRadius: 20 * radiusConstant,
     zIndex: 0,
   },
   textHeading: {
     color: "#EFEEEE",
-    fontSize: 35,
-    marginTop: 80,
+    fontSize: 35 * radiusConstant,
+    marginTop: 80 * heightConstant,
     textAlign: "center",
   },
   missionInput: {
-    width: 275,
-    height: 60,
+    width: 275 * widthConstant,
+    height: 60 * heightConstant,
     backgroundColor: "#EFEEEE",
-    borderRadius: 25,
+    borderRadius: 25 * radiusConstant,
     alignSelf: "center",
-    marginTop: 50,
-    paddingLeft: 20,
-    fontSize: 18,
+    marginTop: 50 * heightConstant,
+    paddingLeft: 20 * widthConstant,
+    fontSize: 18 * radiusConstant,
   },
   buttonContainer: {
     alignSelf: "flex-end",
+    right: -20*widthConstant,
   },
 });
 

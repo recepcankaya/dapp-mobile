@@ -17,7 +17,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
+import {heightConstant, radiusConstant, widthConstant} from "../../customs/CustomResponsiveScreen";
 import Circle from "../../SVGComponents/Circle";
+
 
 import { usePasswordTokenStore } from "../../store/passwordTokenStore";
 
@@ -67,13 +69,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#050505",
   },
   input: {
-    marginTop: 250,
+    marginTop: 250*heightConstant,
   },
   heading: {
-    marginBottom: 25,
+    marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },

@@ -9,17 +9,25 @@ import {
 import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
 
 import CalendarAnimationv2 from "./CalendarAnimationv2";
+import {
+  widthConstant,
+  heightConstant,
+  radiusConstant,
+} from "../CustomResponsiveScreen";
 
 const { width } = Dimensions.get("screen");
+
+const scrollHeight = width * 0.4;
 
 const CalendarBackground = () => {
   return (
     <Svg
       width={width}
-      height={180}
+      height={scrollHeight}
       viewBox="0 0 430 180"
       fill="none"
-      style={{ position: "absolute", top: -40 }}>
+      style={{ position: "absolute", top: -40, left: 0 }}
+    >
       <Defs>
         <LinearGradient
           id="paint0_linear_53_7"
@@ -27,7 +35,8 @@ const CalendarBackground = () => {
           y1="179.358"
           x2="214.36"
           y2="-191.546"
-          gradientUnits="userSpaceOnUse">
+          gradientUnits="userSpaceOnUse"
+        >
           <Stop stopColor="#B80DCA" />
           <Stop offset="1" stopColor="#4035CB" />
         </LinearGradient>
@@ -184,12 +193,14 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={() => changeDateTab("month")}
-          style={styles.buttons}>
+          style={styles.buttons}
+        >
           <Text style={styles.buttonsText}>{currentDate.month}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => changeDateTab("year")}
-          style={styles.buttons}>
+          style={styles.buttons}
+        >
           <Text style={styles.buttonsText}>{currentDate.year}</Text>
         </TouchableOpacity>
       </View>
@@ -199,7 +210,7 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 180,
+    height: 180 * heightConstant,
   },
   sliderContainer: {
     flex: 1,
@@ -209,18 +220,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
-    left: width / 2 - 50,
-    top: 10,
+    left: width / 2 - (100 * widthConstant) / 2,
+    top: 20 * heightConstant,
     zIndex: 100,
   },
   buttons: {
-    height: 30,
-    width: 100,
+    height: 30 * heightConstant,
+    width: 100 * widthConstant,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 5 * heightConstant,
   },
   buttonsText: {
-    fontSize: 20,
+    fontSize: 20 * radiusConstant,
     color: "white",
   },
 });

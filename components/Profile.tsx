@@ -27,6 +27,12 @@ import axios from "axios";
 import { TokenContext } from "./context/TokenContext";
 import CustomTextInput from "./customs/CustomTextInput";
 import CustomInputReadOnly from "./customs/CustomInputReadOnly";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "./customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "./customs/CustomResponsiveText";
 
 const api = axios.create({
   baseURL: "https://akikoko.pythonanywhere.com/api",
@@ -36,12 +42,17 @@ const api = axios.create({
 });
 
 const { width, height } = Dimensions.get("window");
-const rectWidth = 431.138;
-const rectHeight = 234.943;
+const rectWidth = 431.138 * widthConstant + 70;
+const rectHeight = 234.943 * heightConstant + 70;
 
 // SVG component for the back icon
 const BackIcon = () => (
-  <Svg width="18" height="28" viewBox="0 0 18 28" fill="none">
+  <Svg
+    width={18 * widthConstant}
+    height={28 * heightConstant}
+    viewBox="0 0 18 28"
+    fill="none"
+  >
     <Path
       d="M17.0824 1.04755L2.04125 13.9999L16.9999 27.0474"
       stroke="black"
@@ -51,7 +62,12 @@ const BackIcon = () => (
 );
 // SVG component for the profile picture circle
 const ProfilePicture = () => (
-  <Svg width="103" height="103" viewBox="0 0 133 133" fill="none">
+  <Svg
+    width={133 * widthConstant}
+    height={133 * heightConstant}
+    viewBox="0 0 133 133"
+    fill="none"
+  >
     <Circle
       cx="66.5"
       cy="66.5"
@@ -89,7 +105,12 @@ const ProfilePicture = () => (
 
 // SVG component for the user icon
 const UserIcon = () => (
-  <Svg width="35" height="35" viewBox="0 0 35 35" fill="none">
+  <Svg
+    width={25 * widthConstant}
+    height={25 * heightConstant}
+    viewBox="0 0 35 35"
+    fill="none"
+  >
     <Path
       d="M9.75 10.9375C9.75 5.23392 13.4354 1 17.5 1C21.5646 1 25.25 5.23392 25.25 10.9375C25.25 16.6411 21.5646 20.875 17.5 20.875C13.4354 20.875 9.75 16.6411 9.75 10.9375ZM1 30.625C1 26.5975 4.05072 23.3207 7.94664 22.9088C10.4356 25.5442 13.7939 27.25 17.5 27.25C21.2063 27.25 24.5648 25.544 27.0538 22.9083C30.9845 23.3182 34 26.5926 34 30.625V34H1V30.625Z"
       fill="#D9D9D9"
@@ -101,7 +122,12 @@ const UserIcon = () => (
 
 // SVG component for the email icon
 const EmailIcon = () => (
-  <Svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <Svg
+    width={35 * widthConstant}
+    height={35 * heightConstant}
+    viewBox="0 0 48 48"
+    fill="none"
+  >
     <G
       transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
       fill="#000000"
@@ -161,6 +187,7 @@ export default function Profile() {
           },
         }
       );
+
       if (response.status === 200) {
         setUsername(newUsername); // Update the temporary username
         Alert.alert("Success", "Username updated successfully");
@@ -182,13 +209,13 @@ export default function Profile() {
       <Svg style={styles.svg} fill="none">
         {/* top left rectangle */}
         <Rect
-          x={width * 0.25}
-          y={height * 0.48}
-          width={rectWidth}
-          height={rectHeight}
-          transform={`rotate(151.109 ${width * 0.1 + rectWidth / 2} ${
-            height * 0.1 + rectHeight / 2
-          })`}
+          x={width * 0.25 * widthConstant}
+          y={height * 0.48 * heightConstant}
+          width={rectWidth * widthConstant}
+          height={rectHeight * heightConstant}
+          transform={`rotate(151.109 ${
+            (width * 0.1 + rectWidth / 2) * widthConstant
+          } ${(height * 0.1 + rectHeight / 2) * heightConstant})`}
           fill="url(#paint0_linear_113_6)"
           stroke="url(#paint1_linear_113_6)"
           strokeWidth="3"
@@ -224,8 +251,8 @@ export default function Profile() {
       <View style={styles.rectangles}>
         <View
           style={{
-            marginTop: 30,
-            marginBottom: 40,
+            marginTop: 30 * heightConstant,
+            marginBottom: 40 * heightConstant,
             alignItems: "center",
             position: "relative",
           }}
@@ -236,20 +263,36 @@ export default function Profile() {
             value={tempUsername}
             onChangeText={(text: string) => setTempUsername(text)}
             inputMode="text"
+            containerStyle={styles.inputContainer}
           />
-          <View style={{ position: "absolute", top: 15, right: 10 }}>
+          <View
+            style={{
+              position: "absolute",
+              top: 37.5 * heightConstant,
+              right: 12.5 * widthConstant,
+            }}
+          >
             <UserIcon />
           </View>
         </View>
         <View
           style={{
-            marginBottom: 40,
+            marginBottom: 40 * heightConstant,
             alignItems: "center",
             position: "relative",
           }}
         >
-          <CustomInputReadOnly placeholder={email} />
-          <View style={{ position: "absolute", top: 7, right: 10 }}>
+          <CustomInputReadOnly
+            placeholder={email}
+            containerStyle={styles.inputContainer}
+          />
+          <View
+            style={{
+              position: "absolute",
+              top: 12.5 * heightConstant,
+              right: 10 * widthConstant,
+            }}
+          >
             <EmailIcon />
           </View>
         </View>
@@ -258,7 +301,7 @@ export default function Profile() {
             position: "relative",
             justifyContent: "center",
             alignItems: "center",
-            width: 314,
+            width: 330 * widthConstant,
           }}
         >
           <CustomConnectWallet style={{ width: "100%" }} />
@@ -267,20 +310,22 @@ export default function Profile() {
           <View
             style={{
               alignItems: "center",
-              marginTop: 100,
-              left: width * 0.17 - 2,
+              marginTop: 40 * heightConstant,
+              //left: 0,
+              height: 45,
+              width: 250,
             }}
           >
-            <Svg width="307" height="62" viewBox="0 0 347 71" fill="none">
+            <Svg width={210} height={60} viewBox="0 0 224 45" fill="none">
               <Rect
-                x="1.5"
-                y="1.5"
-                width="204"
-                height="38"
-                rx="18.5"
+                x="2.5"
+                y="2.5"
+                width="214"
+                height="45"
+                rx="22.5"
                 fill="#D9D9D9"
                 stroke="url(#paint0_linear_114_4)"
-                strokeWidth="3"
+                strokeWidth="4"
               />
               <Defs>
                 <LinearGradient
@@ -299,12 +344,12 @@ export default function Profile() {
             <Text
               style={{
                 position: "absolute",
-                top: 4,
-                left: 64,
-                width: 257,
+                top: 23.5,
+                //left: 75 * widthConstant,
+                //width: "100%",
                 color: "#000",
                 fontFamily: "Rosarivo",
-                fontSize: 18,
+                fontSize: responsiveFontSize(15),
                 fontWeight: "400",
                 letterSpacing: 0.44,
               }}
@@ -325,8 +370,8 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     position: "absolute",
-    top: 30, // Adjust as needed
-    left: 15, // Adjust as needed
+    top: 30 * heightConstant, // Adjust as needed
+    left: 15 * widthConstant, // Adjust as needed
   },
   svg: {
     position: "absolute",
@@ -334,37 +379,24 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   profilePicture: {
-    marginTop: 70,
+    marginTop: 70 * heightConstant,
     alignItems: "flex-end",
-    marginRight: 25,
+    marginRight: 25 * widthConstant,
   },
   profileText: {
-    marginTop: 40,
-    marginLeft: 30,
+    marginTop: 40 * heightConstant,
+    marginLeft: 55 * widthConstant,
     color: "#EFEEEE",
     fontFamily: "Rosarivo",
-    fontSize: 20,
+    fontSize: 25 * radiusConstant,
     fontWeight: "400",
     letterSpacing: 2,
   },
   rectangles: {
-    position: "absolute",
-    top: 195 + 40, // 40px below the "Profile" text
-    left: width / 6, // Aligned -15 px with the "Profile" text
-    width: "60%",
     justifyContent: "center",
     alignItems: "center",
   },
-  inputText: {
-    position: "absolute",
-    top: 15,
-    left: 20,
-    width: 257,
-    height: 35,
-    color: "#000",
-    fontFamily: "Rosarivo",
-    fontSize: 22,
-    fontWeight: "400",
-    letterSpacing: 0.44,
+  inputContainer: {
+    height: 60 * heightConstant,
   },
 });

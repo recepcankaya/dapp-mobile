@@ -23,6 +23,12 @@ import Circle from "../SVGComponents/Circle";
 import Eyes from "../SVGComponents/Eyes";
 
 import { api } from "../utils/api";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "../customs/CustomResponsiveText";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -94,7 +100,8 @@ const Login = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
-              style={{ marginTop: 25 }}>
+              style={{ marginTop: 25 * heightConstant }}
+            >
               <CustomText text="Forgot Password?" isItalic={false} />
             </TouchableOpacity>
           </View>
@@ -105,7 +112,6 @@ const Login = () => {
             </TouchableOpacity>
           </View>
         </View>
-
         <View style={styles.loginButtonContainer}>
           <TouchableOpacity onPress={handleLogin}>
             <CustomGradientButton text="Login" isLoading={isLoading} />
@@ -124,35 +130,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputContainer: {
-    marginTop: 250,
+    marginTop: 250 * heightConstant,
     width: "80%",
   },
   loginText: {
-    marginBottom: 25,
+    marginBottom: 25 * heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 30 * radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },
   passwordContainer: {
-    marginTop: 30,
+    width: "100%",
+    marginTop: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 20,
+  },
+  passwordInputContainer: {
+    height: 50,
   },
   signupContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 70,
+    marginTop: 90 * heightConstant,
   },
   signupText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20,
+    // fontSize: 25 * radiusConstant,
+    fontSize: responsiveFontSize(22),
     fontStyle: "italic",
     fontWeight: "700",
   },
   loginButtonContainer: {
     alignSelf: "flex-end",
+    right: -20 * widthConstant,
   },
 });
 

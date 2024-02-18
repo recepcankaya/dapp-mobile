@@ -17,8 +17,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import CustomGradientButton from "../../customs/CustomGradientButton";
 import CustomTextInput from "../../customs/CustomTextInput";
 import useLoading from "../../hooks/useLoading";
+import {heightConstant, radiusConstant, widthConstant} from "../../customs/CustomResponsiveScreen";
 import Circle from "../../SVGComponents/Circle";
 import Eyes from "../../SVGComponents/Eyes";
+
 
 import { api } from "../../utils/api";
 import { useEmailStore } from "../../store/emailConfirmStore";
@@ -132,14 +134,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#050505",
   },
+  input: {
+    marginTop: 250*heightConstant,
+  },    
   inputContainer: {
     marginTop: 250,
     gap: 28,
   },
   heading: {
+    marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25,
+    fontSize: 30*radiusConstant,
     fontStyle: "italic",
     fontWeight: "700",
   },

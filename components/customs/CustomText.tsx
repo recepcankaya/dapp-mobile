@@ -1,10 +1,17 @@
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, StyleProp, TextStyle } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "./CustomResponsiveText";
 
 type CustomTextProps = {
   text: string;
   isItalic: boolean;
+  style?: StyleProp<TextStyle>;
 };
 
 const CustomText = ({ text, isItalic }: CustomTextProps) => {
@@ -16,20 +23,24 @@ const CustomText = ({ text, isItalic }: CustomTextProps) => {
           style={[
             styles.forgotPasswordButton,
             isItalic ? { fontStyle: "italic" } : { fontStyle: "normal" },
-          ]}>
+          ]}
+        >
           {text}
         </Text>
-      }>
+      }
+    >
       <LinearGradient
         colors={["#B80DCA", "#4035CB"]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}>
+        end={{ x: 1, y: 1 }}
+      >
         <Text
           style={[
             styles.forgotPasswordButton,
             { opacity: 0 },
             isItalic ? { fontStyle: "italic" } : { fontStyle: "normal" },
-          ]}>
+          ]}
+        >
           {text}
         </Text>
       </LinearGradient>
@@ -41,7 +52,7 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 20,
+    fontSize: responsiveFontSize(25),
     fontWeight: "600",
   },
 });

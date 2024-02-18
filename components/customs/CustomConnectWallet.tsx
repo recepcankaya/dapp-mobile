@@ -1,6 +1,7 @@
 import { StyleSheet, View, ViewStyle } from "react-native";
 import { ConnectWallet, darkTheme } from "@thirdweb-dev/react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
 
 type CustomConnectWalletProps = {
   style?: ViewStyle;
@@ -58,7 +59,7 @@ export default function CustomConnectWallet({
 
 const styles = StyleSheet.create({
   gradientBorder: {
-    borderRadius: 10,
-    padding: 3,
+    borderRadius: 10*radiusConstant,
+    padding: 3*radiusConstant,
   },
 });

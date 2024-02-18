@@ -7,9 +7,10 @@ import Svg, {
   Stop,
   Circle,
 } from "react-native-svg";
+import { widthConstant, heightConstant, radiusConstant } from "../customs/CustomResponsiveScreen";
 
 const AddMissionAttachment = () => (
-  <Svg width={272} height={136} viewBox="0 0 272 136" fill="none">
+  <Svg width={272 * widthConstant} height={136 * heightConstant} viewBox="0 0 272 136" fill="none">
     <Circle cx={56} cy={86} r={50} fill="#050505" />
     <Circle cx={221} cy={86} r={50} fill="#050505" />
     <Mask

@@ -68,6 +68,7 @@ function ProfileTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: [
           {
             backgroundColor: "#0C0C0C",

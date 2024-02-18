@@ -26,10 +26,12 @@ import { getTimeZone } from "react-native-localize";
 import { TokenContext } from "./context/TokenContext";
 import Calendar from "./customs/calendar";
 import Confetti from "./customs/confetti";
+import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
 import { api } from "./utils/api";
 
 import { useMissionsStore, MissionFields } from "./store/missionsStore";
 import useLoading from "./hooks/useLoading";
+
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -326,8 +328,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   missionsListHeaderText: {
-    color: "#fff",
-    fontSize: 25,
+    color: Colors.white,
+    fontSize: 35 * radiusConstant,
   },
   missionsListAddButton: {
     color: "#fff",
@@ -363,7 +365,8 @@ const styles = StyleSheet.create({
   },
   missionText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 30 * radiusConstant,
+    left: 17 - (48.3 / 2),
   },
   missionsItemOptions: {
     borderRadius: 10,

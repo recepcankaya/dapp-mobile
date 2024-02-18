@@ -1,5 +1,17 @@
-import { StyleSheet, TextInput, View } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
 
 type CustomTextInputProps = {
   secureTextEntry: boolean;
@@ -16,6 +28,8 @@ type CustomTextInputProps = {
     | "search"
     | "email"
     | "url";
+  style?: StyleProp<TextStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 const CustomTextInput = ({
@@ -24,18 +38,22 @@ const CustomTextInput = ({
   value,
   onChangeText,
   inputMode,
+  style,
+  containerStyle,
 }: CustomTextInputProps) => {
   return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       colors={["#B80DCA", "#4035CB"]}
-      style={styles.linearGradient}>
+      style={[styles.linearGradient, containerStyle]}
+    >
       <View style={styles.inputContainer}>
         <TextInput
           style={[
             styles.input,
             value ? { fontStyle: "normal" } : { fontStyle: "italic" },
+            style,
           ]}
           placeholder={placeholder}
           placeholderTextColor="#0C0C0C"
@@ -52,24 +70,25 @@ const CustomTextInput = ({
 
 const styles = StyleSheet.create({
   linearGradient: {
-    height: 60,
-    borderRadius: 10,
-    padding: 3,
+    height: 75 * heightConstant,
+    borderRadius: 10 * radiusConstant,
+    padding: 3 * radiusConstant,
+    marginTop: 20 * heightConstant,
   },
   inputContainer: {
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 10 * radiusConstant,
     backgroundColor: "#D9D9D9",
-    paddingLeft: 10,
+    paddingLeft: 10 * widthConstant,
   },
   input: {
-    width: 302,
-    height: 60,
+    width: 330 * widthConstant,
+    height: 65 * heightConstant,
     borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
-    fontSize: 18,
+    borderWidth: 1 * radiusConstant,
+    borderRadius: 10 * radiusConstant,
+    paddingLeft: 10 * widthConstant,
+    fontSize: 23 * radiusConstant,
   },
 });
 
