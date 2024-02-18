@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useContext, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,9 +8,8 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+  ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import Svg, {
   Path,
   LinearGradient,
@@ -19,121 +18,117 @@ import Svg, {
   Ellipse,
   G,
 } from "react-native-svg";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
-import axios from "axios";
-import { TokenContext } from "./context/TokenContext";
-import { UserContext } from "./context/UserContext";
-import Calendar from "./customs/calendar";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { getTimeZone } from "react-native-localize";
+
+import { TokenContext } from "./context/TokenContext";
+import Calendar from "./customs/calendar";
 import Confetti from "./customs/confetti";
 import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
+import { api } from "./utils/api";
+
+import { useMissionsStore, MissionFields } from "./store/missionsStore";
+import useLoading from "./hooks/useLoading";
+
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
+
 function ActiveMissions() {
-  const [filteredMissions, setFilteredMissions] = useState<any[]>([]);
-  const [missions, setMissions] = useState<any[]>([]);
+  const [filteredMissions, setFilteredMissions] = useState<MissionFields[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [confettiVisible, setConfettiVisible] = useState<boolean>(false);
   const { tokens } = useContext(TokenContext);
   const confettiCannonRef = useRef<ConfettiCannon>(null);
-
-  const api = axios.create({
-    baseURL: "https://akikoko.pythonanywhere.com/api",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const missions: MissionFields[] = useMissionsStore((state) => state.missions);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isLoading, setLoading } = useLoading();
 
   const getMissions = async () => {
-    const url = "/user/mission_list/"; // replace with the actual endpoint
-
-    const headers = {
-      Authorization: `Bearer ${tokens?.access}`,
-    };
-
     try {
+      const url = `/user/mission_list?local_time=${new Date()
+        .toISOString()
+        .slice(0, -1)}&timezone=${getTimeZone()}`;
+      const headers = {
+        Authorization: `Bearer ${tokens?.access}`,
+      };
       const response = await api.get(url, { headers });
-      setMissions(response.data);
+      missions.length = 0;
+      missions.push(...response.data);
       setFilteredMissions(response.data);
-    } catch (error) {
-      console.error(error);
-      if ((error as any).response) {
-        console.log((error as any).response.data);
-        console.log((error as any).response.status);
-      } else if ((error as any).request) {
-        console.log((error as any).request);
-      } else {
-        console.log("Error", (error as any).message);
-        console.log(error);
-      }
+    } catch (error: any) {
+      Alert.alert("Oops! 😬", String(error.response.data.errorMessage[0]));
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getMissions();
-    }, [])
-  );
-
-  const completeMission = async (id: any) => {
-    const url = `https://akikoko.pythonanywhere.com/api/mission/complete/${id}/`;
-    const headers = {
-      Authorization: `Bearer ${tokens?.access}`,
-    };
-
+  const completeMission = async (id: number) => {
     try {
-      const response = await axios.patch(
+      setLoading(true);
+      const url = `/mission/complete/${id}/`;
+      const headers = {
+        Authorization: `Bearer ${tokens?.access}`,
+      };
+      await api.patch(
         url,
-        { local_time: new Date().toISOString().slice(0, -1) },
+        {
+          local_time: new Date().toISOString().slice(0, -1),
+          timezone: getTimeZone(),
+        },
         { headers }
       );
-      if (response.status === 200) {
-        console.log(response.data);
-        getMissions();
-        setConfettiVisible(true);
-        confettiCannonRef.current?.start();
-        Alert.alert(response.data.message);
-      }
-    } catch (error) {
-      //console.error(error);
-      if ((error as any).response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        Alert.alert((error as any).response.data.message);
-        console.log((error as any).response.data);
-        console.log((error as any).response.status);
-      } else if ((error as any).request) {
-        // The request was made but no response was received
-        console.log((error as any).request);
-        console.log(id);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", (error as any).message);
-      }
+      await getMissions();
+      confettiCannonRef.current?.start();
+      setConfettiVisible(true);
+      setLoading(false);
+    } catch (error: any) {
+      Alert.alert(
+        "You completed today's mission!",
+        "This is good news, but you can't finish it again today. Come back for tomorrow. We will be waiting for you! 🏆🕒"
+      );
+      setLoading(false);
     }
   };
+
+  /**
+   * Handles the change event of the date picker.
+   * Filters the missions based on the selected date.
+   * @param {Date} date - The selected date.
+   */
   const onChangeDate = (date: Date) => {
-    console.log("test", new Date());
-    console.log("new Date()", date);
-    console.log(
-      "filteredMissions",
-      missions.filter(
-        (mission) =>
-          mission.startDate != null &&
-          mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)
-      )
-    );
+    const changedDate = new Date(date);
+    changedDate.setHours(0, 0, 0, 0);
     setFilteredMissions(
       missions.filter(
         (mission) =>
           mission.startDate != null &&
-          mission.startDate.slice(1, 10) == date.toISOString().slice(1, 10)
+          isWithinRange(mission.startDate, changedDate)
       )
     );
   };
 
-  const missionsRenderItem = ({ item, index }: any) => {
+  /**
+   * Checks if a given date is within a range of 21 days from a start date.
+   * @param startDate - The start date of the range in string format.
+   * @param changedDate - The date to check if it falls within the range.
+   * @returns True if the changed date is within the range, false otherwise.
+   */
+  const isWithinRange = (startDate: string, changedDate: Date) => {
+    const missionStartDate: Date = new Date(startDate);
+    missionStartDate.setHours(0, 0, 0, 0);
+    const missionEndDate: Date = new Date(missionStartDate);
+    missionEndDate.setDate(missionEndDate.getDate() + 21);
+    return missionStartDate <= changedDate && changedDate <= missionEndDate;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getMissions();
+    }, [])
+  );
+
+  const missionsRenderItem = ({ item }: any) => {
     return (
       <View style={styles.missionItemContainer}>
         <Svg
@@ -141,7 +136,8 @@ function ActiveMissions() {
           height={107}
           viewBox="0 0 414 107"
           fill="none"
-          style={{ position: "absolute" }}>
+          style={{ position: "absolute" }}
+        >
           <Path
             d="M410.224 91.79c-.074 7.837-7.257 13.673-14.942 12.141L212.931 67.595a17.499 17.499 0 00-6.422-.078L17.314 100.461C9.621 101.8 2.597 95.836 2.671 88.027l.39-41.2a12.5 12.5 0 0110.48-12.218l193.963-31.74a12.499 12.499 0 014.319.05l188.592 35.313a12.501 12.501 0 0110.199 12.405l-.39 41.154z"
             fill="#0C0C0C"
@@ -155,7 +151,8 @@ function ActiveMissions() {
               y1={41.1111}
               x2={723.204}
               y2={-30.722}
-              gradientUnits="userSpaceOnUse">
+              gradientUnits="userSpaceOnUse"
+            >
               <Stop stopColor="#B80DCA" />
               <Stop offset={1} stopColor="#4035CB" />
             </LinearGradient>
@@ -164,7 +161,8 @@ function ActiveMissions() {
         <View style={styles.missionsItem}>
           <TouchableOpacity
             style={styles.missionsItemCheckBox}
-            onPress={() => completeMission(item.id)}>
+            onPress={() => completeMission(item.id)}
+          >
             {item.isCompleted ? (
               <Svg width={47} height={50} viewBox="0 0 47 50" fill="none">
                 <G filter="url(#filter0_di_479_3)">
@@ -185,7 +183,6 @@ function ActiveMissions() {
                       ry={19}
                       fill="#D9D9D9"
                       fillOpacity={0.7}
-                      // shapeRendering="crispEdges"
                     />
                   </G>
                   <Path
@@ -200,7 +197,8 @@ function ActiveMissions() {
                     y1={10}
                     x2={23.5}
                     y2={36}
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <Stop stopColor="#B80DCA" />
                     <Stop offset={1} stopColor="#4035CB" />
                   </LinearGradient>
@@ -259,23 +257,33 @@ function ActiveMissions() {
         <Confetti
           ref={confettiCannonRef}
           onAnimationEnd={() => setConfettiVisible(false)}
+          onAnimationStart={() =>
+            Alert.alert(
+              "You are rocking!",
+              "You completed today's mission. Keep up the good work! As your reward, we sent LDT token to your account🥳🎉"
+            )
+          }
         />
+      )}
+
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size={"large"} color={"#B80DCA"} />
+        </View>
       )}
       <View style={{ height: 100 }}>
         <Calendar
           onChangeDate={(date) => {
-            console.log("date-active missions", date);
-            console.log("deneme", new Date().toISOString().slice(8, 10));
             const formattedDate = `${date.yearIndex + 2024}-${
               date.monthIndex + 1
             }-${date.dayIndex + 1}`;
-            console.log(formattedDate);
 
             setSelectedDate(new Date(formattedDate));
             onChangeDate(new Date(formattedDate));
           }}
         />
       </View>
+
       <View style={{ flex: 1, paddingBottom: 46, marginBottom: 15 }}>
         <FlatList
           data={filteredMissions}
@@ -300,6 +308,9 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     height: 40,
   },
+  text: {
+    color: "#fff",
+  },
   missionsList: {
     paddingTop: 40,
     paddingBottom: 50,
@@ -321,7 +332,7 @@ const styles = StyleSheet.create({
     fontSize: 35 * radiusConstant,
   },
   missionsListAddButton: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: 50,
   },
   missionItemContainer: {
@@ -384,6 +395,17 @@ const styles = StyleSheet.create({
   missionNumberText: {
     color: "#4035CB",
     fontSize: 18,
+  },
+  loadingContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 10,
   },
 });
 

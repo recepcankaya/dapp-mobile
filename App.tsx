@@ -1,19 +1,7 @@
-import React from "react";
-import { Dimensions, Image, Platform, View } from "react-native";
+import { Dimensions, Platform, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// import { LinearGradient } from "expo-linear-gradient";
-import LoadingScreen from "./components/LoadingScreen";
-import AddTask from "./components/AddTask";
-import Login from "./components/auth/Login";
-import Signup from "./components/auth/Signup";
-import { TokenProvider } from "./components/context/TokenContext";
-import { UserProvider } from "./components/context/UserContext";
-import { MissionProvider } from "./components/context/MissionContext";
-import { PasswordTokenProvider } from "./components/context/PasswordTokenContext";
-import { Svg, Defs, LinearGradient, Stop, Path, Mask } from "react-native-svg";
-import { UserIdProvider } from "./components/context/UserIdContext";
 import {
   ThirdwebProvider,
   smartWallet,
@@ -25,9 +13,22 @@ import {
   embeddedWallet,
   localWallet,
 } from "@thirdweb-dev/react-native";
+import { Svg, Defs, LinearGradient, Stop, Path, Mask } from "react-native-svg";
+
+import { TokenProvider } from "./components/context/TokenContext";
+import { UserProvider } from "./components/context/UserContext";
+import { MissionProvider } from "./components/context/MissionContext";
+import { UserIdProvider } from "./components/context/UserIdContext";
+import LoadingScreen from "./components/LoadingScreen";
+import AddTask from "./components/AddTask";
+import Login from "./components/auth/Login";
+import Signup from "./components/auth/Signup";
 import ActiveMissions from "./components/ActiveMissions";
 import Profile from "./components/Profile";
 import Categories from "./components/Categories";
+import EmailConfirmation from "./components/auth/forgotPassword/EmailConfirmation";
+import ResetConfirmation from "./components/auth/forgotPassword/ResetConfirmation";
+import ResetPassword from "./components/auth/forgotPassword/ResetPassword";
 import {
   ActiveMissionsNegativeIcon,
   ActiveMissionsPositiveIcon,
@@ -36,12 +37,8 @@ import {
   ProfileNegativeIcon,
   ProfilePositiveIcon,
 } from "./components/assets/bottomTabButtonIcons";
-import EmailConfirmation from "./components/auth/forgotPassword/EmailConfirmation";
-import ResetConfirmation from "./components/auth/forgotPassword/ResetConfirmation";
-import ResetPassword from "./components/auth/forgotPassword/ResetPassword";
 
 const { height, width } = Dimensions.get("window");
-const isIOS = Platform.OS === "ios";
 
 type TabParamList = {
   Profile: undefined;
@@ -84,7 +81,7 @@ function ProfileTabNavigator() {
           },
           null,
         ],
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused }) => {
           let isProfile;
           let isActiveMissions;
           let isCategories;
@@ -175,14 +172,15 @@ function App() {
   return (
     <ThirdwebProvider
       activeChain="mumbai"
-      clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
+      // clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
+      clientId="03398793b650e4108bc269aa59a8db69"
       supportedWallets={[
         smartWallet(metamaskWallet({ recommended: true }), smartWalletConfig),
         smartWallet(coinbaseWallet({ recommended: true }), smartWalletConfig),
         smartWallet(walletConnect(), smartWalletConfig),
         smartWallet(trustWallet(), smartWalletConfig),
         smartWallet(rainbowWallet(), smartWalletConfig),
-        // smartWallet(localWallet(), smartWalletConfig),
+        smartWallet(localWallet(), smartWalletConfig),
         smartWallet(
           embeddedWallet({
             auth: {
@@ -198,70 +196,68 @@ function App() {
         ),
       ]}
       autoConnect={true}>
-      <PasswordTokenProvider>
-        <TokenProvider>
-          <UserProvider>
-            <UserIdProvider>
-              <MissionProvider>
-                <NavigationContainer>
-                  <Stack.Navigator initialRouteName="ProfileTab">
-                    <Stack.Screen
-                      name="Loading"
-                      component={LoadingScreen}
-                      options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
-                    />
-                    <Stack.Screen
-                      name="Login"
-                      component={Login}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Email Confirmation"
-                      component={EmailConfirmation}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Reset Confirmation"
-                      component={ResetConfirmation}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Reset Password"
-                      component={ResetPassword}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Sign up"
-                      component={Signup}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="ProfileTab"
-                      component={ProfileTabNavigator}
-                      options={{ headerShown: false }} // Hide navigation bar on LoginPage
-                    />
-                    <Stack.Screen
-                      name="Categories"
-                      component={Categories}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Add Task"
-                      component={AddTask}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                    <Stack.Screen
-                      name="Profile"
-                      component={Profile}
-                      options={{ headerShown: false }} // Hide navigation bar
-                    />
-                  </Stack.Navigator>
-                </NavigationContainer>
-              </MissionProvider>
-            </UserIdProvider>
-          </UserProvider>
-        </TokenProvider>
-      </PasswordTokenProvider>
+      <TokenProvider>
+        <UserProvider>
+          <UserIdProvider>
+            <MissionProvider>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Loading">
+                  <Stack.Screen
+                    name="Loading"
+                    component={LoadingScreen}
+                    options={{ headerShown: false }} // Hide navigation bar on LoadingScreen
+                  />
+                  <Stack.Screen
+                    name="Login"
+                    component={Login}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Email Confirmation"
+                    component={EmailConfirmation}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Reset Confirmation"
+                    component={ResetConfirmation}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Reset Password"
+                    component={ResetPassword}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Sign up"
+                    component={Signup}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="ProfileTab"
+                    component={ProfileTabNavigator}
+                    options={{ headerShown: false }} // Hide navigation bar on LoginPage
+                  />
+                  <Stack.Screen
+                    name="Categories"
+                    component={Categories}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Add Task"
+                    component={AddTask}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                  <Stack.Screen
+                    name="Profile"
+                    component={Profile}
+                    options={{ headerShown: false }} // Hide navigation bar
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </MissionProvider>
+          </UserIdProvider>
+        </UserProvider>
+      </TokenProvider>
     </ThirdwebProvider>
   );
 }

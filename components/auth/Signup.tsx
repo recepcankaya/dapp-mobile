@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -5,6 +6,8 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +20,8 @@ import CustomGradientButton from "../customs/CustomGradientButton";
 import CustomTextInput from "../customs/CustomTextInput";
 import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
+import Eyes from "../SVGComponents/Eyes";
+
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
 import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
@@ -43,9 +48,16 @@ const inputArray = [
     secureTextEntry: true,
     inputMode: "text",
   },
+  {
+    key: 3,
+    name: "confirmPassword",
+    placeholder: "Confirm Password",
+    secureTextEntry: true,
+    inputMode: "text",
+  },
 ];
 
-type FieldName = "username" | "email" | "password";
+type FieldName = "username" | "email" | "password" | "confirmPassword";
 type FieldInputMode =
   | "url"
   | "text"
@@ -56,6 +68,9 @@ type FieldInputMode =
   | "tel";
 
 const Signup = () => {
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
+    useState<boolean>(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
@@ -82,28 +97,18 @@ const Signup = () => {
       }
       setLoading(false);
     } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data &&
-        (error.response.data.email?.[0] || error.response.data.username?.[0])
-      ) {
-        Alert.alert(
-          "Error",
-          error.response.data.email?.[0] +
-            "\n" +
-            error.response.data.username?.[0]
-        );
-      } else {
-        Alert.alert("Error", error.message);
-      }
       setLoading(false);
+      Alert.alert(
+        "Registration Failed!",
+        String(error.response.data.errorMessage[0])
+      );
     }
   };
 
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="transparent" translucent={true} />
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Circle />
         <View style={styles.inputContainer}>
           <Text style={styles.signUpText}>Sign Up</Text>
@@ -115,13 +120,33 @@ const Signup = () => {
                 name={item.name as FieldName}
                 render={({ field: { onChange, value } }) => {
                   return (
-                    <CustomTextInput
-                      placeholder={item.placeholder}
-                      secureTextEntry={item.secureTextEntry}
-                      inputMode={item.inputMode as FieldInputMode}
-                      value={value}
-                      onChangeText={onChange}
-                    />
+                    <View>
+                      <CustomTextInput
+                        placeholder={item.placeholder}
+                        secureTextEntry={
+                          item.name === "password" ||
+                          item.name === "confirmPassword"
+                            ? item.name === "password"
+                              ? !passwordVisible
+                              : !passwordConfirmationVisible
+                            : false
+                        }
+                        inputMode={item.inputMode as FieldInputMode}
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                      {item.name === "password" ? (
+                        <Eyes
+                          passwordVisible={passwordVisible}
+                          setPasswordVisible={setPasswordVisible}
+                        />
+                      ) : item.name === "confirmPassword" ? (
+                        <Eyes
+                          passwordVisible={passwordConfirmationVisible}
+                          setPasswordVisible={setPasswordConfirmationVisible}
+                        />
+                      ) : null}
+                    </View>
                   );
                 }}
               />
@@ -132,7 +157,6 @@ const Signup = () => {
               )}
             </View>
           ))}
-
           <View style={{ width: 314*widthConstant }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
@@ -147,17 +171,19 @@ const Signup = () => {
             <CustomGradientButton text="Sign up" isLoading={isLoading} />
           </TouchableOpacity>
         </View>
-      </View>
-    </>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
     backgroundColor: "#050505",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "space-between",
   },
   inputContainer: {
     alignItems: "center",
@@ -172,6 +198,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 10*heightConstant,
     alignSelf: "flex-start",
+    marginLeft: 40,
   },
   errorMessages: {
     color: "red",
@@ -179,6 +206,7 @@ const styles = StyleSheet.create({
     marginTop: 10*heightConstant,
   },
   signUpButtonContainer: {
+    marginTop: 40,
     alignSelf: "flex-end",
     right: -20*widthConstant,
   },

@@ -7,7 +7,7 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAddress } from "@thirdweb-dev/react-native";
 
@@ -17,9 +17,11 @@ import { UserIdContext } from "../context/UserIdContext";
 import CustomConnectWallet from "../customs/CustomConnectWallet";
 import CustomTextInput from "../customs/CustomTextInput";
 import CustomGradientButton from "../customs/CustomGradientButton";
+import CustomText from "../customs/CustomText";
 import useLoading from "../hooks/useLoading";
 import Circle from "../SVGComponents/Circle";
-import CustomText from "../customs/CustomText";
+import Eyes from "../SVGComponents/Eyes";
+
 import { api } from "../utils/api";
 import {
   heightConstant,
@@ -37,6 +39,7 @@ const Login = () => {
   // Retrieves the user's connected wallet address using the useAddress hook.
   const userAddress = useAddress();
   const { isLoading, setLoading } = useLoading();
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -58,12 +61,21 @@ const Login = () => {
       setUserId(userIdTemp);
       setUsername(userDetailRes.data.username);
       setLoading(false);
-      navigation.navigate("ProfileTab");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "ProfileTab" }],
+        })
+      );
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.response.data.non_field_errors[0]);
+      Alert.alert(
+        "Login Failed 😟",
+        String(error.response.data.errorMessage[0])
+      );
     }
   };
+
   return (
     <>
       <StatusBar backgroundColor="transparent" translucent={true} />
@@ -73,15 +85,19 @@ const Login = () => {
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
           <View style={styles.passwordContainer}>
-            <CustomTextInput
-              secureTextEntry
-              placeholder="Password"
-              inputMode="text"
-              value={password}
-              onChangeText={setPassword}
-              style={styles.passwordInput}
-              containerStyle={styles.passwordInputContainer}
-            />
+            <View>
+              <CustomTextInput
+                secureTextEntry={!passwordVisible}
+                placeholder="Password"
+                inputMode="text"
+                value={password}
+                onChangeText={setPassword}
+              />
+              <Eyes
+                passwordVisible={passwordVisible}
+                setPasswordVisible={setPasswordVisible}
+              />
+            </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("Email Confirmation")}
               style={{ marginTop: 25 * heightConstant }}

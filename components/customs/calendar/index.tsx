@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import Svg, { Path, LinearGradient, Stop, Defs, Mask } from "react-native-svg";
 
-import CalendarAnimation from "./CalendarAnimation";
 import CalendarAnimationv2 from "./CalendarAnimationv2";
 import {
   widthConstant,
@@ -79,7 +78,6 @@ const years = [
   { index: 3, key: 3, text: "" },
   { index: 4, key: 4, text: "" },
 ];
-
 const days = Array.from({ length: 33 }, (_, index) => ({
   index,
   key: index,
@@ -95,7 +93,6 @@ type CalendarProps = {
 };
 
 const Calendar = ({ onChangeDate }: CalendarProps) => {
-  // This is the state that consists of the index of the year, month and day in their respective arrays. Initially, it is set to the current date index in the arrays.
   // This is the state that consists of year, month and day for the calendar. Initially, it is set to the current date.
   const [currentDate, setCurrentDate] = useState<{
     year: string;
@@ -128,7 +125,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
    */
   const changeDateTab = (tab: "day" | "month" | "year") => {
     setDateTab(tab);
-    console.log("The chosen tab is: ", tab);
   };
 
   /**
@@ -146,25 +142,19 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
       {dateTab === "day" && (
         <CalendarAnimationv2
           onChangeValue={(value: string) => {
-            console.log("dayValue", value);
             const newDate = { ...currentDate, day: value };
             const newDateIndex = {
               ...currentDateIndex,
               dayIndex: days.findIndex((d) => d.text === value),
             };
-
             setCurrentDate(newDate);
             setCurrentDateIndex(newDateIndex);
-
             onChangeDate({
               yearIndex: newDateIndex.yearIndex,
               monthIndex: newDateIndex.monthIndex,
               dayIndex: newDateIndex.dayIndex,
             });
           }}
-          initialIndex={days.findIndex(
-            (d) => d.text.toString() === new Date().toISOString().slice(8, 10)
-          )}
           backToDays={backToDays}
           data={days}
         />
@@ -172,10 +162,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
       {dateTab === "month" && (
         <CalendarAnimationv2
           onChangeValue={(value: string) => {
-            console.log(
-              "monthValue",
-              months.findIndex((m) => m.text === value) + 1
-            );
             setCurrentDate({
               ...currentDate,
               month: value,
@@ -188,13 +174,11 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
           }}
           backToDays={backToDays}
           data={months}
-          initialIndex={currentDateIndex.monthIndex}
         />
       )}
       {dateTab === "year" && (
         <CalendarAnimationv2
           onChangeValue={(value: string) => {
-            console.log("yearValue", value);
             setCurrentDate({ ...currentDate, year: value });
             setCurrentDateIndex({
               ...currentDateIndex,
@@ -202,7 +186,6 @@ const Calendar = ({ onChangeDate }: CalendarProps) => {
             });
             onChangeDate(currentDateIndex);
           }}
-          initialIndex={currentDateIndex.yearIndex}
           backToDays={backToDays}
           data={years}
         />

@@ -158,7 +158,6 @@ export default function Profile() {
             Authorization: `Bearer ${tokens?.access}`,
           },
         });
-
         if (response.status === 200) {
           setUsername(response.data.username);
           setEmail(response.data.email);
@@ -166,25 +165,16 @@ export default function Profile() {
         } else {
           Alert.alert("Error", "Failed to get user details");
         }
-      } catch (error) {
-        console.error(error);
-        Alert.alert(
-          "Error",
-          "An error occurred while trying to get user details"
-        );
+      } catch (error: any) {
+        Alert.alert("Error", String(error.response.data.errorMessage[0]));
       }
     };
-
     fetchUserDetails();
   }, [username]);
 
   const changeUsername = async (newUsername: string) => {
-    // Trim the newUsername and check if it's not empty
-    if (newUsername.trim() === "") {
-      Alert.alert("No Changes", "Your username stay same.");
-      return;
-    }
-
+    if (tempUsername.length < 3 || username === tempUsername)
+      return Alert.alert("Error", "You didn't change the username!");
     try {
       const response = await api.patch(
         "/user/profile_update/",
@@ -205,9 +195,8 @@ export default function Profile() {
       } else {
         Alert.alert("Error", "Failed to update username");
       }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "An error occurred while trying to update username");
+    } catch (error: any) {
+      Alert.alert("Error", String(error.response.data.errorMessage[0]));
     }
   };
 
@@ -272,7 +261,7 @@ export default function Profile() {
             secureTextEntry={false}
             placeholder={username}
             value={tempUsername}
-            onChangeText={(text) => setTempUsername(text)}
+            onChangeText={(text: string) => setTempUsername(text)}
             inputMode="text"
             containerStyle={styles.inputContainer}
           />

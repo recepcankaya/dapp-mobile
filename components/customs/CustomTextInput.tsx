@@ -17,7 +17,9 @@ type CustomTextInputProps = {
   secureTextEntry: boolean;
   placeholder: string;
   value: string;
-  onChangeText: React.Dispatch<React.SetStateAction<string>>;
+  onChangeText:
+    | React.Dispatch<React.SetStateAction<string>>
+    | ((text: string) => void);
   inputMode:
     | "text"
     | "decimal"
