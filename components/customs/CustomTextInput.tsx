@@ -12,6 +12,8 @@ import {
   radiusConstant,
   widthConstant,
 } from "../customs/CustomResponsiveScreen";
+import Eyes from "../SVGComponents/Eyes";
+import { responsiveFontSize } from "./CustomResponsiveText";
 
 type CustomTextInputProps = {
   secureTextEntry: boolean;
@@ -30,6 +32,9 @@ type CustomTextInputProps = {
     | "url";
   style?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
+  eyesVisible?: boolean;
+  passwordVisible?: boolean;
+  setPasswordVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const CustomTextInput = ({
@@ -40,6 +45,9 @@ const CustomTextInput = ({
   inputMode,
   style,
   containerStyle,
+  eyesVisible = false,
+  passwordVisible,
+  setPasswordVisible,
 }: CustomTextInputProps) => {
   return (
     <LinearGradient
@@ -63,6 +71,12 @@ const CustomTextInput = ({
           secureTextEntry={secureTextEntry}
           inputMode={inputMode}
         />
+        {eyesVisible && (
+          <Eyes
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
+          />
+        )}
       </View>
     </LinearGradient>
   );
@@ -79,16 +93,19 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10 * radiusConstant,
     backgroundColor: "#D9D9D9",
-    paddingLeft: 10 * widthConstant,
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: 330 * widthConstant,
+    paddingLeft: 10 * radiusConstant,
+    paddingRight: 10 * radiusConstant,
   },
   input: {
-    width: 330 * widthConstant,
+    width: 290 * widthConstant,
     height: 65 * heightConstant,
     borderColor: "transparent",
     borderWidth: 1 * radiusConstant,
     borderRadius: 10 * radiusConstant,
-    paddingLeft: 10 * widthConstant,
-    fontSize: 23 * radiusConstant,
+    fontSize: responsiveFontSize(22),
   },
 });
 

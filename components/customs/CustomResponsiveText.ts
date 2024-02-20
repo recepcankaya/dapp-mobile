@@ -1,12 +1,5 @@
 import { PixelRatio } from "react-native";
 
-// const fontScale: number = PixelRatio.getFontScale();
-// export const getFontSize = (size: number) => {
-//   console.log("fontScale", fontScale);
-//   console.log("size", size);
-//   return size / fontScale;
-// };
-
 import { Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");

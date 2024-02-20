@@ -298,10 +298,9 @@ export default function Profile() {
         </View>
         <View
           style={{
-            position: "relative",
             justifyContent: "center",
             alignItems: "center",
-            width: 330 * widthConstant,
+            width: 345 * widthConstant,
           }}
         >
           <CustomConnectWallet style={{ width: "100%" }} />
@@ -345,8 +344,6 @@ export default function Profile() {
               style={{
                 position: "absolute",
                 top: 23.5,
-                //left: 75 * widthConstant,
-                //width: "100%",
                 color: "#000",
                 fontFamily: "Rosarivo",
                 fontSize: responsiveFontSize(15),
@@ -388,7 +385,7 @@ const styles = StyleSheet.create({
     marginLeft: 55 * widthConstant,
     color: "#EFEEEE",
     fontFamily: "Rosarivo",
-    fontSize: 25 * radiusConstant,
+    fontSize: responsiveFontSize(25),
     fontWeight: "400",
     letterSpacing: 2,
   },
@@ -398,5 +395,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 60 * heightConstant,
+    width: 345 * widthConstant,
   },
 });

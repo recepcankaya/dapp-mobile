@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { responsiveFontSize } from "../CustomResponsiveText";
 // import { days, months, years } from ".";
 
 const { width } = Dimensions.get("screen");
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemText: {
-    fontSize: 15,
+    fontSize: responsiveFontSize(15),
   },
 });
 

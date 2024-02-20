@@ -8,6 +8,7 @@ import Svg, {
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "./CustomResponsiveText";
 
 type CustomGradientButtonProps = {
   text: string;
@@ -49,7 +50,7 @@ const CustomGradientButton = ({
           maskElement={
             <Text
               style={{
-                fontSize: 26*radiusConstant,
+                fontSize: responsiveFontSize(26),
                 fontFamily: "Inter",
                 fontStyle: "italic",
               }}>
@@ -62,7 +63,7 @@ const CustomGradientButton = ({
             end={{ x: 1, y: 0 }}>
             <Text
               style={{
-                fontSize: 26*radiusConstant,
+                fontSize: responsiveFontSize(26),
                 fontFamily: "Inter",
                 fontStyle: "italic",
                 opacity: 0,
@@ -81,13 +82,13 @@ const styles = StyleSheet.create({
     marginBottom: 10*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "700",
   },
   buttonText: {
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "400",
     right: 60*widthConstant,

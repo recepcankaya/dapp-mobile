@@ -1,16 +1,30 @@
 import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
 import { TouchableOpacity, StyleSheet } from "react-native";
+import {
+  heightConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
 
 const OpenEye = () => {
   return (
-    <Svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-      <Rect width="26" height="26" fill="url(#pattern0)" />
+    <Svg
+      width={26 * widthConstant}
+      height={26 * widthConstant}
+      viewBox={"0 0 " + 26 * widthConstant + " " + 26 * widthConstant + " "}
+      fill="none"
+    >
+      <Rect
+        width={26 * widthConstant}
+        height={26 * widthConstant}
+        fill="url(#pattern0)"
+      />
       <Defs>
         <Pattern
           id="pattern0"
           patternContentUnits="objectBoundingBox"
           width="1"
-          height="1">
+          height="1"
+        >
           <Use xlinkHref="#image0_680_6" transform="scale(0.0111111)" />
         </Pattern>
         <Image
@@ -26,14 +40,24 @@ const OpenEye = () => {
 
 const BlindEye = () => {
   return (
-    <Svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-      <Rect width="26" height="26" fill="url(#pattern0)" />
+    <Svg
+      width={26 * widthConstant}
+      height={26 * widthConstant}
+      viewBox={"0 0 " + 26 * widthConstant + " " + 26 * widthConstant + " "}
+      fill="none"
+    >
+      <Rect
+        width={26 * widthConstant}
+        height={26 * widthConstant}
+        fill="url(#pattern0)"
+      />
       <Defs>
         <Pattern
           id="pattern0"
           patternContentUnits="objectBoundingBox"
           width="1"
-          height="1">
+          height="1"
+        >
           <Use xlinkHref="#image0_680_5" transform="scale(0.0111111)" />
         </Pattern>
         <Image
@@ -48,15 +72,18 @@ const BlindEye = () => {
 };
 
 interface EyesProps {
-  passwordVisible: boolean;
-  setPasswordVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  passwordVisible?: boolean;
+  setPasswordVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Eyes = ({ passwordVisible, setPasswordVisible }: EyesProps) => {
   return (
     <TouchableOpacity
       style={styles.eye}
-      onPress={() => setPasswordVisible((prev) => !prev)}>
+      onPress={() => {
+        if (setPasswordVisible) setPasswordVisible((prev) => !prev);
+      }}
+    >
       {passwordVisible ? <OpenEye /> : <BlindEye />}
     </TouchableOpacity>
   );
@@ -64,11 +91,8 @@ const Eyes = ({ passwordVisible, setPasswordVisible }: EyesProps) => {
 
 const styles = StyleSheet.create({
   eye: {
-    height: 26,
-    width: 26,
-    position: "absolute",
-    top: 17,
-    right: 17,
+    height: 26 * widthConstant,
+    width: 26 * widthConstant,
   },
 });
 

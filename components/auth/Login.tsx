@@ -85,15 +85,14 @@ const Login = () => {
           <Text style={styles.loginText}>Login</Text>
           <CustomConnectWallet />
           <View style={styles.passwordContainer}>
-            <View>
+            <View style={{ alignItems: "center" }}>
               <CustomTextInput
                 secureTextEntry={!passwordVisible}
                 placeholder="Password"
                 inputMode="text"
                 value={password}
                 onChangeText={setPassword}
-              />
-              <Eyes
+                eyesVisible={true}
                 passwordVisible={passwordVisible}
                 setPasswordVisible={setPasswordVisible}
               />
@@ -131,13 +130,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: 250 * heightConstant,
-    width: "80%",
+    width: "79%",
   },
   loginText: {
     marginBottom: 25 * heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30 * radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "700",
   },
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    fontSize: 20,
+    fontSize: responsiveFontSize(20),
   },
   passwordInputContainer: {
     height: 50,
@@ -161,7 +160,6 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#FFF",
     fontFamily: "Inter",
-    // fontSize: 25 * radiusConstant,
     fontSize: responsiveFontSize(22),
     fontStyle: "italic",
     fontWeight: "700",

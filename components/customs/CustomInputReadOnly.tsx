@@ -12,6 +12,7 @@ import {
   radiusConstant,
   widthConstant,
 } from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "./CustomResponsiveText";
 
 type CustomTextInputProps = {
   placeholder: string;
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     borderWidth: 1 * radiusConstant,
     borderRadius: 10 * radiusConstant,
     paddingLeft: 10 * widthConstant,
-    fontSize: 23 * radiusConstant,
+    fontSize: responsiveFontSize(23),
   },
 });
 

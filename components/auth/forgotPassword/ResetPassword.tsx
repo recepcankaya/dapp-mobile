@@ -24,6 +24,7 @@ import Eyes from "../../SVGComponents/Eyes";
 
 import { api } from "../../utils/api";
 import { useEmailStore } from "../../store/emailConfirmStore";
+import { responsiveFontSize } from "../../customs/CustomResponsiveText";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState<string>("");
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "700",
   },

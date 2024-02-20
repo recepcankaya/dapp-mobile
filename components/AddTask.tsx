@@ -29,9 +29,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Calendar from "./customs/calendar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomGradientButton from "./customs/CustomGradientButton";
-import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "./customs/CustomResponsiveScreen";
 import { getTimeZone } from "react-native-localize";
 import { MissionFields, useMissionsStore } from "./store/missionsStore";
+import { responsiveFontSize } from "./customs/CustomResponsiveText";
 
 const { width, height } = Dimensions.get("window");
 
@@ -222,7 +227,7 @@ const styles = StyleSheet.create({
   },
   textHeading: {
     color: "#EFEEEE",
-    fontSize: 35 * radiusConstant,
+    fontSize: responsiveFontSize(32),
     marginTop: 80 * heightConstant,
     textAlign: "center",
   },
@@ -234,11 +239,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 50 * heightConstant,
     paddingLeft: 20 * widthConstant,
-    fontSize: 18 * radiusConstant,
+    fontSize: responsiveFontSize(17),
   },
   buttonContainer: {
     alignSelf: "flex-end",
-    right: -20*widthConstant,
+    right: -20 * widthConstant,
   },
 });
 

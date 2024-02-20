@@ -26,12 +26,16 @@ import { getTimeZone } from "react-native-localize";
 import { TokenContext } from "./context/TokenContext";
 import Calendar from "./customs/calendar";
 import Confetti from "./customs/confetti";
-import {heightConstant, radiusConstant, widthConstant} from "./customs/CustomResponsiveScreen";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "./customs/CustomResponsiveScreen";
 import { api } from "./utils/api";
 
 import { useMissionsStore, MissionFields } from "./store/missionsStore";
 import useLoading from "./hooks/useLoading";
-
+import { responsiveFontSize } from "./customs/CustomResponsiveText";
 
 const { width } = Dimensions.get("screen");
 const missionItemHeight = width / 3.8333;
@@ -308,32 +312,22 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     height: 40,
   },
-  text: {
-    color: "#fff",
-  },
   missionsList: {
     paddingTop: 40,
     paddingBottom: 50,
   },
-  missionsListHeader: { height: 100, width: screenWidth - 50 },
+  missionsListHeader: {
+    height: 100,
+    width: screenWidth - 50,
+  },
   missionsListHeaderTop: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  missionsListHeaderBottom: {
-    flex: 1,
-    alignItems: "flex-end",
-    justifyContent: "center",
-    paddingRight: 10,
-  },
   missionsListHeaderText: {
-    color: Colors.white,
-    fontSize: 35 * radiusConstant,
-  },
-  missionsListAddButton: {
     color: "#fff",
-    fontSize: 50,
+    fontSize: responsiveFontSize(30),
   },
   missionItemContainer: {
     width: "100%",
@@ -365,8 +359,8 @@ const styles = StyleSheet.create({
   },
   missionText: {
     color: "white",
-    fontSize: 30 * radiusConstant,
-    left: 17 - (48.3 / 2),
+    fontSize: responsiveFontSize(22),
+    left: 17 - 48.3 / 2,
   },
   missionsItemOptions: {
     borderRadius: 10,
@@ -394,7 +388,7 @@ const styles = StyleSheet.create({
   },
   missionNumberText: {
     color: "#4035CB",
-    fontSize: 18,
+    fontSize: responsiveFontSize(18),
   },
   loadingContainer: {
     position: "absolute",
