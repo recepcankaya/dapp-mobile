@@ -12,7 +12,6 @@ import {
   heightConstant,
   widthConstant,
 } from "../CustomResponsiveScreen";
-import { responsiveFontSize } from "../CustomResponsiveText";
 
 const { width } = Dimensions.get("screen");
 const segmentQty = 5;
