@@ -24,7 +24,12 @@ import Eyes from "../SVGComponents/Eyes";
 
 import { SignupFormSchema, SignupFormFields } from "./signupSchema";
 import { api } from "../utils/api";
-import {heightConstant, radiusConstant, widthConstant} from "../customs/CustomResponsiveScreen";
+import {
+  heightConstant,
+  radiusConstant,
+  widthConstant,
+} from "../customs/CustomResponsiveScreen";
+import { responsiveFontSize } from "../customs/CustomResponsiveText";
 
 const inputArray = [
   {
@@ -47,6 +52,7 @@ const inputArray = [
     placeholder: "Password",
     secureTextEntry: true,
     inputMode: "text",
+    eyesVisible: true,
   },
   {
     key: 3,
@@ -54,6 +60,7 @@ const inputArray = [
     placeholder: "Confirm Password",
     secureTextEntry: true,
     inputMode: "text",
+    eyesVisible: true,
   },
 ];
 
@@ -134,18 +141,18 @@ const Signup = () => {
                         inputMode={item.inputMode as FieldInputMode}
                         value={value}
                         onChangeText={onChange}
+                        eyesVisible={item.eyesVisible}
+                        passwordVisible={
+                          item.name === "password"
+                            ? passwordVisible
+                            : passwordConfirmationVisible
+                        }
+                        setPasswordVisible={
+                          item.name === "password"
+                            ? setPasswordVisible
+                            : setPasswordConfirmationVisible
+                        }
                       />
-                      {item.name === "password" ? (
-                        <Eyes
-                          passwordVisible={passwordVisible}
-                          setPasswordVisible={setPasswordVisible}
-                        />
-                      ) : item.name === "confirmPassword" ? (
-                        <Eyes
-                          passwordVisible={passwordConfirmationVisible}
-                          setPasswordVisible={setPasswordConfirmationVisible}
-                        />
-                      ) : null}
                     </View>
                   );
                 }}
@@ -157,7 +164,7 @@ const Signup = () => {
               )}
             </View>
           ))}
-          <View style={{ width: 314*widthConstant }}>
+          <View style={{ width: 340 * widthConstant }}>
             <CustomConnectWallet style={{ width: "100%" }} />
             {!userAddress && (
               <Text style={styles.errorMessages}>
@@ -187,28 +194,28 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignItems: "center",
-    marginTop: 190*heightConstant,
-    gap: 28*heightConstant, // gap weight den mı height dan mı ?
+    marginTop: 190 * heightConstant,
+    gap: 28 * heightConstant, // gap weight den mı height dan mı ?
   },
   signUpText: {
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 25*radiusConstant,
+    fontSize: responsiveFontSize(25),
     fontStyle: "italic",
     fontWeight: "700",
-    marginBottom: 10*heightConstant,
+    marginBottom: 10 * heightConstant,
     alignSelf: "flex-start",
     marginLeft: 40,
   },
   errorMessages: {
     color: "red",
     alignSelf: "flex-start",
-    marginTop: 10*heightConstant,
+    marginTop: 10 * heightConstant,
   },
   signUpButtonContainer: {
     marginTop: 40,
     alignSelf: "flex-end",
-    right: -20*widthConstant,
+    right: -20 * widthConstant,
   },
 });
 

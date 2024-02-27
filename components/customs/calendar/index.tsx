@@ -14,6 +14,7 @@ import {
   heightConstant,
   radiusConstant,
 } from "../CustomResponsiveScreen";
+import { responsiveFontSize } from "../CustomResponsiveText";
 
 const { width } = Dimensions.get("screen");
 
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     marginBottom: 5 * heightConstant,
   },
   buttonsText: {
-    fontSize: 20 * radiusConstant,
+    fontSize: responsiveFontSize(20),
     color: "white",
   },
 });

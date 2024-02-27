@@ -59,7 +59,7 @@ export default function CustomConnectWallet({
 
 const styles = StyleSheet.create({
   gradientBorder: {
-    borderRadius: 10*radiusConstant,
+    borderRadius: 15*radiusConstant,
     padding: 3*radiusConstant,
   },
 });

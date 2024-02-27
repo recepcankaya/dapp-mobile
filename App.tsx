@@ -105,7 +105,8 @@ function ProfileTabNavigator() {
                 flex: 1,
                 justifyContent: isActiveMissions ? "flex-start" : "flex-end",
                 margin: isActiveMissions ? 15 : 25,
-              }}>
+              }}
+            >
               {focused
                 ? isProfile
                   ? ProfilePositiveIcon()
@@ -130,7 +131,8 @@ function ProfileTabNavigator() {
               style={{
                 height: height >= 812 && Platform.OS === "ios" ? 174 : 140,
                 backgroundColor: "#0C0C0C",
-              }}>
+              }}
+            >
               <Svg width={width} height={124} viewBox="0 0 430 124" fill="none">
                 <Defs>
                   <LinearGradient
@@ -139,7 +141,8 @@ function ProfileTabNavigator() {
                     y1="0"
                     x2="215.5"
                     y2="332"
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <Stop stopColor="#B80DCA" />
                     <Stop offset="1" stopColor="#4035CB" />
                   </LinearGradient>
@@ -161,7 +164,8 @@ function ProfileTabNavigator() {
             </View>
           );
         },
-      })}>
+      })}
+    >
       <Tab.Screen name="Categories" component={Categories} />
       <Tab.Screen name="Active Missions" component={ActiveMissions} />
       <Tab.Screen name="Profile" component={Profile} />
@@ -195,7 +199,8 @@ function App() {
           smartWalletConfig
         ),
       ]}
-      autoConnect={true}>
+      autoConnect={true}
+    >
       <TokenProvider>
         <UserProvider>
           <UserIdProvider>

@@ -22,6 +22,7 @@ import Circle from "../../SVGComponents/Circle";
 
 
 import { usePasswordTokenStore } from "../../store/passwordTokenStore";
+import { responsiveFontSize } from "../../customs/CustomResponsiveText";
 
 const ResetConfirmation = () => {
   const [code, setCode] = useState("");
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "700",
   },

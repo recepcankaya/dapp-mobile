@@ -24,6 +24,7 @@ import Circle from "../../SVGComponents/Circle";
 import { useEmailStore } from "../../store/emailConfirmStore";
 import { usePasswordTokenStore } from "../../store/passwordTokenStore";
 import { api } from "../../utils/api";
+import { responsiveFontSize } from "../../customs/CustomResponsiveText";
 
 const EmailConfirmation = () => {
   const email = useEmailStore((state) => state.email);
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 25*heightConstant,
     color: "#FFF",
     fontFamily: "Inter",
-    fontSize: 30*radiusConstant,
+    fontSize: responsiveFontSize(30),
     fontStyle: "italic",
     fontWeight: "700",
   },
