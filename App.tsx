@@ -10,7 +10,6 @@ import {
   rainbowWallet,
   walletConnect,
   embeddedWallet,
-  localWallet,
 } from "@thirdweb-dev/react-native";
 
 import Login from "./src/components/Login";
@@ -44,7 +43,6 @@ function App() {
         walletConnect(),
         trustWallet(),
         rainbowWallet(),
-        localWallet(),
         embeddedWallet({
           auth: {
             // you need to enable EmbeddedWallets under your API Key in your thirdweb dashboard:
