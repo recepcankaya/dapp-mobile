@@ -20,6 +20,7 @@ const Login = () => {
   const walletAddr = useAddress();
   const disconnect = useDisconnect();
   const embeddedWallet = useWallet("embeddedWallet");
+  const navigation = useNavigation();
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();

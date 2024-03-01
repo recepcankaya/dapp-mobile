@@ -12,10 +12,7 @@ import {
 } from "@thirdweb-dev/react-native";
 
 import Login from "./src/screens/Login";
-
-type TabParamList = {
-  Login: undefined;
-};
+import UserInfo from "./src/screens/UserInfo";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -26,7 +23,6 @@ type TabParamList = {
 // };
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator<TabParamList>();
 
 function App() {
   return (
@@ -58,6 +54,11 @@ function App() {
           <Stack.Screen
             name="Login"
             component={Login}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="User Info"
+            component={UserInfo}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
