@@ -13,6 +13,7 @@ import {
 
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
+import Profile from "./src/screens/Profile";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -50,7 +51,7 @@ function App() {
       ]}
       autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Loading">
+        <Stack.Navigator initialRouteName="Profile">
           <Stack.Screen
             name="Login"
             component={Login}
@@ -59,6 +60,11 @@ function App() {
           <Stack.Screen
             name="User Info"
             component={UserInfo}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
