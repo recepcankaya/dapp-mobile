@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import supabase from "../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
@@ -10,15 +10,17 @@ const UserInfo = () => {
   const walletAddr = useAddress();
 
   const submitForm = async () => {
-    console.log("walletAddr: ", walletAddr);
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("users")
-      .update({ name, surname })
+      .update({ name, surname, last_login: new Date() })
       .eq("walletAddr", walletAddr);
     if (error) {
-      console.error("Error inserting data: ", error);
+      Alert.alert(
+        "Bunu biz de beklemiyorduk 🤔",
+        "Lütfen tekrar dener misiniz 👉👈"
+      );
     } else {
-      console.log("Data inserted successfully: ", data);
+      Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
     }
   };
 
