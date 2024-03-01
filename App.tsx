@@ -1,4 +1,3 @@
-import { Dimensions, Platform, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,9 +11,7 @@ import {
   embeddedWallet,
 } from "@thirdweb-dev/react-native";
 
-import Login from "./src/components/Login";
-
-const { height, width } = Dimensions.get("window");
+import Login from "./src/screens/Login";
 
 type TabParamList = {
   Login: undefined;
@@ -38,11 +35,12 @@ function App() {
       // clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
       clientId="03398793b650e4108bc269aa59a8db69"
       supportedWallets={[
-        metamaskWallet({ recommended: true }),
-        coinbaseWallet({ recommended: true }),
+        metamaskWallet(),
+        coinbaseWallet(),
         walletConnect(),
         trustWallet(),
         rainbowWallet(),
+
         embeddedWallet({
           auth: {
             // you need to enable EmbeddedWallets under your API Key in your thirdweb dashboard:
