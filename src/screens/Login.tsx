@@ -10,9 +10,53 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import jwt from "jsonwebtoken";
 
 import supabase from "../lib/supabase";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+
+type NavigationList = {
+  "User Info": undefined;
+};
+
+type AddTaskScreenNavigationProp = BottomTabNavigationProp<
+  NavigationList,
+  "User Info"
+>;
+
+const base64url = (source: string) => {
+  // Encode in base64
+  let encodedSource = Buffer.from(source).toString("base64");
+
+  // Make it URL safe
+  encodedSource = encodedSource.replace(/=/g, "");
+  encodedSource = encodedSource.replace(/\+/g, "-");
+  encodedSource = encodedSource.replace(/\//g, "_");
+
+  return encodedSource;
+};
+
+const signToken = (payload: object, secretKey: string) => {
+  // Header
+  const header = {
+    alg: "HS256",
+    typ: "JWT",
+  };
+
+  // Payload
+  const base64Header = base64url(JSON.stringify(header));
+  const base64Payload = base64url(JSON.stringify(payload));
+
+  // Signature
+  const signature = base64url(
+    require("react-native-crypto")
+      .createHmac("sha256", secretKey)
+      .update(`${base64Header}.${base64Payload}`)
+      .digest("base64")
+  );
+
+  // JWT
+  return `${base64Header}.${base64Payload}.${signature}`;
+};
 
 const Login = () => {
   const address = useAddress();
@@ -20,7 +64,7 @@ const Login = () => {
   const walletAddr = useAddress();
   const disconnect = useDisconnect();
   const embeddedWallet = useWallet("embeddedWallet");
-  const navigation = useNavigation();
+  const navigation = useNavigation<AddTaskScreenNavigationProp>();
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -115,7 +159,28 @@ const Login = () => {
 
       console.log("Checkpoint 3: User data is ", user);
 
-      const jwtToken = jwt.sign(
+      // const jwtToken = jwt.sign(
+      //   {
+      //     sub: user.id,
+      //     walletAddr,
+      //     iat: Date.now() / 1000,
+      //     exp: Math.floor(Date.now() / 1000 + 60 * 60 * 24 * 90),
+      //     user_metadata: {
+      //       id: user.id,
+      //     },
+      //   },
+      //   "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA==",
+      //   {
+      //     algorithm: "HS256",
+      //     allowInsecureKeySizes: true,
+      //     allowInvalidAsymmetricKeyTypes: true,
+      //   }
+      // );
+
+      const secretKey =
+        "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA==";
+
+      const jwtToken = signToken(
         {
           sub: user.id,
           walletAddr,
@@ -125,7 +190,7 @@ const Login = () => {
             id: user.id,
           },
         },
-        "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA=="
+        secretKey
       );
 
       console.log("Checkpoint 4: JWT token is created ", jwtToken);
@@ -138,6 +203,7 @@ const Login = () => {
       });
 
       console.log("Successfull login with siwe");
+      navigation.navigate("User Info");
     } catch (error) {
       console.log("Error when logging is ", error);
     }
