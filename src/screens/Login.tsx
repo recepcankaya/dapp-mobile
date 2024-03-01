@@ -1,5 +1,6 @@
 import { View, StyleSheet, StatusBar, Alert, Button, Text } from "react-native";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   useAddress,
   ConnectEmbed,
@@ -12,23 +13,13 @@ import { ethers } from "ethers";
 
 import supabase from "../lib/supabase";
 import signToken from "../lib/jwt";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-
-type NavigationList = {
-  "User Info": undefined;
-};
-
-type AddTaskScreenNavigationProp = BottomTabNavigationProp<
-  NavigationList,
-  "User Info"
->;
 
 const Login = () => {
   const address = useAddress();
   const signer = useSigner();
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
-  const navigation = useNavigation<AddTaskScreenNavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -65,7 +56,10 @@ const Login = () => {
         await supabase.from("users").insert({ nonce, walletAddr });
       } else {
         // new nonce
-        await supabase.from("users").update({ nonce }).match({ walletAddr });
+        await supabase
+          .from("users")
+          .update({ nonce, last_login: new Date() })
+          .match({ walletAddr });
       }
 
       const siweMessage = {
@@ -94,7 +88,6 @@ const Login = () => {
         );
       } else {
         const signature = await signer?.signMessage(siweMessage.statement);
-        console.log("Checkpoint 2: Signature is created with EOA ", signature);
         if (!signature) {
           throw new Error("Signature is undefined");
         }
@@ -137,7 +130,7 @@ const Login = () => {
       if (isNewUser) {
         navigation.navigate("User Info");
       } else {
-        // @todo -  Burada kullanıcı "brands" ekranına yönlendirilecek
+        navigation.navigate("Brands");
       }
     } catch (error) {
       Alert.alert(

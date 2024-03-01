@@ -3,16 +3,18 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import supabase from "../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const UserInfo = () => {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
+  const [username, setUsername] = useState("");
   const walletAddr = useAddress();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const submitForm = async () => {
     const { error } = await supabase
       .from("users")
-      .update({ name, surname, last_login: new Date() })
+      .update({ username, last_login: new Date() })
       .eq("walletAddr", walletAddr);
     if (error) {
       Alert.alert(
@@ -20,6 +22,7 @@ const UserInfo = () => {
         "Lütfen tekrar dener misiniz 👉👈"
       );
     } else {
+      navigation.navigate("Brands");
       Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
     }
   };
@@ -28,17 +31,14 @@ const UserInfo = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Text style={styles.labels}>Adınız:</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.labels}>Soyadınız:</Text>
+          <Text style={styles.labels}>Kullanıcı adınız:</Text>
           <TextInput
             style={styles.input}
-            value={surname}
-            onChangeText={setSurname}
+            value={username}
+            onChangeText={setUsername}
           />
         </View>
+
         <Button title="Kaydet" onPress={submitForm} />
       </View>
     </SafeAreaView>
