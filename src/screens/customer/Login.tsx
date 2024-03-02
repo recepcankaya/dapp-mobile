@@ -190,7 +190,6 @@ const Login = () => {
           İşletmeyseniz Lütfen Giriş Yapmak için {"\n"}Tıklayınız
         </Text>
       </TouchableOpacity>
-      <View></View>
     </SafeAreaView>
   );
 };

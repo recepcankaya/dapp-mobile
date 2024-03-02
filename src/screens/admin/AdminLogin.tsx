@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -13,6 +20,10 @@ const AdminLogin = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const submitForm = async () => {
+    if (!email || !password) {
+      Alert.alert("Giriş Hatası", "Mail ve şifre alanları boş bırakılamaz.");
+      return;
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -29,30 +40,28 @@ const AdminLogin = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formContainer}>
-        <View style={styles.form}>
-          <Text style={styles.header}>Giriş Yap</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              inputMode="email"
-              placeholder="Mailiniz"
-              style={styles.input}
-              placeholderTextColor="#000"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              placeholder="Şifreniz"
-              secureTextEntry={true}
-              style={styles.input}
-              placeholderTextColor="#000"
-              value={password}
-              onChangeText={setPassword}
-            />
-          </View>
+        <Text style={styles.header}>Giriş Yap</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            inputMode="email"
+            placeholder="Mailiniz"
+            style={styles.input}
+            placeholderTextColor="#000"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            placeholder="Şifreniz"
+            secureTextEntry={true}
+            style={styles.input}
+            placeholderTextColor="#000"
+            value={password}
+            onChangeText={setPassword}
+          />
         </View>
-        <Pressable style={styles.button} onPress={submitForm}>
-          <Text style={styles.header}>Giriş Yap</Text>
-        </Pressable>
+        <TouchableOpacity style={styles.continueButton} onPress={submitForm}>
+          <Text style={styles.buttonText}>Giriş Yap</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -67,39 +76,41 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "80%",
-    height: "50%",
-    borderColor: "#C8AFD6",
-    borderWidth: 2,
-    borderRadius: 30,
+    height: 600,
+    alignItems: "stretch",
     justifyContent: "center",
-    alignItems: "center",
-  },
-  form: {
-    height: "60%",
-    width: "80%",
-    justifyContent: "space-between",
   },
   header: {
     color: colors.white,
     fontSize: 24,
+    marginBottom: 40,
   },
   inputContainer: {
+    width: "100%",
     gap: 40,
+    marginBottom: 100,
   },
   input: {
-    backgroundColor: "#C8AFD6",
+    backgroundColor: colors.pink,
     width: "100%",
-    height: 50,
+    height: 60,
     borderRadius: 20,
-    paddingLeft: 10,
+    paddingLeft: 20,
     fontSize: 18,
   },
-  button: {
-    width: "70%",
-    height: 50,
+  continueButton: {
+    borderWidth: 2,
+    borderColor: colors.pink,
+    width: "80%",
+    height: 70,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    alignSelf: "center",
+  },
+  buttonText: {
+    fontSize: 24,
+    color: colors.white,
   },
 });
 export default AdminLogin;
