@@ -11,13 +11,12 @@ import {
 } from "@thirdweb-dev/react-native";
 
 import colors from "./src/ui/colors";
-import Text from "./src/ui/customText";
 
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
 import Brands from "./src/screens/Brands";
 import Home from "./src/screens/Home";
-import { View } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -46,7 +45,6 @@ const TabNavigator = () => {
         tabBarLabelStyle: { color: colors.black },
       })}>
       <TabStack.Screen name="Home" component={Home} />
-      <TabStack.Screen name="UserInfo" component={UserInfo} />
     </TabStack.Navigator>
   );
 };
@@ -91,6 +89,11 @@ function App() {
           <Stack.Screen
             name="Brands"
             component={Brands}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
