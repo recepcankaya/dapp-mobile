@@ -61,10 +61,8 @@ const Brands = () => {
         style={styles.brand}
         onPress={() => {
           setBrand(item);
-          console.log("navigate to other page|");
           navigation.navigate("TabNavigator");
-        }}
-      >
+        }}>
         <Image source={{ uri: item.image }} style={styles.brandImage} />
       </TouchableOpacity>
     );

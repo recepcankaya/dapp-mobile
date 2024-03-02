@@ -1,15 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image } from "react-native";
-import colors from "../ui/colors";
+import QRCode from "react-qr-code";
+
+import useBrandStore, { Brand } from "../store/brandStore";
+import useUserStore from "../store/userStore";
 import { heightConstant, widthConstant } from "../ui/responsiveScreen";
 import Text from "../ui/customText";
-import useBrandStore, { Brand } from "../store/brandStore";
-import logo from "../assets/LadderLogo.png";
-import QRCode from "react-qr-code";
-import supabase from "../lib/supabase";
-import { useAddress } from "@thirdweb-dev/react-native";
-import { useState } from "react";
-import useUserStore from "../store/userStore";
+import colors from "../ui/colors";
+
+const logo = require("../assets/LadderLogo.png");
 
 const Home = () => {
   const userID = useUserStore((state) => state.user.id);
@@ -34,7 +33,7 @@ const Home = () => {
       </View>
       <View style={styles.ticketContainer}>
         <View style={styles.ticketText}>
-          <Text text="Your Ticket" />
+          <Text text="Süreciniz" />
         </View>
         <View style={styles.ticket}>
           {positions.map((position, index) => (
@@ -56,7 +55,7 @@ const Home = () => {
       </View>
       <View style={styles.qrCodeContainer}>
         <View style={styles.qrCode}>
-          <QRCode size={256} value={userID} viewBox={`0 0 256 256`} />
+          <QRCode size={240} value={userID} viewBox={`0 0 240 240`} />
         </View>
       </View>
     </SafeAreaView>
@@ -121,8 +120,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   qrCode: {
-    height: 320 * heightConstant,
-    width: 320 * heightConstant,
+    height: 340 * heightConstant,
+    width: 340 * heightConstant,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
