@@ -13,6 +13,7 @@ import { ethers } from "ethers";
 import jwt from "jsonwebtoken";
 
 import supabase from "../lib/supabase";
+import useUserStore from "../store/userStore";
 
 const Login = () => {
   const address = useAddress();
@@ -21,6 +22,7 @@ const Login = () => {
   const disconnect = useDisconnect();
   const embeddedWallet = useWallet("embeddedWallet");
   const navigation = useNavigation();
+  const updateUser = useUserStore((state) => state.setUser)
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -136,6 +138,8 @@ const Login = () => {
         access_token: jwtToken,
         refresh_token: jwtToken,
       });
+
+      updateUser({id: user.id.toString(), username: user.username, numberOfNFTs: user.number_of_nfts, orderNumber: user.order_number})
 
       console.log("Successfull login with siwe");
     } catch (error) {

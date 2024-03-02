@@ -11,9 +11,15 @@ import {
   embeddedWallet,
 } from "@thirdweb-dev/react-native";
 
+import colors from "./src/ui/colors";
+import Text from "./src/ui/customText";
+
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
 import Brands from "./src/screens/Brands";
+import Home from "./src/screens/Home";
+import { View } from "react-native";
+
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
  */
@@ -23,6 +29,29 @@ import Brands from "./src/screens/Brands";
 // };
 
 const Stack = createNativeStackNavigator();
+const TabStack = createBottomTabNavigator();
+
+const TabNavigator = () => {
+  return (
+    <TabStack.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.purple,
+        headerBackgroundContainerStyle: { borderWidth: 0 },
+        tabBarStyle: {
+          backgroundColor: colors.white,
+          paddingTop: 10,
+          borderTopColor: colors.purple,
+          borderTopWidth: 3,
+        },
+        tabBarLabelStyle: { color: colors.black },
+      })}
+    >
+      <TabStack.Screen name="Home" component={Home} />
+      <TabStack.Screen name="UserInfo" component={UserInfo} />
+    </TabStack.Navigator>
+  );
+};
 
 function App() {
   return (
@@ -63,8 +92,8 @@ function App() {
             options={{ headerShown: false }} // Hide navigation bar
           />
           <Stack.Screen
-            name="User Info"
-            component={UserInfo}
+            name="TabNavigator"
+            component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>

@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../ui/colors";
 import { widthConstant } from "../ui/responsiveScreen";
 import useBrandStore, { Brand } from "../store/brandStore";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 
 const data: Brand[] = [
   {
@@ -39,8 +41,10 @@ const data: Brand[] = [
 ];
 
 const Brands = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const brands = useBrandStore((state) => state.brands);
   const setBrands = useBrandStore((state) => state.setBrands);
+  const setBrand = useBrandStore((state) => state.setBrand);
   useEffect(() => {
     //fetch data from api
     setBrands(data);
@@ -55,7 +59,11 @@ const Brands = () => {
     return (
       <TouchableOpacity
         style={styles.brand}
-        onPress={() => console.log("navigate to other page|")}
+        onPress={() => {
+          setBrand(item);
+          console.log("navigate to other page|");
+          navigation.navigate("TabNavigator");
+        }}
       >
         <Image source={{ uri: item.image }} style={styles.brandImage} />
       </TouchableOpacity>
