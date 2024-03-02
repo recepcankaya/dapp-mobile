@@ -1,28 +1,27 @@
 import { View, StyleSheet, StatusBar, Alert, Button, Text } from "react-native";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   useAddress,
   ConnectEmbed,
   useSigner,
-  useDisconnect,
   useWallet,
 } from "@thirdweb-dev/react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import jwt from "jsonwebtoken";
 
 import supabase from "../lib/supabase";
+import signToken from "../lib/jwt";
 import useUserStore from "../store/userStore";
 
 const Login = () => {
   const address = useAddress();
   const signer = useSigner();
   const walletAddr = useAddress();
-  const disconnect = useDisconnect();
   const embeddedWallet = useWallet("embeddedWallet");
-  const navigation = useNavigation();
-  const updateUser = useUserStore((state) => state.setUser)
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const updateUser = useUserStore((state) => state.setUser);
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -39,9 +38,9 @@ const Login = () => {
    * @returns {Promise<void>} A promise that resolves when the login process is completed.
    * @throws {Error} If the wallet address is undefined or if there is an error during the login process.
    */
-  // @todo - kullanıcı yeni nonce' ı reddetse bile nonce değişiyor. bunun önüne geç.
   const handleLoginWithSIWE = async () => {
     try {
+      let isNewUser = false;
       if (!walletAddr) {
         throw new Error("Wallet address is undefined");
       }
@@ -55,18 +54,14 @@ const Login = () => {
 
       if (data?.length === 0) {
         // create user record + nonce
-        let { data } = await supabase
-          .from("users")
-          .insert({ nonce, walletAddr });
-        console.log(
-          `Checkpoint 1: Inserted new user with nonce: ${nonce} walletAddr: ${walletAddr} data: ${data}`
-        );
+        isNewUser = true;
+        await supabase.from("users").insert({ nonce, walletAddr });
       } else {
         // new nonce
-        await supabase.from("users").update({ nonce }).match({ walletAddr });
-        console.log(
-          `Checkpoint 1: Inserted new user with nonce: ${nonce} walletAddr: ${walletAddr}`
-        );
+        await supabase
+          .from("users")
+          .update({ nonce, last_login: new Date() })
+          .match({ walletAddr });
       }
 
       const siweMessage = {
@@ -83,10 +78,7 @@ const Login = () => {
         const signature = await embeddedWallet?.signMessage(
           siweMessage.statement
         );
-        console.log(
-          "Checkpoint 2: Signature is created with embedded wallet ",
-          signature
-        );
+
         if (!signature) {
           throw new Error("Signature is undefined");
         }
@@ -98,7 +90,6 @@ const Login = () => {
         );
       } else {
         const signature = await signer?.signMessage(siweMessage.statement);
-        console.log("Checkpoint 2: Signature is created with EOA ", signature);
         if (!signature) {
           throw new Error("Signature is undefined");
         }
@@ -115,9 +106,10 @@ const Login = () => {
         .eq("nonce", nonce)
         .single();
 
-      console.log("Checkpoint 3: User data is ", user);
+      const secretKey =
+        "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA==";
 
-      const jwtToken = jwt.sign(
+      const jwtToken = signToken(
         {
           sub: user.id,
           walletAddr,
@@ -127,10 +119,8 @@ const Login = () => {
             id: user.id,
           },
         },
-        "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA=="
+        secretKey
       );
-
-      console.log("Checkpoint 4: JWT token is created ", jwtToken);
 
       supabase.functions.setAuth(jwtToken);
       supabase.realtime.setAuth(jwtToken);
@@ -139,11 +129,23 @@ const Login = () => {
         refresh_token: jwtToken,
       });
 
-      updateUser({id: user.id.toString(), username: user.username, numberOfNFTs: user.number_of_nfts, orderNumber: user.order_number})
+      updateUser({
+        id: user.id.toString(),
+        username: user.username,
+        numberOfNFTs: user.number_of_nfts,
+        orderNumber: user.order_number,
+      });
 
-      console.log("Successfull login with siwe");
+      if (isNewUser) {
+        navigation.navigate("User Info");
+      } else {
+        navigation.navigate("Brands");
+      }
     } catch (error) {
-      console.log("Error when logging is ", error);
+      Alert.alert(
+        "Bunu biz de beklemiyorduk 🤔",
+        "Lütfen tekrar dener misiniz 👉👈"
+      );
     }
   };
 
@@ -151,15 +153,22 @@ const Login = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.form}>
-        <ConnectEmbed
-          modalTitle="Sign In"
-          modalTitleIconUrl=""
-          container={{ paddingVertical: "lg", borderRadius: "lg" }}
-        />
+        {address ? (
+          <>
+            <Text style={{ color: "#fff" }}>Girişiniz yapılmıştır.</Text>
+            <Text style={{ color: "#fff" }}>
+              Devam etmek için lütfen aşağıdaki butona tıklayın
+            </Text>
+            <Button title="Devam Et" onPress={handleLoginWithSIWE} />
+          </>
+        ) : (
+          <ConnectEmbed
+            modalTitle="Sign In"
+            modalTitleIconUrl=""
+            container={{ paddingVertical: "lg", borderRadius: "lg" }}
+          />
+        )}
       </View>
-      <Text style={{ color: "#fff" }}>Address is {address}</Text>
-      <Button title="Login with SIWE" onPress={handleLoginWithSIWE} />
-      <Button title="disconnect" onPress={() => disconnect()} />
     </SafeAreaView>
   );
 };

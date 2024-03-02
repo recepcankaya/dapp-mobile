@@ -1,6 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   ThirdwebProvider,
   metamaskWallet,
@@ -45,8 +44,7 @@ const TabNavigator = () => {
           borderTopWidth: 3,
         },
         tabBarLabelStyle: { color: colors.black },
-      })}
-    >
+      })}>
       <TabStack.Screen name="Home" component={Home} />
       <TabStack.Screen name="UserInfo" component={UserInfo} />
     </TabStack.Navigator>
@@ -77,23 +75,22 @@ function App() {
           },
         }),
       ]}
-      autoConnect={true}
-    >
+      autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Brands">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
             component={Login}
             options={{ headerShown: false }} // Hide navigation bar
           />
           <Stack.Screen
-            name="Brands"
-            component={Brands}
+            name="User Info"
+            component={UserInfo}
             options={{ headerShown: false }} // Hide navigation bar
           />
           <Stack.Screen
-            name="TabNavigator"
-            component={TabNavigator}
+            name="Brands"
+            component={Brands}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
