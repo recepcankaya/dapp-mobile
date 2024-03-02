@@ -40,7 +40,7 @@ const TabNavigator = () => {
         tabBarStyle: {
           backgroundColor: colors.white,
           paddingTop: 10,
-          borderTopColor: colors.purple,
+          borderTopColor: colors.pink,
           borderTopWidth: 3,
         },
         tabBarLabelStyle: { color: colors.black },

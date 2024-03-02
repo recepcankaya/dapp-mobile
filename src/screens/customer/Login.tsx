@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     borderWidth: 2,
-    borderColor: "#C8AFD6",
+    borderColor: colors.pink,
     width: "80%",
     height: 70,
     borderRadius: 30,

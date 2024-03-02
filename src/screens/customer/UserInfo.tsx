@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   input: {
-    borderColor: "#C8AFD6",
+    borderColor: colors.pink,
     borderStyle: "solid",
     borderWidth: 2,
     width: "100%",
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   button: {
-    backgroundColor: "#C8AFD6",
+    backgroundColor: colors.pink,
     width: "100%",
     height: 50,
     borderRadius: 20,

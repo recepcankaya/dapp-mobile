@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     height: 100 * heightConstant,
     width: "100%",
     borderBottomWidth: 2,
-    borderBottomColor: colors.purple,
+    borderBottomColor: colors.pink,
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 5,

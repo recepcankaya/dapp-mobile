@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 40,
   },
   brand: {
     width: 130 * widthConstant,
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: colors.purple,
+    borderColor: colors.white,
   },
 });
 
