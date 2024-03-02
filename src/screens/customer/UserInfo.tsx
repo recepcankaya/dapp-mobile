@@ -1,10 +1,19 @@
 import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import supabase from "../../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import colors from "../../ui/colors";
 
 const UserInfo = () => {
   const [username, setUsername] = useState("");
@@ -12,19 +21,28 @@ const UserInfo = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const submitForm = async () => {
-    const { error } = await supabase
-      .from("users")
-      .update({ username, last_login: new Date() })
-      .eq("walletAddr", walletAddr);
-    if (error) {
-      Alert.alert(
-        "Bunu biz de beklemiyorduk 🤔",
-        "Lütfen tekrar dener misiniz 👉👈"
-      );
-    } else {
-      navigation.navigate("Brands");
-      Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
-    }
+    try {
+      if (username.length < 3) {
+        Alert.alert(
+          "Kullanıcı Adı Hatası",
+          "Kullanıcı adınız en az 3 karakter olmalıdır."
+        );
+        return;
+      }
+      const { error } = await supabase
+        .from("users")
+        .update({ username, last_login: new Date() })
+        .eq("walletAddr", walletAddr);
+      if (error) {
+        Alert.alert(
+          "Bunu biz de beklemiyorduk 🤔",
+          "Lütfen tekrar dener misiniz 👉👈"
+        );
+      } else {
+        navigation.navigate("Brands");
+        Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
+      }
+    } catch (error) {}
   };
 
   return (
@@ -38,8 +56,9 @@ const UserInfo = () => {
             onChangeText={setUsername}
           />
         </View>
-
-        <Button title="Kaydet" onPress={submitForm} />
+        <TouchableOpacity style={styles.button} onPress={submitForm}>
+          <Text style={styles.buttonText}>Kaydet</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -48,36 +67,48 @@ const UserInfo = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050505",
+    backgroundColor: colors.black,
     justifyContent: "center",
     alignItems: "center",
   },
   form: {
-    height: "40%",
+    height: 600,
     width: "80%",
-    backgroundColor: "#2e2d2d",
     borderRadius: 10,
     justifyContent: "space-evenly",
     alignItems: "stretch",
   },
   inputContainer: {
-    width: "80%",
+    width: "100%",
     alignSelf: "center",
   },
   labels: {
-    color: "#fff",
-    fontSize: 18,
-    marginBottom: 10,
+    color: colors.white,
+    fontSize: 24,
+    marginBottom: 30,
   },
   input: {
-    borderColor: "#fff",
+    borderColor: "#C8AFD6",
     borderStyle: "solid",
-    borderWidth: 1,
+    borderWidth: 2,
     width: "100%",
-    height: "30%",
-    borderRadius: 5,
-    paddingLeft: 10,
-    color: "#fff",
+    height: 60,
+    borderRadius: 30,
+    paddingLeft: 20,
+    color: colors.white,
+    fontSize: 18,
+  },
+  button: {
+    backgroundColor: "#C8AFD6",
+    width: "100%",
+    height: 50,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: colors.black,
+    fontSize: 20,
   },
 });
 
