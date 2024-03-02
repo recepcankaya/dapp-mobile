@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -22,6 +23,7 @@ import { ethers } from "ethers";
 import supabase from "../../lib/supabase";
 import signToken from "../../lib/jwt";
 import useUserStore from "../../store/userStore";
+import colors from "../../ui/colors";
 
 const Login = () => {
   const address = useAddress();
@@ -163,11 +165,15 @@ const Login = () => {
       <View style={styles.form}>
         {address ? (
           <>
-            <Text style={{ color: "#fff" }}>Girişiniz yapılmıştır.</Text>
-            <Text style={{ color: "#fff" }}>
+            <Text style={styles.header}>Girişiniz yapılmıştır.</Text>
+            <Text style={styles.subheader}>
               Devam etmek için lütfen aşağıdaki butona tıklayın
             </Text>
-            <Button title="Devam Et" onPress={handleLoginWithSIWE} />
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={handleLoginWithSIWE}>
+              <Text style={styles.buttonText}>Devam Et</Text>
+            </TouchableOpacity>
           </>
         ) : (
           <ConnectEmbed
@@ -177,13 +183,14 @@ const Login = () => {
           />
         )}
       </View>
-      <View>
-        <Pressable onPress={() => navigation.navigate("Admin Login")}>
-          <Text style={{ color: "#fff" }}>
-            Eğer İşletmeyseniz Lütfen Giriş Yapmak için Tıklayınız
-          </Text>
-        </Pressable>
-      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Admin Login")}
+        style={styles.businessButton}>
+        <Text style={styles.businessText}>
+          İşletmeyseniz Lütfen Giriş Yapmak için {"\n"}Tıklayınız
+        </Text>
+      </TouchableOpacity>
+      <View></View>
     </SafeAreaView>
   );
 };
@@ -191,12 +198,45 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050505",
+    backgroundColor: colors.black,
     justifyContent: "center",
   },
   form: {
-    width: "80%",
+    height: 500,
+    width: "90%",
     alignSelf: "center",
+  },
+  header: {
+    fontSize: 26,
+    color: colors.white,
+    marginBottom: 100,
+  },
+  subheader: {
+    fontSize: 20,
+    color: colors.white,
+    marginBottom: 50,
+  },
+  continueButton: {
+    borderWidth: 2,
+    borderColor: "#C8AFD6",
+    width: "80%",
+    height: 70,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  buttonText: {
+    fontSize: 24,
+    color: colors.white,
+  },
+  businessButton: {
+    width: "90%",
+    alignSelf: "center",
+  },
+  businessText: {
+    fontSize: 18,
+    color: colors.white,
   },
 });
 
