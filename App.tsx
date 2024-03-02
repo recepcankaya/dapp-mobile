@@ -13,6 +13,9 @@ import {
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
 import Brands from "./src/screens/Brands";
+import AdminLogin from "./src/screens/AdminLogin";
+import AdminHome from "./src/screens/AdminHome";
+
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
  */
@@ -54,6 +57,16 @@ function App() {
             name="Login"
             component={Login}
             options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="Admin Login"
+            component={AdminLogin}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Admin Home"
+            component={AdminHome}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="User Info"

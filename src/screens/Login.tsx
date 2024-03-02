@@ -1,4 +1,12 @@
-import { View, StyleSheet, StatusBar, Alert, Button, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Alert,
+  Button,
+  Text,
+  Pressable,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
@@ -159,6 +167,13 @@ const Login = () => {
             container={{ paddingVertical: "lg", borderRadius: "lg" }}
           />
         )}
+      </View>
+      <View>
+        <Pressable onPress={() => navigation.navigate("Admin Login")}>
+          <Text style={{ color: "#fff" }}>
+            Eğer İşletmeyseniz Lütfen Giriş Yapmak için Tıklayınız
+          </Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
