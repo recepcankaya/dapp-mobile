@@ -12,8 +12,8 @@ type State = {
 };
 
 type Action = {
-  setBrand: (brand: Brand) => void;
-  setBrands: (brands: Brand[]) => void;
+  setBrand: (brand: State["brand"]) => void;
+  setBrands: (brands: State["brands"]) => void;
 };
 
 const useBrandStore = create<State & Action>((set) => ({
@@ -23,8 +23,8 @@ const useBrandStore = create<State & Action>((set) => ({
     image: "",
   },
   brands: [],
-  setBrand: (brand) => set({ brand }),
-  setBrands: (brands) => set({ brands }),
+  setBrand: (brand) => set(() => ({ brand })),
+  setBrands: (brands) => set(() => ({ brands })),
 }));
 
 export default useBrandStore;
