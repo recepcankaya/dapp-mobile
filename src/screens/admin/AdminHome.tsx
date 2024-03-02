@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../ui/colors";
+import colors from "../../ui/colors";
 
 const AdminHome = () => {
   return (

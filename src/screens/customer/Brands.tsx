@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../ui/colors";
-import { widthConstant } from "../ui/responsiveScreen";
-import useBrandStore, { Brand } from "../store/brandStore";
+import colors from "../../ui/colors";
+import { widthConstant } from "../../ui/responsiveScreen";
+import useBrandStore, { Brand } from "../../store/brandStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 

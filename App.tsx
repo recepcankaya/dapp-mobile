@@ -9,17 +9,15 @@ import {
   walletConnect,
   embeddedWallet,
 } from "@thirdweb-dev/react-native";
-
-import colors from "./src/ui/colors";
-
-import Login from "./src/screens/Login";
-import UserInfo from "./src/screens/UserInfo";
-import Brands from "./src/screens/Brands";
-import AdminLogin from "./src/screens/AdminLogin";
-import AdminHome from "./src/screens/AdminHome";
-
-import Home from "./src/screens/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import Login from "./src/screens/customer/Login";
+import UserInfo from "./src/screens/customer/UserInfo";
+import Brands from "./src/screens/customer/Brands";
+import AdminLogin from "./src/screens/admin/AdminLogin";
+import AdminHome from "./src/screens/admin/AdminHome";
+import CustomerHome from "./src/screens/customer/CustomerHome";
+import colors from "./src/ui/colors";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -35,7 +33,7 @@ const TabStack = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <TabStack.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={() => ({
         headerShown: false,
         tabBarActiveTintColor: colors.purple,
         headerBackgroundContainerStyle: { borderWidth: 0 },
@@ -47,7 +45,7 @@ const TabNavigator = () => {
         },
         tabBarLabelStyle: { color: colors.black },
       })}>
-      <TabStack.Screen name="Home" component={Home} />
+      <TabStack.Screen name="Home" component={CustomerHome} />
     </TabStack.Navigator>
   );
 };

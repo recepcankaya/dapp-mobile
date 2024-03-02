@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import colors from "../ui/colors";
-import supabase from "../lib/supabase";
+import colors from "../../ui/colors";
+import supabase from "../../lib/supabase";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");

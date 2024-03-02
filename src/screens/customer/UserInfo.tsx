@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import supabase from "../lib/supabase";
+import supabase from "../../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

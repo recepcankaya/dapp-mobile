@@ -19,9 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 
-import supabase from "../lib/supabase";
-import signToken from "../lib/jwt";
-import useUserStore from "../store/userStore";
+import supabase from "../../lib/supabase";
+import signToken from "../../lib/jwt";
+import useUserStore from "../../store/userStore";
 
 const Login = () => {
   const address = useAddress();
