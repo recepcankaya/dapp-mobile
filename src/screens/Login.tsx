@@ -21,6 +21,7 @@ import { ethers } from "ethers";
 
 import supabase from "../lib/supabase";
 import signToken from "../lib/jwt";
+import useUserStore from "../store/userStore";
 
 const Login = () => {
   const address = useAddress();
@@ -28,6 +29,7 @@ const Login = () => {
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const updateUser = useUserStore((state) => state.setUser);
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -133,6 +135,13 @@ const Login = () => {
       await supabase.auth.setSession({
         access_token: jwtToken,
         refresh_token: jwtToken,
+      });
+
+      updateUser({
+        id: user.id.toString(),
+        username: user.username,
+        numberOfNFTs: user.number_of_nfts,
+        orderNumber: user.order_number,
       });
 
       if (isNewUser) {

@@ -10,11 +10,16 @@ import {
   embeddedWallet,
 } from "@thirdweb-dev/react-native";
 
+import colors from "./src/ui/colors";
+
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
 import Brands from "./src/screens/Brands";
 import AdminLogin from "./src/screens/AdminLogin";
 import AdminHome from "./src/screens/AdminHome";
+
+import Home from "./src/screens/Home";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -25,6 +30,27 @@ import AdminHome from "./src/screens/AdminHome";
 // };
 
 const Stack = createNativeStackNavigator();
+const TabStack = createBottomTabNavigator();
+
+const TabNavigator = () => {
+  return (
+    <TabStack.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.purple,
+        headerBackgroundContainerStyle: { borderWidth: 0 },
+        tabBarStyle: {
+          backgroundColor: colors.white,
+          paddingTop: 10,
+          borderTopColor: colors.purple,
+          borderTopWidth: 3,
+        },
+        tabBarLabelStyle: { color: colors.black },
+      })}>
+      <TabStack.Screen name="Home" component={Home} />
+    </TabStack.Navigator>
+  );
+};
 
 function App() {
   return (
@@ -76,6 +102,11 @@ function App() {
           <Stack.Screen
             name="Brands"
             component={Brands}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
