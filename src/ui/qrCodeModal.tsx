@@ -1,6 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import QRCode, { QRCodeProps } from 'react-qr-code';
-import { boolean } from 'zod';
 
 type QrCodeModalProps = {
     onClose: () => void;
@@ -21,7 +20,6 @@ const QrCodeModal = ({ isVisible, value, onClose }: QrCodeModalProps & QRCodePro
                 />
             </View>
         </View>
-
     )
 }
 
