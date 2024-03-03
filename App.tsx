@@ -14,6 +14,7 @@ import colors from "./src/ui/colors";
 
 import Login from "./src/screens/Login";
 import UserInfo from "./src/screens/UserInfo";
+import Profile from "./src/screens/Profile";
 import Brands from "./src/screens/Brands";
 import Home from "./src/screens/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -96,6 +97,11 @@ function App() {
             component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
+           <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ headerShown: false }} // Hide navigation bar
+           />
         </Stack.Navigator>
       </NavigationContainer>
     </ThirdwebProvider>
