@@ -7,6 +7,7 @@ import useUserStore from "../../store/userStore";
 import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
+import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 

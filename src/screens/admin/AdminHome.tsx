@@ -1,8 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../ui/colors";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const AdminHome = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.infoContainer}>
@@ -15,7 +19,13 @@ const AdminHome = () => {
         <View style={styles.info}>
           <View style={styles.circle}></View>
           <View style={styles.infoTextContainer}>
-            <Text style={styles.infoText}>Bugüne Kadar</Text>
+            <Text style={styles.infoText}>Marka Şubesi</Text>
+          </View>
+        </View>
+        <View style={styles.info}>
+          <View style={styles.circle}></View>
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoText}>Bugüne Kadar Kaç Ürün Satıldığı</Text>
           </View>
         </View>
         <View style={styles.info}>
@@ -37,6 +47,9 @@ const AdminHome = () => {
           </View>
         </View>
       </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Admin Camera")}>
+        <Text style={{ color: "#fff" }}>QR Code</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -50,7 +63,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     width: "90%",
-    height: 600,
+    height: 650,
     alignItems: "stretch",
     justifyContent: "space-between",
   },
