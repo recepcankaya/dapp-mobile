@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
     View,
     StyleSheet,
@@ -7,14 +7,13 @@ import {
     Image,
     FlatList,
 } from "react-native";
-import {
-    heightConstant,
-    radiusConstant,
-    widthConstant,
-} from "../../components/customs/CustomResponsiveScreen";
+import { radiusConstant, heightConstant, widthConstant } from "../ui/responsiveScreen";
+import QrCodeModal from "../ui/qrCodeModal";
+
 
 export default function Profile() {
     const [selectedTab, setSelectedTab] = useState('Waiting');
+    const [qrCodeModalVisible, setQrCodeModalVisible] = useState<boolean>(false);
 
     const waitingIcons = [
         { key: '1', source: require('../assets/Star.png') },
@@ -41,7 +40,7 @@ export default function Profile() {
                 {selectedTab === 'Waiting' && (
                     <FlatList
                         data={waitingIcons}
-                        renderItem={({ item }) => <Image source={item.source} style={styles.icon} />}
+                        renderItem={({ item }) => <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}><Image source={item.source} style={styles.icon} /></TouchableOpacity>}
                         keyExtractor={item => item.key}
                         numColumns={2}
                     />
@@ -55,6 +54,7 @@ export default function Profile() {
                     />
                 )}
             </View>
+            <QrCodeModal isVisible={qrCodeModalVisible} value={'atakan'} onClose={() => setQrCodeModalVisible(false)} />
         </View>
     );
 }

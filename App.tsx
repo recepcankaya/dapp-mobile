@@ -97,11 +97,11 @@ function App() {
             component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
-           <Stack.Screen
+          <Stack.Screen
             name="Profile"
             component={Profile}
             options={{ headerShown: false }} // Hide navigation bar
-           />
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ThirdwebProvider>
