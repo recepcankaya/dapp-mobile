@@ -9,11 +9,13 @@ import {
 } from "react-native";
 import { radiusConstant, heightConstant, widthConstant } from "../ui/responsiveScreen";
 import QrCodeModal from "../ui/qrCodeModal";
+import userStore from "../store/userStore"
 
 
 export default function Profile() {
     const [selectedTab, setSelectedTab] = useState('Waiting');
     const [qrCodeModalVisible, setQrCodeModalVisible] = useState<boolean>(false);
+    const user = userStore((state) => state.user);
 
     const waitingIcons = [
         { key: '1', source: require('../assets/Star.png') },
@@ -54,7 +56,7 @@ export default function Profile() {
                     />
                 )}
             </View>
-            <QrCodeModal isVisible={qrCodeModalVisible} value={'atakan'} onClose={() => setQrCodeModalVisible(false)} />
+            <QrCodeModal isVisible={qrCodeModalVisible} value={JSON.stringify({ userId: user.id, forNFT: true })} onClose={() => setQrCodeModalVisible(false)} />
         </View>
     );
 }

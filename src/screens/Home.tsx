@@ -1,17 +1,41 @@
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, FlatList, Button } from "react-native";
 import QRCode from "react-qr-code";
 
 import useBrandStore, { Brand } from "../store/brandStore";
-import useUserStore from "../store/userStore";
+import useUserStore, { User } from "../store/userStore";
 import { heightConstant, widthConstant } from "../ui/responsiveScreen";
 import Text from "../ui/customText";
 import colors from "../ui/colors";
+
+import supabase from "../lib/supabase";
 
 const logo = require("../assets/LadderLogo.png");
 
 const Home = () => {
   const userID = useUserStore((state) => state.user.id);
+  // const userOrderNumber = useUserStore((state) => state.user.orderNumber);
+  const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
+
+  const fetchUserOrderNumber = async () => {
+    try {
+      const { data, error } = await supabase.from("user_of_missions").select("number_of_orders").eq("user_id", userID).single();
+      if (error) {
+        console.log(error);
+      } else {
+        setUserOrderNumber(data?.number_of_orders ?? 0);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchUserOrderNumber();
+  }, []);
+
+  const ticketCircles = new Array(8).fill(userOrderNumber);
   const positions = [
     { top: -50, left: -50 },
     { top: -50, right: -50 },
@@ -20,6 +44,10 @@ const Home = () => {
   ];
 
   const brand: Brand = useBrandStore((state) => state.brand);
+
+  const ticketRenderItem = ({ item, index }: { item: any; index: number }) => {
+    return <View style={[styles.circle, { backgroundColor: index < userOrderNumber ? colors.green : colors.pink }]} />;
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -39,18 +67,18 @@ const Home = () => {
           {positions.map((position, index) => (
             <View key={index} style={[styles.blackCircles, position]} />
           ))}
-          <View style={styles.circles}>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-          </View>
-          <View style={styles.circles}>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-          </View>
+          <FlatList
+            data={ticketCircles}
+            extraData={ticketCircles}
+            renderItem={(item) => ticketRenderItem(item)}
+            numColumns={4}
+            contentContainerStyle={styles.circles}
+            scrollEnabled={false}
+          />
+          <FlatList
+            data={positions}
+            renderItem={(item) => <View style={[styles.blackCircles, item.item]} />}
+          />
         </View>
       </View>
       <View style={styles.qrCodeContainer}>
@@ -103,10 +131,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
   },
   circles: {
-    flex: 1,
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: 'center',
+    height: 200 * heightConstant
   },
   circle: {
     backgroundColor: colors.pink,

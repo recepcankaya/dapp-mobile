@@ -4,10 +4,9 @@ import QRCode, { QRCodeProps } from 'react-qr-code';
 type QrCodeModalProps = {
     onClose: () => void;
     isVisible: boolean;
-    value: any;
 }
 
-const QrCodeModal = ({ isVisible, value, onClose }: QrCodeModalProps & QRCodeProps) => {
+const QrCodeModal = ({ isVisible, onClose, value }: QrCodeModalProps & QRCodeProps) => {
     if (!isVisible) return null;
     return (
         <View style={styles.container}>
