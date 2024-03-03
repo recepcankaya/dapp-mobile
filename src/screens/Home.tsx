@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, StyleSheet, Image, FlatList, Button } from "react-native";
+import { View, StyleSheet, Image, FlatList } from "react-native";
 import QRCode from "react-qr-code";
 
 import useBrandStore, { Brand } from "../store/brandStore";
-import useUserStore, { User } from "../store/userStore";
+import useUserStore from "../store/userStore";
 import { heightConstant, widthConstant } from "../ui/responsiveScreen";
 import Text from "../ui/customText";
 import colors from "../ui/colors";
