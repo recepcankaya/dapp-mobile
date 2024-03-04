@@ -11,13 +11,8 @@ import {
 } from "@thirdweb-dev/react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Login from "./src/screens/customer/Login";
-import UserInfo from "./src/screens/customer/UserInfo";
-import Brands from "./src/screens/customer/Brands";
-import AdminLogin from "./src/screens/admin/AdminLogin";
-import AdminHome from "./src/screens/admin/AdminHome";
-import AdminCamera from "./src/screens/admin/AdminCamera";
-import CustomerHome from "./src/screens/customer/CustomerHome";
+import { Brands, CustomerHome, Login, UserInfo } from "./src/screens/customer";
+import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
 /**
