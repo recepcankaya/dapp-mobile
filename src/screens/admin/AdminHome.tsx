@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../ui/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -104,8 +111,13 @@ const AdminHome = () => {
           </View>
         </View>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("Admin Camera")}>
-        <Text style={{ color: "#fff" }}>QR Code</Text>
+      <TouchableOpacity
+        style={styles.qrCode}
+        onPress={() => navigation.navigate("Admin Camera")}>
+        <Image
+          source={require("../../assets/qr-code.png")}
+          style={styles.qrCode}
+        />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -154,6 +166,12 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 20,
     fontWeight: "bold",
+  },
+  qrCode: {
+    position: "absolute",
+    bottom: 10,
+    width: 50,
+    height: 50,
   },
 });
 
