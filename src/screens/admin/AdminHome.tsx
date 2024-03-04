@@ -18,7 +18,7 @@ const AdminHome = () => {
   const [adminDashbordInfo, setAdminDashboardInfo] = useState({
     brand_name: "",
     brand_branch: "",
-    number_of_orders: 0,
+    number_of_orders_so_far: 0,
     used_nfts: 0,
     not_used_nfts: 0,
     number_for_reward: 0,
@@ -32,7 +32,7 @@ const AdminHome = () => {
       const { data: adminData, error: adminError } = await supabase
         .from("admins")
         .select(
-          "brand_name, brand_branch, used_nfts, not_used_nfts, number_for_reward, number_of_orders, last_qr_scan_time"
+          "brand_name, brand_branch, used_nfts, not_used_nfts, number_for_reward, number_of_orders_so_far, last_qr_scan_time"
         )
         .eq("id", adminId);
       if (adminData) {
@@ -75,7 +75,7 @@ const AdminHome = () => {
         <View style={styles.info}>
           <View style={styles.circle}>
             <Text style={styles.adminData}>
-              {adminDashbordInfo.number_of_orders}
+              {adminDashbordInfo.number_of_orders_so_far}
             </Text>
           </View>
           <View style={styles.infoTextContainer}>
