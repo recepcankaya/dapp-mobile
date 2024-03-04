@@ -16,12 +16,12 @@ import {
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
 
-  const waitingIcons = [{ key: "1", source: require("../assets/Star.png") }];
+  const waitingIcons = [{ key: "1", source: require("../../assets/Star.png") }];
 
   const collectionIcons = [
-    { key: "1", source: require("../assets/Arab.png") },
-    { key: "2", source: require("../assets/Mean.png") },
-    { key: "3", source: require("../assets/Mio.png") },
+    { key: "1", source: require("../../assets/Arab.png") },
+    { key: "2", source: require("../../assets/Mean.png") },
+    { key: "3", source: require("../../assets/Mio.png") },
   ];
 
   return (
