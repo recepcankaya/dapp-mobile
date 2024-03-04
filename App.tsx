@@ -11,7 +11,13 @@ import {
 } from "@thirdweb-dev/react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Brands, CustomerHome, Login, UserInfo } from "./src/screens/customer";
+import {
+  Brands,
+  CustomerHome,
+  Login,
+  UserInfo,
+  Profile,
+} from "./src/screens/customer";
 import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
@@ -106,6 +112,11 @@ function App() {
           <Stack.Screen
             name="TabNavigator"
             component={TabNavigator}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
