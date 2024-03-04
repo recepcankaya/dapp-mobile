@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../ui/colors";
-import { widthConstant } from "../ui/responsiveScreen";
-import useBrandStore, { Brand } from "../store/brandStore";
+import colors from "../../ui/colors";
+import { widthConstant } from "../../ui/responsiveScreen";
+import useBrandStore, { Brand } from "../../store/brandStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 40,
   },
   brand: {
     width: 130 * widthConstant,
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: colors.purple,
+    borderColor: colors.white,
   },
 });
 
