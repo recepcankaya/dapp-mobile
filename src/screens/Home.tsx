@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image, FlatList } from "react-native";
 import QRCode from "react-qr-code";
 
-import useBrandStore, { Brand } from "../store/brandStore";
 import useUserStore from "../store/userStore";
 import { heightConstant, widthConstant } from "../ui/responsiveScreen";
 import Text from "../ui/customText";
@@ -11,20 +10,22 @@ import colors from "../ui/colors";
 
 import supabase from "../lib/supabase";
 
+import useAdminStore from "../store/adminStore";
+
 const logo = require("../assets/LadderLogo.png");
 
 const Home = () => {
   const userID = useUserStore((state) => state.user.id);
-  // const userOrderNumber = useUserStore((state) => state.user.orderNumber);
+  const admin = useAdminStore((state) => state.admin);
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
 
   const fetchUserOrderNumber = async () => {
     try {
-      const { data, error } = await supabase.from("user_of_missions").select("number_of_orders").eq("user_id", userID).single();
+      const { data, error } = await supabase.from("user_of_missions").select("number_of_orders").eq("user_id", userID);
       if (error) {
         console.log(error);
       } else {
-        setUserOrderNumber(data?.number_of_orders ?? 0);
+        setUserOrderNumber(data[0]?.number_of_orders ?? 0);
       }
     } catch (error) {
       console.log(error);
@@ -35,15 +36,13 @@ const Home = () => {
     fetchUserOrderNumber();
   }, []);
 
-  const ticketCircles = new Array(8).fill(userOrderNumber);
+  const ticketCircles = new Array(admin.numberForReward).fill(userOrderNumber);
   const positions = [
     { top: -50, left: -50 },
     { top: -50, right: -50 },
     { bottom: -50, left: -50 },
     { bottom: -50, right: -50 },
   ];
-
-  const brand: Brand = useBrandStore((state) => state.brand);
 
   const ticketRenderItem = ({ item, index }: { item: any; index: number }) => {
     return <View style={[styles.circle, { backgroundColor: index < userOrderNumber ? colors.green : colors.pink }]} />;
@@ -55,7 +54,7 @@ const Home = () => {
         <Image
           resizeMode="contain"
           style={styles.headerImage}
-          source={{ uri: brand.image }}
+          source={{ uri: admin.brandLogo }}
         />
         <Image resizeMode="stretch" style={styles.headerImage} source={logo} />
       </View>
