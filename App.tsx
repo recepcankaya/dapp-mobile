@@ -20,6 +20,7 @@ import {
 } from "./src/screens/customer";
 import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
 import colors from "./src/ui/colors";
+import { Image } from "react-native";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -35,19 +36,32 @@ const TabStack = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <TabStack.Navigator
-      screenOptions={() => ({
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: colors.purple,
+        tabBarShowLabel: false,
         headerBackgroundContainerStyle: { borderWidth: 0 },
         tabBarStyle: {
           backgroundColor: colors.white,
-          paddingTop: 10,
           borderTopColor: colors.pink,
           borderTopWidth: 3,
         },
         tabBarLabelStyle: { color: colors.black },
+        tabBarIcon: ({ focused }) => {
+          let iconName;
+          if (route.name === "Home") {
+            iconName = focused
+              ? require("../dapp-mobile/src/assets/customer-home-icon.png")
+              : require("../dapp-mobile/src/assets/inactive-customer-home-icon.png");
+          } else if (route.name === "Profile") {
+            iconName = focused
+              ? require("../dapp-mobile/src/assets/profile-icon.png")
+              : require("../dapp-mobile/src/assets/inactive-profile-icon.png");
+          }
+          return <Image source={iconName} />;
+        },
       })}>
       <TabStack.Screen name="Home" component={CustomerHome} />
+      <TabStack.Screen name="Profile" component={Profile} />
     </TabStack.Navigator>
   );
 };
@@ -112,11 +126,6 @@ function App() {
           <Stack.Screen
             name="TabNavigator"
             component={TabNavigator}
-            options={{ headerShown: false }} // Hide navigation bar
-          />
-          <Stack.Screen
-            name="Profile"
-            component={Profile}
             options={{ headerShown: false }} // Hide navigation bar
           />
         </Stack.Navigator>
