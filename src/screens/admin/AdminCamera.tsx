@@ -68,7 +68,7 @@ const AdminCamera = () => {
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
         await supabase
-          .from("admin")
+          .from("admins")
           .select("number_for_reward")
           .eq("id", adminId);
 
