@@ -9,15 +9,17 @@ import {
   walletConnect,
   embeddedWallet,
 } from "@thirdweb-dev/react-native";
-
-import colors from "./src/ui/colors";
-
-import Login from "./src/screens/Login";
-import UserInfo from "./src/screens/UserInfo";
-import Profile from "./src/screens/Profile";
-import Brands from "./src/screens/Brands";
-import Home from "./src/screens/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import {
+  Brands,
+  CustomerHome,
+  Login,
+  UserInfo,
+  Profile,
+} from "./src/screens/customer";
+import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
+import colors from "./src/ui/colors";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -33,19 +35,19 @@ const TabStack = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <TabStack.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={() => ({
         headerShown: false,
         tabBarActiveTintColor: colors.purple,
         headerBackgroundContainerStyle: { borderWidth: 0 },
         tabBarStyle: {
           backgroundColor: colors.white,
           paddingTop: 10,
-          borderTopColor: colors.purple,
+          borderTopColor: colors.pink,
           borderTopWidth: 3,
         },
         tabBarLabelStyle: { color: colors.black },
       })}>
-      <TabStack.Screen name="Home" component={Home} />
+      <TabStack.Screen name="Home" component={CustomerHome} />
     </TabStack.Navigator>
   );
 };
@@ -83,6 +85,21 @@ function App() {
             options={{ headerShown: false }} // Hide navigation bar
           />
           <Stack.Screen
+            name="Admin Login"
+            component={AdminLogin}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Admin Home"
+            component={AdminHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Admin Camera"
+            component={AdminCamera}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="User Info"
             component={UserInfo}
             options={{ headerShown: false }} // Hide navigation bar
@@ -97,11 +114,11 @@ function App() {
             component={TabNavigator}
             options={{ headerShown: false }} // Hide navigation bar
           />
-           <Stack.Screen
+          <Stack.Screen
             name="Profile"
             component={Profile}
             options={{ headerShown: false }} // Hide navigation bar
-           />
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ThirdwebProvider>

@@ -2,15 +2,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image } from "react-native";
 import QRCode from "react-qr-code";
 
-import useBrandStore, { Brand } from "../store/brandStore";
-import useUserStore from "../store/userStore";
-import { heightConstant, widthConstant } from "../ui/responsiveScreen";
-import Text from "../ui/customText";
-import colors from "../ui/colors";
+import useBrandStore, { Brand } from "../../store/brandStore";
+import useUserStore from "../../store/userStore";
+import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
+import Text from "../../ui/customText";
+import colors from "../../ui/colors";
+import { useAddress } from "@thirdweb-dev/react-native";
 
-const logo = require("../assets/LadderLogo.png");
+const logo = require("../../assets/LadderLogo.png");
 
-const Home = () => {
+const CustomerHome = () => {
   const userID = useUserStore((state) => state.user.id);
   const positions = [
     { top: -50, left: -50 },
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     height: 100 * heightConstant,
     width: "100%",
     borderBottomWidth: 2,
-    borderBottomColor: colors.purple,
+    borderBottomColor: colors.pink,
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 5,
@@ -129,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default CustomerHome;
