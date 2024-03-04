@@ -34,8 +34,7 @@ const AdminLogin = () => {
       if (data.user) {
         setAdminId(data.user.id);
         // Check if it's the first login
-        console.log(data.user.last_sign_in_at);
-        if (null === null) {
+        if (data.user.last_sign_in_at === null) {
           // Send password reset link
           console.log(email);
           const { error } = await supabase.auth.resetPasswordForEmail(email);
