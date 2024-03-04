@@ -13,12 +13,17 @@ const Brands = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const fetchAdmins = async () => {
     try {
-      const { data, error } = await supabase.from("admins").select("*");
+      const { data, error } = await supabase.from("admins").select("brand_name, brand_logo, number_for_reward, nft_src");
       if (error) {
         console.log(error);
       } else {
-        console.log('admin', data);
-        updateAdmins(data);
+        const admins: Admin[] = data.map(item => ({
+          brandName: item.brand_name,
+          brandLogo: item.brand_logo,
+          numberForReward: item.number_for_reward,
+          NFTSrc: item.nft_src
+        }));
+        updateAdmins(admins);
       }
     } catch (error) {
       console.log(error);
@@ -33,19 +38,8 @@ const Brands = () => {
   const updateAdmins = useAdminStore(state => state.updateAdmins);
 
   const selectBrand = (item: any) => {
-    updateAdmin({
-      id: item.id,
-      createdAt: item.created_at,
-      brandName: item.brand_name,
-      brandBranch: item.brand_branch,
-      brandLogo: item.brand_logo,
-      numberOfOrders: item.number_of_orders,
-      usedNFTs: item.used_nfts,
-      notUsedNFTs: item.not_used_nfts,
-      numberForReward: item.number_for_reward,
-      NFTSrc: item.nft_src,
-      lastQRScanTime: item.last_qr_scan_time,
-    })
+    console.log('item', item);
+    updateAdmin(item)
     navigation.navigate("TabNavigator");
   }
 
@@ -72,7 +66,7 @@ const Brands = () => {
         renderItem={({ item, index }: { item: any; index: number }) =>
           brandListRenderItem({ item, index })
         }
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => index.toString()}
         numColumns={2}
       />
     </SafeAreaView>
