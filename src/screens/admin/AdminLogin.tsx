@@ -33,6 +33,18 @@ const AdminLogin = () => {
     if (data) {
       if (data.user) {
         setAdminId(data.user.id);
+        // Check if it's the first login
+        console.log(data.user.last_sign_in_at);
+        if (null === null) {
+          // Send password reset link
+          console.log(email);
+          const { error } = await supabase.auth.resetPasswordForEmail(email);
+          if (error) {
+            console.error(error);
+          } else {
+            Alert.alert("Password Reset", "A password reset link has been sent to your email.");
+          }
+        }
       }
     }
     if (error) {

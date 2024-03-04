@@ -24,6 +24,7 @@ import supabase from "../../lib/supabase";
 import signToken from "../../lib/jwt";
 import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
+import { useEffect } from "react";
 
 const Login = () => {
   const address = useAddress();
@@ -158,6 +159,31 @@ const Login = () => {
       );
     }
   };
+  useEffect(() => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event == "PASSWORD_RECOVERY") {
+        Alert.prompt(
+          "New Password",
+          "What would you like your new password to be?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "OK",
+              onPress: async (newPassword) => {
+                const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+                if (data) Alert.alert("Success", "Password updated successfully!");
+                if (error) Alert.alert("Error", "There was an error updating your password.");
+              },
+            },
+          ],
+          "secure-text"
+        );
+      }
+    })
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
