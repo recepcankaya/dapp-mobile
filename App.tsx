@@ -69,7 +69,7 @@ const TabNavigator = () => {
 function App() {
   return (
     <ThirdwebProvider
-      activeChain="mumbai"
+      activeChain="polygon"
       // clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
       clientId="03398793b650e4108bc269aa59a8db69"
       supportedWallets={[

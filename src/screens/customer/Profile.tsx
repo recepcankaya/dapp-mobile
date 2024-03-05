@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,18 +13,32 @@ import {
   widthConstant,
 } from "../../ui/responsiveScreen";
 import useUserStore from "../../store/userStore";
+import {
+  useOwnedNFTs,
+  useAddress,
+  useContract,
+  useNFT,
+} from "@thirdweb-dev/react-native";
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
+import useAdminStore from "../../store/adminStore";
+import QrCodeModal from "../../ui/qrCodeModal";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
+  const [qrCodeModalVisible, setQrCodeModalVisible] = useState<boolean>(false);
   const username = useUserStore((state) => state.user.username);
-
-  const waitingIcons = [{ key: "1", source: require("../../assets/Star.png") }];
-
-  const collectionIcons = [
-    { key: "1", source: require("../../assets/Arab.png") },
-    { key: "2", source: require("../../assets/Mean.png") },
-    { key: "3", source: require("../../assets/Mio.png") },
-  ];
+  const contractAddress = useAdminStore((state) => state.admin.contractAddress);
+  const address = useAddress();
+  const { contract } = useContract(contractAddress);
+  const {
+    data: nftData,
+    isLoading,
+    error,
+  } = useOwnedNFTs(
+    contract,
+    "0x58bc2ade1d6341d363da428f735d0d6def5eb661"
+    // address
+  );
 
   return (
     <View style={styles.container}>
@@ -50,27 +64,52 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
-        {selectedTab === "Waiting" && (
-          <FlatList
-            data={waitingIcons}
-            renderItem={({ item }) => (
-              <Image source={item.source} style={styles.icon} />
-            )}
-            keyExtractor={(item) => item.key}
-            numColumns={2}
-          />
-        )}
-        {selectedTab === "Your Collection" && (
-          <FlatList
-            data={collectionIcons}
-            renderItem={({ item }) => (
-              <Image source={item.source} style={styles.icon} />
-            )}
-            keyExtractor={(item) => item.key}
-            numColumns={2}
-          />
-        )}
+        {selectedTab === "Waiting" &&
+          (nftData && nftData?.length > 0 ? (
+            <FlatList
+              data={nftData}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}>
+                  <Image
+                    source={{ uri: nftData[0].metadata.image ?? undefined }}
+                    style={styles.icon}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.metadata.id}
+              numColumns={2}
+            />
+          ) : (
+            <Text style={{ color: "#fff" }}>
+              Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
+            </Text>
+          ))}
+        {selectedTab === "Your Collection" &&
+          (nftData && nftData?.length > 0 ? (
+            <FlatList
+              data={nftData}
+              renderItem={({ item }) => (
+                <Image
+                  source={{ uri: nftData[0].metadata.image ?? undefined }}
+                  style={styles.icon}
+                  resizeMode="contain"
+                />
+              )}
+              keyExtractor={(item) => item.metadata.id}
+              numColumns={2}
+            />
+          ) : (
+            <Text style={{ color: "#fff" }}>
+              Herhangi bir NFT' ye sahip değilsiniz
+            </Text>
+          ))}
       </View>
+      <QrCodeModal
+        isVisible={qrCodeModalVisible}
+        value={"atakan"}
+        onClose={() => setQrCodeModalVisible(false)}
+      />
     </View>
   );
 }
@@ -132,6 +171,7 @@ const styles = StyleSheet.create({
     height: 125 * heightConstant,
     marginLeft: 90 * widthConstant,
     marginTop: 40 * heightConstant,
+    aspectRatio: 1,
   },
   selectedTab: {
     borderBottomWidth: 3,

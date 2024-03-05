@@ -9,12 +9,18 @@ import { useNavigation } from "@react-navigation/native";
 import supabase from "../../lib/supabase";
 
 const Brands = () => {
+  const admins = useAdminStore((state) => state.admins);
+  const updateAdmin = useAdminStore((state) => state.updateAdmin);
+  const updateAdmins = useAdminStore((state) => state.updateAdmins);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   const fetchAdmins = async () => {
     try {
       const { data, error } = await supabase
         .from("admins")
-        .select("brand_name, brand_logo_ipfs_url, number_for_reward, nft_src");
+        .select(
+          "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address"
+        );
       if (error) {
         console.log(error);
       } else {
@@ -23,6 +29,7 @@ const Brands = () => {
           brandLogo: item.brand_logo_ipfs_url,
           numberForReward: item.number_for_reward,
           NFTSrc: item.nft_src,
+          contractAddress: item.contract_address,
         }));
         updateAdmins(admins);
       }
@@ -34,12 +41,7 @@ const Brands = () => {
     fetchAdmins();
   }, []);
 
-  const admins = useAdminStore((state) => state.admins);
-  const updateAdmin = useAdminStore((state) => state.updateAdmin);
-  const updateAdmins = useAdminStore((state) => state.updateAdmins);
-
   const selectBrand = (item: any) => {
-    console.log("item", item);
     updateAdmin(item);
     navigation.navigate("TabNavigator");
   };

@@ -5,6 +5,7 @@ export type Admin = {
   brandLogo: string;
   numberForReward: number;
   NFTSrc: string;
+  contractAddress: string;
 };
 
 type State = {
@@ -23,6 +24,7 @@ const useAdminStore = create<State & Action>((set) => ({
     brandLogo: "",
     numberForReward: 0,
     NFTSrc: "",
+    contractAddress: "",
   },
   admins: [],
   updateAdmin: (admin) => set(() => ({ admin })),
