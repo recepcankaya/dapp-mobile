@@ -15,6 +15,7 @@ import {
   ConnectEmbed,
   useSigner,
   useWallet,
+  useDisconnect,
 } from "@thirdweb-dev/react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
@@ -30,6 +31,7 @@ const Login = () => {
   const signer = useSigner();
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
+  const disconnect = useDisconnect();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const updateUser = useUserStore((state) => state.setUser);
 
@@ -183,6 +185,11 @@ const Login = () => {
           />
         )}
       </View>
+      {/* <TouchableOpacity
+        onPress={() => disconnect()}
+        style={styles.businessButton}>
+        <Text style={styles.businessText}>Disconnect</Text>
+      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Admin Login")}
         style={styles.businessButton}>

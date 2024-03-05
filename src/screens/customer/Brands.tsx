@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../..//ui/colors";
-import { widthConstant } from "../../ui/responsiveScreen";
-import useAdminStore, { Admin } from "../../store/adminStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+
+import useAdminStore, { Admin } from "../../store/adminStore";
+import { widthConstant } from "../../ui/responsiveScreen";
+import colors from "../..//ui/colors";
 import supabase from "../../lib/supabase";
 
 const Brands = () => {
@@ -41,33 +42,29 @@ const Brands = () => {
     fetchAdmins();
   }, []);
 
-  const selectBrand = (item: any) => {
+  const selectBrand = (item: Admin) => {
     updateAdmin(item);
     navigation.navigate("TabNavigator");
   };
 
-  const brandListRenderItem = ({
-    item,
-    index,
-  }: {
-    item: any;
-    index: number;
-  }) => {
-    return (
-      <TouchableOpacity style={styles.brand} onPress={() => selectBrand(item)}>
-        <Image source={{ uri: item.brandLogo }} style={styles.brandImage} />
-      </TouchableOpacity>
-    );
-  };
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={admins}
         extraData={admins}
-        renderItem={({ item, index }: { item: any; index: number }) =>
-          brandListRenderItem({ item, index })
-        }
-        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }: { item: Admin }) => (
+          <TouchableOpacity
+            style={styles.brand}
+            onPress={() => selectBrand(item)}>
+            <Image
+              source={{
+                uri: item.brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+              }}
+              style={styles.brandImage}
+            />
+          </TouchableOpacity>
+        )}
+        keyExtractor={(index) => index.toString()}
         numColumns={2}
       />
     </SafeAreaView>
@@ -94,7 +91,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: colors.purple,
+    borderColor: colors.pink,
+    aspectRatio: 1,
   },
 });
 
