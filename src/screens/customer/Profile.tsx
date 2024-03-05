@@ -12,9 +12,11 @@ import {
   radiusConstant,
   widthConstant,
 } from "../../ui/responsiveScreen";
+import useUserStore from "../../store/userStore";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
+  const username = useUserStore((state) => state.user.username);
 
   const waitingIcons = [{ key: "1", source: require("../../assets/Star.png") }];
 
@@ -26,7 +28,7 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Username</Text>
+      <Text style={styles.header}>{username}</Text>
       <View style={styles.tabsContainer}>
         <TouchableOpacity onPress={() => setSelectedTab("Waiting")}>
           <Text
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     width: 159 * widthConstant,
     height: 53 * heightConstant,
-    top: 165 * heightConstant,
+    top: 100 * heightConstant,
     left: 28 * widthConstant,
     color: "#FFFFFF",
   },
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    top: 250 * heightConstant,
+    top: 200 * heightConstant,
     left: 35 * widthConstant,
   },
   waitingTabText: {
