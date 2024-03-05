@@ -31,6 +31,7 @@ export default function Profile() {
   const username = useUserStore((state) => state.user.username);
   const userID = useUserStore((state) => state.user.id);
   const contractAddress = useAdminStore((state) => state.admin.contractAddress);
+  const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
   const address = useAddress();
   const { contract } = useContract(contractAddress);
   const {
@@ -43,6 +44,7 @@ export default function Profile() {
     // address
   );
 
+  // NFT renderlama kısmında doğru bir logic lazım. kullanıcının sahip olduğu bütün NFT'leri renderlayamayız mesela Waiting kısmında.
   return (
     <SafeAreaView style={styles.container}>
       {/* ScrollView ekleyelim */}
@@ -75,7 +77,9 @@ export default function Profile() {
               renderItem={() => (
                 <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}>
                   <Image
-                    source={{ uri: nftData[0].metadata.image ?? undefined }}
+                    source={{
+                      uri: NFTSrc.replace("ipfs://", "https://ipfs.io/ipfs/"),
+                    }}
                     style={styles.icon}
                     resizeMode="contain"
                   />
@@ -85,7 +89,7 @@ export default function Profile() {
               numColumns={2}
             />
           ) : (
-            <Text style={{ color: "#fff" }}>
+            <Text style={styles.infoText}>
               Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
             </Text>
           ))}
@@ -95,7 +99,9 @@ export default function Profile() {
               data={nftData}
               renderItem={() => (
                 <Image
-                  source={{ uri: nftData[0].metadata.image ?? undefined }}
+                  source={{
+                    uri: NFTSrc.replace("ipfs://", "https://ipfs.io/ipfs/"),
+                  }}
                   style={styles.icon}
                   resizeMode="contain"
                 />
@@ -104,8 +110,8 @@ export default function Profile() {
               numColumns={2}
             />
           ) : (
-            <Text style={{ color: "#fff" }}>
-              Herhangi bir NFT' ye sahip değilsiniz
+            <Text style={styles.infoText}>
+              Herhangi bir NFT' ye sahip değilsiniz.
             </Text>
           ))}
       </View>
@@ -129,11 +135,13 @@ const styles = StyleSheet.create({
     fontSize: 28 * radiusConstant,
     fontWeight: "400",
     color: colors.white,
+    marginBottom: 60 * heightConstant,
+    marginLeft: 30 * widthConstant,
   },
   tabsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
   },
   waitingTabText: {
     fontFamily: "Rosarivo",
@@ -157,11 +165,17 @@ const styles = StyleSheet.create({
     height: 35 * heightConstant,
     color: "#FFFFFF",
   },
-  iconContainer: {},
+  iconContainer: {
+    alignItems: "center",
+  },
+  infoText: {
+    fontSize: 24 * radiusConstant,
+    color: colors.white,
+    marginTop: 60 * heightConstant,
+  },
   icon: {
-    width: 125 * widthConstant,
-    height: 125 * heightConstant,
-
+    width: 375 * widthConstant,
+    height: 375 * heightConstant,
     aspectRatio: 1,
   },
   selectedTab: {
