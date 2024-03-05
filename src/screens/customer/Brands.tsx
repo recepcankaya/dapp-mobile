@@ -14,13 +14,13 @@ const Brands = () => {
     try {
       const { data, error } = await supabase
         .from("admins")
-        .select("brand_name, brand_logo, number_for_reward, nft_src");
+        .select("brand_name, brand_logo_ipfs_url, number_for_reward, nft_src");
       if (error) {
         console.log(error);
       } else {
         const admins: Admin[] = data.map((item) => ({
           brandName: item.brand_name,
-          brandLogo: item.brand_logo,
+          brandLogo: item.brand_logo_ipfs_url,
           numberForReward: item.number_for_reward,
           NFTSrc: item.nft_src,
         }));

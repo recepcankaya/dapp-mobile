@@ -15,19 +15,24 @@ import {
 } from "react-native-vision-camera";
 import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import supabase from "../../lib/supabase";
-import updateAdminId from "../../store/adminId";
+import updateAdminId from "../../store/adminStoreForAdmin";
 import {
   useAddress,
   useContract,
   useMintNFT,
 } from "@thirdweb-dev/react-native";
+import useAdminStore from "../../store/adminStore";
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 
 const AdminCamera = () => {
-  const adminId = updateAdminId((state) => state.adminId);
-  const address = useAddress();
-  const { contract } = useContract(
-    "0xC01cA582DeeD31104B6534960f3a282DFdC1FCA8"
+  const adminID = useAdminForAdminStore((state) => state.admin.adminId);
+  const brandName = useAdminForAdminStore((state) => state.admin.brandName);
+  const contractAddress = useAdminForAdminStore(
+    (state) => state.admin.contractAddress
   );
+  const NFTSrc = useAdminForAdminStore((state) => state.admin.NFTSrc);
+  const customerAddress = useAddress();
+  const { contract } = useContract(contractAddress);
   const {
     mutate: mintNft,
     isLoading,
@@ -70,7 +75,7 @@ const AdminCamera = () => {
         await supabase
           .from("admins")
           .select("number_for_reward")
-          .eq("id", adminId);
+          .eq("id", adminID);
 
       // If the order is for free, check the user's free right
       if (forNFT === true) {
@@ -100,7 +105,7 @@ const AdminCamera = () => {
           await supabase.from("user_missions").insert({
             number_of_orders: 1,
             user_id: userId,
-            admin_id: adminId,
+            admin_id: adminID,
             has_free_right: false,
             number_of_free_rights: 0,
           });
@@ -127,15 +132,14 @@ const AdminCamera = () => {
                 number_of_orders: 0,
               })
               .eq("user_id", userId);
-            if (address) {
+            if (customerAddress) {
               mintNft({
                 metadata: {
-                  name: "Mega Playstation",
+                  name: brandName,
                   description: "",
-                  image:
-                    "ipfs://QmP7NbUz8FhcBuRKC4NeXokkTWXZKtTRdPijM9yc2FPExU/Mega%20Playstation.png",
+                  image: NFTSrc,
                 },
-                to: address,
+                to: customerAddress,
               });
             }
           } else {
@@ -147,15 +151,14 @@ const AdminCamera = () => {
                 number_of_orders: 0,
               })
               .eq("user_id", userId);
-            if (address) {
+            if (customerAddress) {
               mintNft({
                 metadata: {
-                  name: "Mega Playstation",
+                  name: brandName,
                   description: "",
-                  image:
-                    "ipfs://QmP7NbUz8FhcBuRKC4NeXokkTWXZKtTRdPijM9yc2FPExU/Mega%20Playstation.png",
+                  image: NFTSrc,
                 },
-                to: address,
+                to: customerAddress,
               });
             }
           }
