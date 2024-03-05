@@ -18,7 +18,7 @@ import {
   UserInfo,
   Profile,
 } from "./src/screens/customer";
-import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
+import { AdminCamera, AdminHome, AdminLogin, AdminNewPassword } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
 /**
@@ -97,6 +97,11 @@ function App() {
           <Stack.Screen
             name="Admin Camera"
             component={AdminCamera}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Admin New Password"
+            component={AdminNewPassword}
             options={{ headerShown: false }}
           />
           <Stack.Screen

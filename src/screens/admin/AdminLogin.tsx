@@ -35,14 +35,13 @@ const AdminLogin = () => {
         setAdminId(data.user.id);
         // Check if it's the first login
         if (data.user.last_sign_in_at === null) {
-          // Send password reset link
           console.log(email);
-          const { error } = await supabase.auth.resetPasswordForEmail(email);
-          if (error) {
-            console.error(error);
-          } else {
-            Alert.alert("Password Reset", "A password reset link has been sent to your email.");
-          }
+          navigation.navigate("Admin New Password");
+        }
+        else {
+          setEmail("");
+          setPassword("");
+          navigation.navigate("Admin Home");
         }
       }
     }
@@ -50,9 +49,7 @@ const AdminLogin = () => {
       console.error(error);
       return;
     }
-    setEmail("");
-    setPassword("");
-    navigation.navigate("Admin Home");
+
   };
 
   return (
