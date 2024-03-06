@@ -4,13 +4,19 @@ import supabase from "../../lib/supabase";
 import colors from '../../ui/colors';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import updateAdminEmail from '../../store/adminId';
 
 const AdminNewPassword = () => {
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordCheck, setPasswordCheck] = useState('');
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const email = updateAdminEmail((state) => state.adminEmail); // get the stored email
 
     const handleResetPassword = async () => {
+        if (password !== passwordCheck) {
+            Alert.alert('Error', 'Passwords do not match.');
+            return;
+        }
         try {
             const { error } = await supabase.auth.updateUser({ email, password });
             if (error) {
@@ -33,16 +39,17 @@ const AdminNewPassword = () => {
                 <Text style={styles.header}>Yeni Şifre</Text>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        style={styles.input}
-                    />
-                    <TextInput
                         placeholder="Yeni Şifre"
                         secureTextEntry
                         value={password}
                         onChangeText={setPassword}
+                        style={styles.input}
+                    />
+                    <TextInput
+                        placeholder="Yeni Şifre Tekrar"
+                        secureTextEntry
+                        value={passwordCheck}
+                        onChangeText={setPasswordCheck}
                         style={styles.input}
                     />
                     <Button title="Reset Password" onPress={handleResetPassword} />
