@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ScrollView,
 } from "react-native";
 import {
   heightConstant,
@@ -44,82 +45,102 @@ export default function Profile() {
     // address
   );
 
-  // NFT renderlama kısmında doğru bir logic lazım. kullanıcının sahip olduğu bütün NFT'leri renderlayamayız mesela Waiting kısmında.
   return (
     <SafeAreaView style={styles.container}>
-      {/* ScrollView ekleyelim */}
-      <Text style={styles.header}>{username}</Text>
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity onPress={() => setSelectedTab("Waiting")}>
-          <Text
-            style={[
-              styles.waitingTabText,
-              selectedTab === "Waiting" && styles.selectedTab,
-            ]}>
-            Waiting
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
-          <Text
-            style={[
-              styles.collectionTabText,
-              selectedTab === "Your Collection" && styles.selectedTab,
-            ]}>
-            Your Collection
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.iconContainer}>
-        {selectedTab === "Waiting" &&
-          (nftData && nftData?.length > 0 ? (
-            <FlatList
-              data={nftData}
-              renderItem={() => (
-                <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}>
-                  <Image
-                    source={{
-                      uri: NFTSrc.replace("ipfs://", "https://ipfs.io/ipfs/"),
-                    }}
-                    style={styles.icon}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.metadata.id}
-              numColumns={2}
-            />
-          ) : (
-            <Text style={styles.infoText}>
-              Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
+      <ScrollView>
+        <Text style={styles.header}>{username}</Text>
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity onPress={() => setSelectedTab("Waiting")}>
+            <Text
+              style={[
+                styles.waitingTabText,
+                selectedTab === "Waiting" && styles.selectedTab,
+              ]}>
+              Waiting
             </Text>
-          ))}
-        {selectedTab === "Your Collection" &&
-          (nftData && nftData?.length > 0 ? (
-            <FlatList
-              data={nftData}
-              renderItem={() => (
-                <Image
-                  source={{
-                    uri: NFTSrc.replace("ipfs://", "https://ipfs.io/ipfs/"),
-                  }}
-                  style={styles.icon}
-                  resizeMode="contain"
-                />
-              )}
-              keyExtractor={(item) => item.metadata.id}
-              numColumns={2}
-            />
-          ) : (
-            <Text style={styles.infoText}>
-              Herhangi bir NFT' ye sahip değilsiniz.
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
+            <Text
+              style={[
+                styles.collectionTabText,
+                selectedTab === "Your Collection" && styles.selectedTab,
+              ]}>
+              Your Collection
             </Text>
-          ))}
-      </View>
-      <QrCodeModal
-        isVisible={qrCodeModalVisible}
-        value={JSON.stringify({ userId: userID, forNFT: true })}
-        onClose={() => setQrCodeModalVisible(false)}
-      />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.iconContainer}>
+          {selectedTab === "Waiting" &&
+            (nftData && nftData?.length > 0 ? (
+              <FlatList
+                data={nftData}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}>
+                    {Array.from({ length: Number(item.quantityOwned) }).map(
+                      (_, i) => (
+                        <Image
+                          key={i}
+                          source={{
+                            uri: NFTSrc.replace(
+                              "ipfs://",
+                              "https://ipfs.io/ipfs/"
+                            ),
+                          }}
+                          style={styles.icon}
+                          resizeMode="contain"
+                        />
+                      )
+                    )}
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.metadata.id + item.quantityOwned}
+                numColumns={1}
+              />
+            ) : (
+              <Text style={styles.infoText}>
+                Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
+              </Text>
+            ))}
+          {selectedTab === "Your Collection" &&
+            (nftData && nftData?.length > 0 ? (
+              <FlatList
+                data={nftData}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <View>
+                    {Array.from({ length: Number(item.quantityOwned) }).map(
+                      (_, i) => (
+                        <Image
+                          key={i}
+                          source={{
+                            uri: NFTSrc.replace(
+                              "ipfs://",
+                              "https://ipfs.io/ipfs/"
+                            ),
+                          }}
+                          style={styles.icon}
+                          resizeMode="contain"
+                        />
+                      )
+                    )}
+                  </View>
+                )}
+                keyExtractor={(item) => item.metadata.id + item.quantityOwned}
+                numColumns={1}
+              />
+            ) : (
+              <Text style={styles.infoText}>
+                Herhangi bir NFT' ye sahip değilsiniz.
+              </Text>
+            ))}
+        </View>
+        <QrCodeModal
+          isVisible={qrCodeModalVisible}
+          value={JSON.stringify({ userId: userID, forNFT: true })}
+          onClose={() => setQrCodeModalVisible(false)}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
