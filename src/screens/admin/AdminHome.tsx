@@ -34,7 +34,7 @@ const AdminHome = () => {
       const { data: adminData, error: adminError } = await supabase
         .from("admins")
         .select(
-          "brand_name, brand_branch, used_nfts, not_used_nfts, number_for_reward, number_of_orders_so_far, last_qr_scan_time, contract_address, nft_src"
+          "brand_name, brand_branch, used_nfts, not_used_nfts, number_for_reward, number_of_orders_so_far, last_qr_scan_time, contract_address, nft_src, not_used_nft_src, not_used_contract_address"
         )
         .eq("id", adminID);
       if (adminData) {
@@ -43,12 +43,14 @@ const AdminHome = () => {
           brandName: adminData[0].brand_name,
           brandBranch: adminData[0].brand_branch,
           numberOfOrdersSoFar: adminData[0].number_of_orders_so_far,
-          lastQRScanTime: adminData[0].last_qr_scan_time,
-          contractAddress: adminData[0].contract_address,
-          NFTSrc: adminData[0].nft_src,
           usedNFTs: adminData[0].used_nfts,
           notUsedNFTs: adminData[0].not_used_nfts,
           numberForReward: adminData[0].number_for_reward,
+          lastQRScanTime: adminData[0].last_qr_scan_time,
+          contractAddress: adminData[0].contract_address,
+          NFTSrc: adminData[0].nft_src,
+          notUsedContractAddress: adminData[0].not_used_contract_address,
+          notUsedNFTSrc: adminData[0].not_used_nft_src,
         });
       } else {
         console.error(adminError);

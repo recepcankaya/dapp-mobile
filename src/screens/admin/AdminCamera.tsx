@@ -61,9 +61,7 @@ const AdminCamera = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  useEffect(() => {
-    console.log('atakan');
-  }, [])
+  let qrCodeValue = [];
 
   useEffect(() => {
     if (!hasPermission) requestPermission();
@@ -81,11 +79,13 @@ const AdminCamera = () => {
     onCodeScanned: async (codes, frame) => {
       let userId = "";
       let forNFT = null;
-      console.log('codes', codes);
-
+      if (qrCodeValue.length > 0) return;
+      qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(codes[0].value);
+        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(
+          codes[0].value
+        );
         ({ userId, forNFT } = parsedValue);
       }
 
@@ -137,6 +137,7 @@ const AdminCamera = () => {
             user_id: userId,
             admin_id: adminID,
           });
+          Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders <
@@ -149,6 +150,7 @@ const AdminCamera = () => {
               number_of_orders: userMissionInfo[0].number_of_orders + 1,
             })
             .eq("user_id", userId);
+          Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders ===
@@ -170,6 +172,7 @@ const AdminCamera = () => {
               },
               to: customerAddress,
             });
+            Alert.alert("Müşteriniz ödülünüzü kazandı.");
           }
         }
       }
@@ -179,9 +182,7 @@ const AdminCamera = () => {
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>
-          ←
-        </Text>
+        <Text style={styles.backButtonText}>←</Text>
       </Pressable>
       <Camera
         ref={cameraRef}
@@ -214,16 +215,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 20,
     alignSelf: "flex-start",
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginLeft: 20,
     zIndex: 1,
-    backgroundColor: colors.black
+    backgroundColor: colors.pink,
   },
   backButtonText: {
     fontSize: 20,
     color: colors.white,
-  }
+  },
 });
 
 export default AdminCamera;

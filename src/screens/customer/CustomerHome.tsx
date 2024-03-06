@@ -24,9 +24,9 @@ const CustomerHome = () => {
   ];
 
   const qrCodeValue = {
-    userId,
-    forNFT: false
-  }
+    userID,
+    forNFT: false,
+  };
 
   const brand: Brand = useBrandStore((state) => state.brand);
 
@@ -66,7 +66,11 @@ const CustomerHome = () => {
       </View>
       <View style={styles.qrCodeContainer}>
         <View style={styles.qrCode}>
-          <QRCode size={240} value={JSON.stringify(qrCodeValue)} viewBox={`0 0 240 240`} />
+          <QRCode
+            size={240}
+            value={JSON.stringify(qrCodeValue)}
+            viewBox={`0 0 240 240`}
+          />
         </View>
       </View>
     </SafeAreaView>
