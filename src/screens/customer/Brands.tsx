@@ -20,7 +20,7 @@ const Brands = () => {
       const { data, error } = await supabase
         .from("admins")
         .select(
-          "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address"
+          "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"
         );
       if (error) {
         console.log(error);
@@ -31,6 +31,8 @@ const Brands = () => {
           numberForReward: item.number_for_reward,
           NFTSrc: item.nft_src,
           contractAddress: item.contract_address,
+          notUsedNFTSrc: item.not_used_nft_src,
+          notUsedContractAddress: item.not_used_contract_address,
         }));
         updateAdmins(admins);
       }

@@ -33,16 +33,29 @@ export default function Profile() {
   const userID = useUserStore((state) => state.user.id);
   const contractAddress = useAdminStore((state) => state.admin.contractAddress);
   const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
+  const notUsedContractAddress = useAdminStore(
+    (state) => state.admin.notUsedContractAddress
+  );
+  const notUsedNFTSrc = useAdminStore((state) => state.admin.notUsedNFTSrc);
   const address = useAddress();
-  const { contract } = useContract(contractAddress);
+  const { contract: usedNFTContract } = useContract(contractAddress);
+  const { contract: notUsedNFTContract } = useContract(notUsedContractAddress);
   const {
     data: nftData,
     isLoading,
     error,
   } = useOwnedNFTs(
-    contract,
+    usedNFTContract,
     "0x58bc2ade1d6341d363da428f735d0d6def5eb661"
     // address
+  );
+  const {
+    data: nftDataNotUsed,
+    isLoading: isLoadingNotUsed,
+    error: errorNotUsed,
+  } = useOwnedNFTs(
+    notUsedNFTContract,
+    "0x58bc2ade1d6341d363da428f735d0d6def5eb661"
   );
 
   // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
@@ -72,9 +85,9 @@ export default function Profile() {
         </View>
         <View style={styles.iconContainer}>
           {selectedTab === "Waiting" &&
-            (nftData && nftData?.length > 0 ? (
+            (nftDataNotUsed && nftDataNotUsed?.length > 0 ? (
               <FlatList
-                data={nftData}
+                data={nftDataNotUsed}
                 scrollEnabled={false}
                 renderItem={({ item }) => (
                   <View>
@@ -85,7 +98,7 @@ export default function Profile() {
                           onPress={() => setQrCodeModalVisible(true)}>
                           <Image
                             source={{
-                              uri: NFTSrc.replace(
+                              uri: notUsedNFTSrc.replace(
                                 "ipfs://",
                                 "https://ipfs.io/ipfs/"
                               ),
