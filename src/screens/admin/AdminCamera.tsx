@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
   Text,
   ActivityIndicator,
-  TouchableOpacity,
   Alert,
+  Pressable,
+  StatusBar,
 } from "react-native";
 import {
   Camera,
@@ -13,7 +14,6 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import supabase from "../../lib/supabase";
 import updateAdminId from "../../store/adminStoreForAdmin";
 import {
@@ -25,6 +25,12 @@ import {
 } from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import colors from "../../ui/colors";
+
+const statusBarHeight = StatusBar.currentHeight ?? 0;
 
 const AdminCamera = () => {
   const adminID = useAdminForAdminStore((state) => state.admin.adminId);
@@ -53,9 +59,15 @@ const AdminCamera = () => {
 
   const cameraRef = useRef<Camera>(null);
 
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  useEffect(() => {
+    console.log('atakan');
+  }, [])
+
   useEffect(() => {
     if (!hasPermission) requestPermission();
-  }, []);
+  }, [hasPermission]);
 
   if (!hasPermission) return <ActivityIndicator />;
 
@@ -65,14 +77,15 @@ const AdminCamera = () => {
 
   const codeScanner = useCodeScanner({
     codeTypes: ["qr", "ean-13"],
-    onCodeScanned: async (codes) => {
+
+    onCodeScanned: async (codes, frame) => {
       let userId = "";
       let forNFT = null;
+      console.log('codes', codes);
+
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(
-          codes[0].value
-        );
+        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(codes[0].value);
         ({ userId, forNFT } = parsedValue);
       }
 
@@ -164,17 +177,20 @@ const AdminCamera = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>
+          ←
+        </Text>
+      </Pressable>
       <Camera
         ref={cameraRef}
         style={styles.camera}
         device={device}
         isActive={true}
-        photo={true}
         codeScanner={codeScanner}
       />
-      <TouchableOpacity style={styles.takePhotoButton}></TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -191,17 +207,23 @@ const styles = StyleSheet.create({
   camera: {
     ...StyleSheet.absoluteFillObject,
   },
-  takePhotoButton: {
-    position: "absolute",
-    bottom: 100 * heightConstant,
-    alignSelf: "center",
-    width: 75 * widthConstant,
-    height: 75 * widthConstant,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 50,
-    borderWidth: 5,
-    borderColor: "#fff",
+  backButton: {
+    width: 40,
+    height: 40,
+    padding: 5,
+    borderWidth: 2,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 20,
+    zIndex: 1,
+    backgroundColor: colors.black
   },
+  backButtonText: {
+    fontSize: 20,
+    color: colors.white,
+  }
 });
 
 export default AdminCamera;
