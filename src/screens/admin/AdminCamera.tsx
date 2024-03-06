@@ -130,12 +130,12 @@ const AdminCamera = () => {
 
       // If the order is not for free, check the number of orders
       else {
-        if (!userMissionInfo) {
+        if (userMissionInfo) {
           // If the user does not have a record in the user_missions table, add a new record
           await supabase.from("user_missions").insert({
             number_of_orders: 1,
             user_id: userId,
-            admin_id: adminID,
+            admin_id: adminID.toString(),
           });
           Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
