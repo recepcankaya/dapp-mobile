@@ -18,9 +18,7 @@ import {
   useOwnedNFTs,
   useAddress,
   useContract,
-  useNFT,
 } from "@thirdweb-dev/react-native";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import useAdminStore from "../../store/adminStore";
 import QrCodeModal from "../../ui/qrCodeModal";
 import colors from "../../ui/colors";
@@ -44,19 +42,12 @@ export default function Profile() {
     data: nftData,
     isLoading,
     error,
-  } = useOwnedNFTs(
-    usedNFTContract,
-    "0x58bc2ade1d6341d363da428f735d0d6def5eb661"
-    // address
-  );
+  } = useOwnedNFTs(usedNFTContract, address);
   const {
     data: nftDataNotUsed,
     isLoading: isLoadingNotUsed,
     error: errorNotUsed,
-  } = useOwnedNFTs(
-    notUsedNFTContract,
-    "0x58bc2ade1d6341d363da428f735d0d6def5eb661"
-  );
+  } = useOwnedNFTs(notUsedNFTContract, address);
 
   // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
   return (

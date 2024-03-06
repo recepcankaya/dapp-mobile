@@ -2,15 +2,17 @@ import { create } from "zustand";
 
 type Admin = {
   adminId: string;
-  brandName: "";
-  brandBranch: "";
-  numberOfOrdersSoFar: 0;
-  usedNFTs: 0;
-  notUsedNFTs: 0;
-  numberForReward: 0;
-  lastQRScanTime: "";
-  contractAddress: "";
-  NFTSrc: "";
+  brandName: string;
+  brandBranch: string;
+  numberOfOrdersSoFar: number;
+  usedNFTs: number;
+  notUsedNFTs: number;
+  numberForReward: number;
+  lastQRScanTime: string;
+  contractAddress: string;
+  NFTSrc: string;
+  notUsedNFTSrc: string;
+  notUsedContractAddress: string;
 };
 
 type State = {
@@ -33,6 +35,8 @@ const useAdminForAdminStore = create<State & Action>((set) => ({
     lastQRScanTime: "",
     contractAddress: "",
     NFTSrc: "",
+    notUsedNFTSrc: "",
+    notUsedContractAddress: "",
   },
   updateAdmin: (admin) => set(() => ({ admin: admin })),
 }));

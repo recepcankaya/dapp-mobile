@@ -18,8 +18,10 @@ import supabase from "../../lib/supabase";
 import updateAdminId from "../../store/adminStoreForAdmin";
 import {
   useAddress,
+  useBurnNFT,
   useContract,
   useMintNFT,
+  useTransferNFT,
 } from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
@@ -31,13 +33,22 @@ const AdminCamera = () => {
     (state) => state.admin.contractAddress
   );
   const NFTSrc = useAdminForAdminStore((state) => state.admin.NFTSrc);
+  const notUsedNFTSrc = useAdminForAdminStore(
+    (state) => state.admin.notUsedNFTSrc
+  );
+  const notUsedContractAddress = useAdminForAdminStore(
+    (state) => state.admin.notUsedContractAddress
+  );
   const customerAddress = useAddress();
   const { contract } = useContract(contractAddress);
+  const { contract: notUsedContract } = useContract(notUsedContractAddress);
   const {
-    mutate: mintNft,
+    mutateAsync: mintNft,
     isLoading,
     isError: mintNftError,
   } = useMintNFT(contract);
+  const { mutateAsync: mintNotUsedNft } = useMintNFT(notUsedContract);
+  const { mutateAsync: burnNFTUsingTransfer } = useTransferNFT(notUsedContract);
   const { hasPermission, requestPermission } = useCameraPermission();
 
   const cameraRef = useRef<Camera>(null);
@@ -59,15 +70,17 @@ const AdminCamera = () => {
       let forNFT = null;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue = JSON.parse(codes[0].value);
+        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(
+          codes[0].value
+        );
         ({ userId, forNFT } = parsedValue);
       }
 
-      // get number_of_orders, has_free_right, number_of_free_rights from user_missions table
+      // get number_of_orders from user_missions table
       const { data: userMissionInfo, error: errorUserMissionInfo } =
         await supabase
           .from("user_missions")
-          .select("number_of_orders, has_free_right, number_of_free_rights")
+          .select("number_of_orders")
           .eq("user_id", userId);
 
       // get number_for_reward from admin table
@@ -79,25 +92,29 @@ const AdminCamera = () => {
 
       // If the order is for free, check the user's free right
       if (forNFT === true) {
-        // Check whether the user has a free right
-        if (userMissionInfo && userMissionInfo[0].has_free_right > 1) {
-          // If the user has more than one free right, decrease the number of free rights by one
-          await supabase
-            .from("user_missions")
-            .update({
-              number_of_free_rights:
-                userMissionInfo[0].number_of_free_rights - 1,
-            })
-            .eq("user_id", userId);
+        if (userMissionInfo && customerAddress) {
+          // We will mint new NFT for the collection
+          mintNft({
+            metadata: {
+              name: brandName,
+              description: "",
+              image: NFTSrc,
+            },
+            to: customerAddress,
+          });
+          // After minted the NFT, we will burn old NFT using transfer to 0x0 address
+          burnNFTUsingTransfer({
+            to: "0x0000000000000000000000000000000000000000",
+            tokenId: 0,
+            amount: 1,
+          });
           Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-        } else if (userMissionInfo && userMissionInfo[0].has_free_right === 1) {
-          // If the user has only one free right, delete the row
           await supabase.from("user_missions").delete().eq("id", userId);
-          Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
         } else {
-          Alert.alert("Müşterinizin ücretsiz hakkı bulunmamaktadır.");
+          Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
         }
       }
+
       // If the order is not for free, check the number of orders
       else {
         if (!userMissionInfo) {
@@ -106,8 +123,6 @@ const AdminCamera = () => {
             number_of_orders: 1,
             user_id: userId,
             admin_id: adminID,
-            has_free_right: false,
-            number_of_free_rights: 0,
           });
         } else if (
           numberForReward &&
@@ -121,46 +136,27 @@ const AdminCamera = () => {
               number_of_orders: userMissionInfo[0].number_of_orders + 1,
             })
             .eq("user_id", userId);
-        } else {
+        } else if (
+          numberForReward &&
+          userMissionInfo[0].number_of_orders ===
+            numberForReward[0].number_for_reward
+        ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
-          if (userMissionInfo[0].has_free_right === false) {
+          if (customerAddress) {
             await supabase
               .from("user_missions")
               .update({
-                has_free_right: true,
-                number_of_free_rights: 1,
                 number_of_orders: 0,
               })
               .eq("user_id", userId);
-            if (customerAddress) {
-              mintNft({
-                metadata: {
-                  name: brandName,
-                  description: "",
-                  image: NFTSrc,
-                },
-                to: customerAddress,
-              });
-            }
-          } else {
-            await supabase
-              .from("user_missions")
-              .update({
-                number_of_free_rights:
-                  userMissionInfo[0].number_of_free_rights + 1,
-                number_of_orders: 0,
-              })
-              .eq("user_id", userId);
-            if (customerAddress) {
-              mintNft({
-                metadata: {
-                  name: brandName,
-                  description: "",
-                  image: NFTSrc,
-                },
-                to: customerAddress,
-              });
-            }
+            mintNotUsedNft({
+              metadata: {
+                name: brandName,
+                description: "",
+                image: notUsedNFTSrc,
+              },
+              to: customerAddress,
+            });
           }
         }
       }
