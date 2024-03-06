@@ -8,11 +8,14 @@ import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import { useAddress } from "@thirdweb-dev/react-native";
+import useAdminStore from "../../store/adminStore";
 
 const logo = require("../../assets/LadderLogo.png");
 
 const CustomerHome = () => {
-  const userId = useUserStore((state) => state.user.id);
+  const userID = useUserStore((state) => state.user.id);
+  const brandLogo = useAdminStore((state) => state.admin.brandLogo);
+
   const positions = [
     { top: -50, left: -50 },
     { top: -50, right: -50 },
@@ -33,7 +36,9 @@ const CustomerHome = () => {
         <Image
           resizeMode="contain"
           style={styles.headerImage}
-          source={{ uri: brand.image }}
+          source={{
+            uri: brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+          }}
         />
         <Image resizeMode="stretch" style={styles.headerImage} source={logo} />
       </View>
@@ -86,7 +91,7 @@ const styles = StyleSheet.create({
     height: 85 * widthConstant,
     width: 85 * widthConstant,
     borderWidth: 1,
-    borderColor: colors.purple,
+    borderColor: colors.pink,
     borderRadius: 20,
   },
   ticketContainer: {

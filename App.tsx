@@ -69,15 +69,17 @@ const TabNavigator = () => {
 function App() {
   return (
     <ThirdwebProvider
-      activeChain="mumbai"
+      activeChain="polygon"
       // clientId={process.env.EXPO_PUBLIC_TW_CLIENT_ID}
-      clientId="03398793b650e4108bc269aa59a8db69"
+      clientId="9cf2156f9e78bdaaecbcef17707d78ad"
       supportedWallets={[
-        metamaskWallet(),
-        coinbaseWallet(),
-        walletConnect(),
-        trustWallet(),
-        rainbowWallet(),
+        // !!! There is a problem with SIWE for EOA wallets, so we are not using it for now !!!
+
+        // metamaskWallet(),
+        // coinbaseWallet(),
+        // walletConnect(),
+        // trustWallet(),
+        // rainbowWallet(),
 
         embeddedWallet({
           auth: {

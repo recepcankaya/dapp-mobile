@@ -1,20 +1,27 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../..//ui/colors";
-import { widthConstant } from "../../ui/responsiveScreen";
-import useAdminStore, { Admin } from "../../store/adminStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+
+import useAdminStore, { Admin } from "../../store/adminStore";
+import { widthConstant } from "../../ui/responsiveScreen";
+import colors from "../..//ui/colors";
 import supabase from "../../lib/supabase";
 
 const Brands = () => {
+  const admins = useAdminStore((state) => state.admins);
+  const updateAdmin = useAdminStore((state) => state.updateAdmin);
+  const updateAdmins = useAdminStore((state) => state.updateAdmins);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   const fetchAdmins = async () => {
     try {
       const { data, error } = await supabase
         .from("admins")
-        .select("brand_name, brand_logo_ipfs_url, number_for_reward, nft_src");
+        .select(
+          "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"
+        );
       if (error) {
         console.log(error);
       } else {
@@ -23,6 +30,9 @@ const Brands = () => {
           brandLogo: item.brand_logo_ipfs_url,
           numberForReward: item.number_for_reward,
           NFTSrc: item.nft_src,
+          contractAddress: item.contract_address,
+          notUsedNFTSrc: item.not_used_nft_src,
+          notUsedContractAddress: item.not_used_contract_address,
         }));
         updateAdmins(admins);
       }
@@ -34,38 +44,29 @@ const Brands = () => {
     fetchAdmins();
   }, []);
 
-  const admins = useAdminStore((state) => state.admins);
-  const updateAdmin = useAdminStore((state) => state.updateAdmin);
-  const updateAdmins = useAdminStore((state) => state.updateAdmins);
-
-  const selectBrand = (item: any) => {
-    console.log("item", item);
+  const selectBrand = (item: Admin) => {
     updateAdmin(item);
     navigation.navigate("TabNavigator");
   };
 
-  const brandListRenderItem = ({
-    item,
-    index,
-  }: {
-    item: any;
-    index: number;
-  }) => {
-    return (
-      <TouchableOpacity style={styles.brand} onPress={() => selectBrand(item)}>
-        <Image source={{ uri: item.brandLogo }} style={styles.brandImage} />
-      </TouchableOpacity>
-    );
-  };
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={admins}
         extraData={admins}
-        renderItem={({ item, index }: { item: any; index: number }) =>
-          brandListRenderItem({ item, index })
-        }
-        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }: { item: Admin }) => (
+          <TouchableOpacity
+            style={styles.brand}
+            onPress={() => selectBrand(item)}>
+            <Image
+              source={{
+                uri: item.brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+              }}
+              style={styles.brandImage}
+            />
+          </TouchableOpacity>
+        )}
+        keyExtractor={(index) => index.toString()}
         numColumns={2}
       />
     </SafeAreaView>
@@ -92,7 +93,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: colors.purple,
+    borderColor: colors.pink,
+    aspectRatio: 1,
   },
 });
 
