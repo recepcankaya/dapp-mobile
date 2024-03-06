@@ -45,6 +45,7 @@ export default function Profile() {
     // address
   );
 
+  // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -76,23 +77,26 @@ export default function Profile() {
                 data={nftData}
                 scrollEnabled={false}
                 renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => setQrCodeModalVisible(true)}>
+                  <View>
                     {Array.from({ length: Number(item.quantityOwned) }).map(
                       (_, i) => (
-                        <Image
+                        <TouchableOpacity
                           key={i}
-                          source={{
-                            uri: NFTSrc.replace(
-                              "ipfs://",
-                              "https://ipfs.io/ipfs/"
-                            ),
-                          }}
-                          style={styles.icon}
-                          resizeMode="contain"
-                        />
+                          onPress={() => setQrCodeModalVisible(true)}>
+                          <Image
+                            source={{
+                              uri: NFTSrc.replace(
+                                "ipfs://",
+                                "https://ipfs.io/ipfs/"
+                              ),
+                            }}
+                            style={styles.icon}
+                            resizeMode="contain"
+                          />
+                        </TouchableOpacity>
                       )
                     )}
-                  </TouchableOpacity>
+                  </View>
                 )}
                 keyExtractor={(item) => item.metadata.id + item.quantityOwned}
                 numColumns={1}
@@ -171,8 +175,6 @@ const styles = StyleSheet.create({
     lineHeight: 30 * heightConstant,
     letterSpacing: 0.15,
     textAlign: "left",
-    width: 101 * widthConstant,
-    height: 35 * heightConstant,
     color: "#FFFFFF",
   },
   collectionTabText: {
