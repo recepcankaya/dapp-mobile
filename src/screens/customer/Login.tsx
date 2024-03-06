@@ -15,6 +15,7 @@ import {
   ConnectEmbed,
   useSigner,
   useWallet,
+  useDisconnect,
 } from "@thirdweb-dev/react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
@@ -24,13 +25,13 @@ import supabase from "../../lib/supabase";
 import signToken from "../../lib/jwt";
 import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
-import { useEffect } from "react";
 
 const Login = () => {
   const address = useAddress();
   const signer = useSigner();
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
+  const disconnect = useDisconnect();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const updateUser = useUserStore((state) => state.setUser);
 
@@ -159,31 +160,6 @@ const Login = () => {
       );
     }
   };
-  useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event == "PASSWORD_RECOVERY") {
-        Alert.prompt(
-          "New Password",
-          "What would you like your new password to be?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: async (newPassword) => {
-                const { data, error } = await supabase.auth.updateUser({ password: newPassword });
-                if (data) Alert.alert("Success", "Password updated successfully!");
-                if (error) Alert.alert("Error", "There was an error updating your password.");
-              },
-            },
-          ],
-          "secure-text"
-        );
-      }
-    })
-  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -209,6 +185,11 @@ const Login = () => {
           />
         )}
       </View>
+      {/* <TouchableOpacity
+        onPress={() => disconnect()}
+        style={styles.businessButton}>
+        <Text style={styles.businessText}>Disconnect</Text>
+      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Admin Login")}
         style={styles.businessButton}>
