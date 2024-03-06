@@ -12,13 +12,18 @@ import { useAddress } from "@thirdweb-dev/react-native";
 const logo = require("../../assets/LadderLogo.png");
 
 const CustomerHome = () => {
-  const userID = useUserStore((state) => state.user.id);
+  const userId = useUserStore((state) => state.user.id);
   const positions = [
     { top: -50, left: -50 },
     { top: -50, right: -50 },
     { bottom: -50, left: -50 },
     { bottom: -50, right: -50 },
   ];
+
+  const qrCodeValue = {
+    userId,
+    forNFT: false
+  }
 
   const brand: Brand = useBrandStore((state) => state.brand);
 
@@ -56,7 +61,7 @@ const CustomerHome = () => {
       </View>
       <View style={styles.qrCodeContainer}>
         <View style={styles.qrCode}>
-          <QRCode size={240} value={userID} viewBox={`0 0 240 240`} />
+          <QRCode size={240} value={JSON.stringify(qrCodeValue)} viewBox={`0 0 240 240`} />
         </View>
       </View>
     </SafeAreaView>
