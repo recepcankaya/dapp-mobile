@@ -119,7 +119,7 @@ const Login = () => {
         .single();
 
       const secretKey =
-        "g0gRho4kgKR47SqQpa7z4rYzZrjgOQGCj8FA7v0VBkguG+MpWe7BGR+kwENTExL19ts8RTCnaQbOBWoCFG6LsA==";
+        "veNu6YoBFKFTy+46wtx640Xe2lPhQd6sKTNU3WNWB7uRFdUKYH5oylkQ9BabGGGhAc0UyCNuHaWN3cZj2Pxyig==";
 
       const jwtToken = signToken(
         {
