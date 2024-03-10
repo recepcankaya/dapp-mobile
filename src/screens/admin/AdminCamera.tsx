@@ -77,16 +77,16 @@ const AdminCamera = () => {
     codeTypes: ["qr", "ean-13"],
 
     onCodeScanned: async (codes, frame) => {
-      let userId = "";
+      let userID = "";
       let forNFT = null;
       if (qrCodeValue.length > 0) return;
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userId: string; forNFT: boolean } = JSON.parse(
+        const parsedValue: { userID: string; forNFT: boolean } = JSON.parse(
           codes[0].value
         );
-        ({ userId, forNFT } = parsedValue);
+        ({ userID, forNFT } = parsedValue);
       }
 
       // get number_of_orders from user_missions table
@@ -94,7 +94,7 @@ const AdminCamera = () => {
         await supabase
           .from("user_missions")
           .select("number_of_orders")
-          .eq("user_id", userId);
+          .eq("user_id", userID);
 
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
@@ -122,7 +122,7 @@ const AdminCamera = () => {
             amount: 1,
           });
           Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-          await supabase.from("user_missions").delete().eq("id", userId);
+          await supabase.from("user_missions").delete().eq("id", userID);
         } else {
           Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
         }
@@ -130,12 +130,12 @@ const AdminCamera = () => {
 
       // If the order is not for free, check the number of orders
       else {
-        if (userMissionInfo) {
+        if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
           await supabase.from("user_missions").insert({
             number_of_orders: 1,
-            user_id: userId,
-            admin_id: adminID.toString(),
+            user_id: userID,
+            admin_id: adminID,
           });
           Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
@@ -144,12 +144,14 @@ const AdminCamera = () => {
             numberForReward[0].number_for_reward
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
-          await supabase
-            .from("user_missions")
-            .update({
-              number_of_orders: userMissionInfo[0].number_of_orders + 1,
-            })
-            .eq("user_id", userId);
+          let { data, error } = await supabase.rpc(
+            "Increment_user_missions.number_of_orders",
+            {
+              userID,
+            }
+          );
+          if (error) console.error(error);
+          else console.log(data);
           Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
@@ -163,7 +165,7 @@ const AdminCamera = () => {
               .update({
                 number_of_orders: 0,
               })
-              .eq("user_id", userId);
+              .eq("user_id", userID);
             mintNotUsedNft({
               metadata: {
                 name: brandName,
