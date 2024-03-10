@@ -81,7 +81,7 @@ const Login = () => {
         addres: walletAddr,
         statement: "Onaylama tuşuna basarak uygulamaya giriş yapabilirsiniz.",
         version: "1",
-        chainId: "800001",
+        chainId: "137",
         nonce,
       };
 
@@ -98,7 +98,7 @@ const Login = () => {
           siweMessage.statement,
           signature,
           walletAddr,
-          80001
+          137
         );
       } else {
         const signature = await signer?.signMessage(siweMessage.statement);
