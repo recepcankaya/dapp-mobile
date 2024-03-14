@@ -20,8 +20,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
+import { sha512 } from "js-sha512";
 
-import supabase from "../../lib/supabase";
+import supabase, {
+  createSupabaseClient,
+  secretSupabase,
+} from "../../lib/supabase";
 import signToken from "../../lib/jwt";
 import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
@@ -50,7 +54,7 @@ const Login = () => {
    * @returns {Promise<void>} A promise that resolves when the login process is completed.
    * @throws {Error} If the wallet address is undefined or if there is an error during the login process.
    */
-  const handleLoginWithSIWE = async () => {
+  const handleLoginWithSIWE = async (): Promise<void> => {
     try {
       let isNewUser = false;
       if (!walletAddr) {
@@ -58,22 +62,28 @@ const Login = () => {
       }
 
       const nonce = uuidv4();
+      const passwordHash = sha512(`${walletAddr}l4dder1t`).slice(0, 50);
 
-      let { data } = await supabase
-        .from("users")
-        .select("nonce")
-        .eq("walletAddr", walletAddr);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: `${walletAddr}@ladderuser.com`,
+        password: passwordHash,
+      });
 
-      if (data?.length === 0) {
-        // create user record + nonce
+      if (error) {
         isNewUser = true;
-        await supabase.from("users").insert({ nonce, walletAddr });
+        const { data, error } = await supabase.auth.signUp({
+          email: `${walletAddr}@ladderuser.com`,
+          password: passwordHash,
+        });
+        await supabase
+          .from("users")
+          .update({ nonce, walletAddr })
+          .eq("id", data.user?.id);
       } else {
-        // new nonce
         await supabase
           .from("users")
           .update({ nonce, last_login: new Date() })
-          .match({ walletAddr });
+          .eq("id", data.user?.id);
       }
 
       const siweMessage = {
@@ -111,41 +121,17 @@ const Login = () => {
         }
       }
 
-      let { data: user } = await supabase
+      const { data: user, error: userError } = await supabase
         .from("users")
         .select("*")
         .eq("walletAddr", walletAddr)
-        .eq("nonce", nonce)
         .single();
-
-      const secretKey =
-        "veNu6YoBFKFTy+46wtx640Xe2lPhQd6sKTNU3WNWB7uRFdUKYH5oylkQ9BabGGGhAc0UyCNuHaWN3cZj2Pxyig==";
-
-      const jwtToken = signToken(
-        {
-          sub: user.id,
-          walletAddr,
-          iat: Date.now() / 1000,
-          exp: Math.floor(Date.now() / 1000 + 60 * 60 * 24 * 90),
-          user_metadata: {
-            id: user.id,
-          },
-        },
-        secretKey
-      );
-
-      supabase.functions.setAuth(jwtToken);
-      supabase.realtime.setAuth(jwtToken);
-      await supabase.auth.setSession({
-        access_token: jwtToken,
-        refresh_token: jwtToken,
-      });
 
       updateUser({
         id: user.id.toString(),
         username: user.username,
-        numberOfNFTs: user.number_of_nfts,
-        orderNumber: user.order_number,
+        numberOfNFTs: 0,
+        orderNumber: 0,
       });
 
       if (isNewUser) {
@@ -154,10 +140,11 @@ const Login = () => {
         navigation.navigate("Brands");
       }
     } catch (error) {
-      Alert.alert(
-        "Bunu biz de beklemiyorduk 🤔",
-        "Lütfen tekrar dener misiniz 👉👈"
-      );
+      // Alert.alert(
+      //   "Bunu biz de beklemiyorduk 🤔",
+      //   "Lütfen tekrar dener misiniz 👉👈"
+      // );
+      console.error(error);
     }
   };
 
