@@ -14,7 +14,7 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import supabase from "../../lib/supabase";
+import supabase, { secretSupabase } from "../../lib/supabase";
 import updateAdminId from "../../store/adminStoreForAdmin";
 import {
   useAddress,
@@ -91,14 +91,14 @@ const AdminCamera = () => {
 
       // get number_of_orders from user_missions table
       const { data: userMissionInfo, error: errorUserMissionInfo } =
-        await supabase
+        await secretSupabase
           .from("user_missions")
           .select("number_of_orders")
           .eq("user_id", userID);
 
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
-        await supabase
+        await secretSupabase
           .from("admins")
           .select("number_for_reward")
           .eq("id", adminID);
@@ -122,7 +122,7 @@ const AdminCamera = () => {
             amount: 1,
           });
           Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-          await supabase.from("user_missions").delete().eq("id", userID);
+          await secretSupabase.from("user_missions").delete().eq("id", userID);
         } else {
           Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
         }
@@ -132,7 +132,7 @@ const AdminCamera = () => {
       else {
         if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
-          await supabase.from("user_missions").insert({
+          await secretSupabase.from("user_missions").insert({
             number_of_orders: 1,
             user_id: userID,
             admin_id: adminID,
@@ -160,7 +160,7 @@ const AdminCamera = () => {
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
           if (customerAddress) {
-            await supabase
+            await secretSupabase
               .from("user_missions")
               .update({
                 number_of_orders: 0,

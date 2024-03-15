@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import useAdminStore, { Admin } from "../../store/adminStore";
 import { widthConstant } from "../../ui/responsiveScreen";
 import colors from "../..//ui/colors";
-import supabase from "../../lib/supabase";
+import supabase, { secretSupabase } from "../../lib/supabase";
 
 const Brands = () => {
   const admins = useAdminStore((state) => state.admins);
@@ -17,7 +17,8 @@ const Brands = () => {
 
   const fetchAdmins = async () => {
     try {
-      const { data, error } = await supabase
+      // @todo - auth yapmak için users ile adminsi bağlayalım
+      const { data, error } = await secretSupabase
         .from("admins")
         .select(
           "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"

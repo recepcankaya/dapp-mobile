@@ -61,7 +61,7 @@ export default function Profile() {
                 styles.waitingTabText,
                 selectedTab === "Waiting" && styles.selectedTab,
               ]}>
-              Waiting
+              Bekleyenler
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
@@ -70,7 +70,7 @@ export default function Profile() {
                 styles.collectionTabText,
                 selectedTab === "Your Collection" && styles.selectedTab,
               ]}>
-              Your Collection
+              Koleksiyonunuz
             </Text>
           </TouchableOpacity>
         </View>
@@ -139,7 +139,7 @@ export default function Profile() {
               />
             ) : (
               <Text style={styles.infoText}>
-                Herhangi bir NFT' ye sahip değilsiniz.
+                Herhangi bir Koleksiyon parçasına sahip değilsiniz.
               </Text>
             ))}
         </View>
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    fontSize: 24 * radiusConstant,
+    fontSize: 22 * radiusConstant,
     color: colors.white,
     marginTop: 60 * heightConstant,
   },

@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, FlatList } from "react-native";
 import QRCode from "react-qr-code";
 
 import useBrandStore, { Brand } from "../../store/brandStore";
@@ -9,13 +9,38 @@ import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import { useAddress } from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
+import { useEffect, useState } from "react";
+import supabase from "../../lib/supabase";
 
 const logo = require("../../assets/LadderLogo.png");
 
 const CustomerHome = () => {
+  const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
   const userID = useUserStore((state) => state.user.id);
+  const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
 
+  const fetchUserOrderNumber = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("user_missions")
+        .select("number_of_orders")
+        .eq("user_id", userID); // problemli
+      if (error) {
+        console.log(error);
+      } else {
+        setUserOrderNumber(data[0]?.number_of_orders ?? 0);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserOrderNumber();
+  }, []);
+
+  const ticketCircles = new Array(admin.numberForReward).fill(userOrderNumber);
   const positions = [
     { top: -50, left: -50 },
     { top: -50, right: -50 },
@@ -28,7 +53,19 @@ const CustomerHome = () => {
     forNFT: false,
   };
 
-  const brand: Brand = useBrandStore((state) => state.brand);
+  const ticketRenderItem = ({ item, index }: { item: any; index: number }) => {
+    return (
+      <View
+        style={[
+          styles.circle,
+          {
+            backgroundColor:
+              index < userOrderNumber ? colors.green : colors.pink,
+          },
+        ]}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -50,18 +87,22 @@ const CustomerHome = () => {
           {positions.map((position, index) => (
             <View key={index} style={[styles.blackCircles, position]} />
           ))}
-          <View style={styles.circles}>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-          </View>
-          <View style={styles.circles}>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-            <View style={styles.circle}></View>
-          </View>
+          <FlatList
+            data={ticketCircles}
+            extraData={ticketCircles}
+            renderItem={(item) => ticketRenderItem(item)}
+            numColumns={4}
+            contentContainerStyle={styles.circles}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+          />
+          <FlatList
+            data={positions}
+            renderItem={(item) => (
+              <View style={[styles.blackCircles, item.item]} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
       </View>
       <View style={styles.qrCodeContainer}>
@@ -107,8 +148,9 @@ const styles = StyleSheet.create({
   },
   ticket: {
     width: "100%",
-    height: 200 * heightConstant,
+    height: "50%",
     backgroundColor: colors.white,
+    paddingTop: 10 * heightConstant,
   },
   blackCircles: {
     position: "absolute",
@@ -119,9 +161,7 @@ const styles = StyleSheet.create({
   },
   circles: {
     flex: 1,
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
   },
   circle: {
     backgroundColor: colors.pink,
