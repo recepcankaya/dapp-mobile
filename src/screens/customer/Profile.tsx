@@ -9,20 +9,21 @@ import {
   ScrollView,
 } from "react-native";
 import {
+  useOwnedNFTs,
+  useAddress,
+  useContract,
+} from "@thirdweb-dev/react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import {
   heightConstant,
   radiusConstant,
   widthConstant,
 } from "../../ui/responsiveScreen";
 import useUserStore from "../../store/userStore";
-import {
-  useOwnedNFTs,
-  useAddress,
-  useContract,
-} from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
 import QrCodeModal from "../../ui/qrCodeModal";
 import colors from "../../ui/colors";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
@@ -61,7 +62,7 @@ export default function Profile() {
                 styles.waitingTabText,
                 selectedTab === "Waiting" && styles.selectedTab,
               ]}>
-              Waiting
+              Bekleyenler
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
@@ -70,7 +71,7 @@ export default function Profile() {
                 styles.collectionTabText,
                 selectedTab === "Your Collection" && styles.selectedTab,
               ]}>
-              Your Collection
+              Koleksiyonunuz
             </Text>
           </TouchableOpacity>
         </View>
@@ -139,7 +140,7 @@ export default function Profile() {
               />
             ) : (
               <Text style={styles.infoText}>
-                Herhangi bir NFT' ye sahip değilsiniz.
+                Herhangi bir Koleksiyon parçasına sahip değilsiniz.
               </Text>
             ))}
         </View>
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    fontSize: 24 * radiusConstant,
+    fontSize: 22 * radiusConstant,
     color: colors.white,
     marginTop: 60 * heightConstant,
   },

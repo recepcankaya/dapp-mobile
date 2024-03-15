@@ -8,7 +8,6 @@ type Admin = {
   usedNFTs: number;
   notUsedNFTs: number;
   numberForReward: number;
-  lastQRScanTime: string;
   contractAddress: string;
   NFTSrc: string;
   notUsedNFTSrc: string;
@@ -32,7 +31,6 @@ const useAdminForAdminStore = create<State & Action>((set) => ({
     usedNFTs: 0,
     notUsedNFTs: 0,
     numberForReward: 0,
-    lastQRScanTime: "",
     contractAddress: "",
     NFTSrc: "",
     notUsedNFTSrc: "",

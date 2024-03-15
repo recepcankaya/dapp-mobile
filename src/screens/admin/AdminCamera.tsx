@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
-  View,
   StyleSheet,
   Text,
   ActivityIndicator,
   Alert,
   Pressable,
-  StatusBar,
 } from "react-native";
 import {
   Camera,
@@ -14,23 +12,19 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import supabase from "../../lib/supabase";
-import updateAdminId from "../../store/adminStoreForAdmin";
 import {
   useAddress,
-  useBurnNFT,
   useContract,
   useMintNFT,
   useTransferNFT,
 } from "@thirdweb-dev/react-native";
-import useAdminStore from "../../store/adminStore";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
-import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../ui/colors";
-
-const statusBarHeight = StatusBar.currentHeight ?? 0;
+import supabase, { secretSupabase } from "../../lib/supabase";
 
 const AdminCamera = () => {
   const adminID = useAdminForAdminStore((state) => state.admin.adminId);
@@ -91,14 +85,14 @@ const AdminCamera = () => {
 
       // get number_of_orders from user_missions table
       const { data: userMissionInfo, error: errorUserMissionInfo } =
-        await supabase
+        await secretSupabase
           .from("user_missions")
           .select("number_of_orders")
           .eq("user_id", userID);
 
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
-        await supabase
+        await secretSupabase
           .from("admins")
           .select("number_for_reward")
           .eq("id", adminID);
@@ -122,7 +116,7 @@ const AdminCamera = () => {
             amount: 1,
           });
           Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-          await supabase.from("user_missions").delete().eq("id", userID);
+          await secretSupabase.from("user_missions").delete().eq("id", userID);
         } else {
           Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
         }
@@ -132,7 +126,7 @@ const AdminCamera = () => {
       else {
         if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
-          await supabase.from("user_missions").insert({
+          await secretSupabase.from("user_missions").insert({
             number_of_orders: 1,
             user_id: userID,
             admin_id: adminID,
@@ -145,7 +139,7 @@ const AdminCamera = () => {
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
-            "Increment_user_missions.number_of_orders",
+            "increment_user_missions_number_of_orders",
             {
               userID,
             }
@@ -153,14 +147,16 @@ const AdminCamera = () => {
           if (error) console.error(error);
           else console.log(data);
           Alert.alert("İşlem başarıyla gerçekleşti.");
-        } else if (
+        }
+        // @todo - bug burada. kod bloğu burada çalışmıyor.
+        else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders ===
             numberForReward[0].number_for_reward
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
           if (customerAddress) {
-            await supabase
+            await secretSupabase
               .from("user_missions")
               .update({
                 number_of_orders: 0,
