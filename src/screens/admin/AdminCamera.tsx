@@ -139,7 +139,7 @@ const AdminCamera = () => {
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
-            "Increment_user_missions.number_of_orders",
+            "increment_user_missions_number_of_orders",
             {
               userID,
             }
