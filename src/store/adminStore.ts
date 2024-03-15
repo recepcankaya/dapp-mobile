@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export type Admin = {
+  id: string;
   brandName: string;
   brandLogo: string;
   numberForReward: number;
@@ -22,6 +23,7 @@ type Action = {
 
 const useAdminStore = create<State & Action>((set) => ({
   admin: {
+    id: "",
     brandName: "",
     brandLogo: "",
     numberForReward: 0,
