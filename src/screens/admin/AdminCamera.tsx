@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
-  View,
   StyleSheet,
   Text,
   ActivityIndicator,
   Alert,
   Pressable,
-  StatusBar,
 } from "react-native";
 import {
   Camera,
@@ -14,23 +12,19 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import supabase, { secretSupabase } from "../../lib/supabase";
-import updateAdminId from "../../store/adminStoreForAdmin";
 import {
   useAddress,
-  useBurnNFT,
   useContract,
   useMintNFT,
   useTransferNFT,
 } from "@thirdweb-dev/react-native";
-import useAdminStore from "../../store/adminStore";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
-import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../ui/colors";
-
-const statusBarHeight = StatusBar.currentHeight ?? 0;
+import supabase, { secretSupabase } from "../../lib/supabase";
 
 const AdminCamera = () => {
   const adminID = useAdminForAdminStore((state) => state.admin.adminId);
@@ -153,7 +147,9 @@ const AdminCamera = () => {
           if (error) console.error(error);
           else console.log(data);
           Alert.alert("İşlem başarıyla gerçekleşti.");
-        } else if (
+        }
+        // @todo - bug burada. kod bloğu burada çalışmıyor.
+        else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders ===
             numberForReward[0].number_for_reward

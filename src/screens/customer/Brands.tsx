@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import useAdminStore, { Admin } from "../../store/adminStore";
 import { widthConstant } from "../../ui/responsiveScreen";
 import colors from "../..//ui/colors";
-import supabase, { secretSupabase } from "../../lib/supabase";
+import { secretSupabase } from "../../lib/supabase";
 
 const Brands = () => {
   const admins = useAdminStore((state) => state.admins);

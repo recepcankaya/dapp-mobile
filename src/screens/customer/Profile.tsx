@@ -9,20 +9,21 @@ import {
   ScrollView,
 } from "react-native";
 import {
+  useOwnedNFTs,
+  useAddress,
+  useContract,
+} from "@thirdweb-dev/react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import {
   heightConstant,
   radiusConstant,
   widthConstant,
 } from "../../ui/responsiveScreen";
 import useUserStore from "../../store/userStore";
-import {
-  useOwnedNFTs,
-  useAddress,
-  useContract,
-} from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
 import QrCodeModal from "../../ui/qrCodeModal";
 import colors from "../../ui/colors";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");

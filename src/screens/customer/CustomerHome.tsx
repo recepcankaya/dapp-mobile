@@ -1,18 +1,23 @@
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image, FlatList } from "react-native";
 import QRCode from "react-qr-code";
 
-import useBrandStore, { Brand } from "../../store/brandStore";
 import useUserStore from "../../store/userStore";
 import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
-import { useAddress } from "@thirdweb-dev/react-native";
 import useAdminStore from "../../store/adminStore";
-import { useEffect, useState } from "react";
 import supabase from "../../lib/supabase";
 
 const logo = require("../../assets/LadderLogo.png");
+
+const positions = [
+  { top: -50, left: -50 },
+  { top: -50, right: -50 },
+  { bottom: -50, left: -50 },
+  { bottom: -50, right: -50 },
+];
 
 const CustomerHome = () => {
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
@@ -22,10 +27,11 @@ const CustomerHome = () => {
 
   const fetchUserOrderNumber = async () => {
     try {
+      // @todo - Burada user_missions tablosunda user_id ile eşleşen bütün verileri çekmiş oluyoruz ancak göreve özel bir veri çekmemiz gerekiyor.
       const { data, error } = await supabase
         .from("user_missions")
         .select("number_of_orders")
-        .eq("user_id", userID); // problemli
+        .eq("user_id", userID);
       if (error) {
         console.log(error);
       } else {
@@ -36,24 +42,18 @@ const CustomerHome = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserOrderNumber();
-  }, []);
-
   const ticketCircles = new Array(admin.numberForReward).fill(userOrderNumber);
-  const positions = [
-    { top: -50, left: -50 },
-    { top: -50, right: -50 },
-    { bottom: -50, left: -50 },
-    { bottom: -50, right: -50 },
-  ];
-
   const qrCodeValue = {
     userID,
     forNFT: false,
   };
 
-  const ticketRenderItem = ({ item, index }: { item: any; index: number }) => {
+  useEffect(() => {
+    fetchUserOrderNumber();
+  }, []);
+
+  // @todo - renk green' e dönmüyor
+  const ticketRenderItem = ({ index }: { index: number }) => {
     return (
       <View
         style={[
@@ -101,7 +101,7 @@ const CustomerHome = () => {
             renderItem={(item) => (
               <View style={[styles.blackCircles, item.item]} />
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(index) => index.toString()}
           />
         </View>
       </View>

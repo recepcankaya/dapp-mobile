@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Alert,
-  Button,
   StyleSheet,
   Text,
   TextInput,
@@ -9,10 +8,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import supabase from "../../lib/supabase";
-import { useAddress } from "@thirdweb-dev/react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAddress } from "@thirdweb-dev/react-native";
+
+import supabase from "../../lib/supabase";
 import colors from "../../ui/colors";
 import useUserStore from "../../store/userStore";
 
@@ -51,7 +51,9 @@ const UserInfo = () => {
         navigation.navigate("Brands");
         Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
