@@ -37,15 +37,20 @@ const AdminLogin = () => {
           ...admin,
           adminId: data.user.id,
         });
+        // Check if it's the first login
+        if (data.user.last_sign_in_at === null) {
+          navigation.navigate("Admin New Password");
+        } else {
+          setEmail("");
+          setPassword("");
+          navigation.navigate("Admin Home");
+        }
       }
     }
     if (error) {
       console.error(error);
       return;
     }
-    setEmail("");
-    setPassword("");
-    navigation.navigate("Admin Home");
   };
 
   return (
