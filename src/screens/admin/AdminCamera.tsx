@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
-  View,
   StyleSheet,
   Text,
   ActivityIndicator,
-  TouchableOpacity,
   Alert,
+  Pressable,
 } from "react-native";
 import {
   Camera,
@@ -13,33 +12,54 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
-import supabase from "../../lib/supabase";
-import updateAdminId from "../../store/adminId";
 import {
   useAddress,
   useContract,
   useMintNFT,
+  useTransferNFT,
 } from "@thirdweb-dev/react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
+import { SafeAreaView } from "react-native-safe-area-context";
+import colors from "../../ui/colors";
+import supabase, { secretSupabase } from "../../lib/supabase";
 
 const AdminCamera = () => {
-  const adminId = updateAdminId((state) => state.adminId);
-  const address = useAddress();
-  const { contract } = useContract(
-    "0xC01cA582DeeD31104B6534960f3a282DFdC1FCA8"
+  const adminID = useAdminForAdminStore((state) => state.admin.adminId);
+  const brandName = useAdminForAdminStore((state) => state.admin.brandName);
+  const contractAddress = useAdminForAdminStore(
+    (state) => state.admin.contractAddress
   );
+  const NFTSrc = useAdminForAdminStore((state) => state.admin.NFTSrc);
+  const notUsedNFTSrc = useAdminForAdminStore(
+    (state) => state.admin.notUsedNFTSrc
+  );
+  const notUsedContractAddress = useAdminForAdminStore(
+    (state) => state.admin.notUsedContractAddress
+  );
+  const customerAddress = useAddress();
+  const { contract } = useContract(contractAddress);
+  const { contract: notUsedContract } = useContract(notUsedContractAddress);
   const {
-    mutate: mintNft,
+    mutateAsync: mintNft,
     isLoading,
     isError: mintNftError,
   } = useMintNFT(contract);
+  const { mutateAsync: mintNotUsedNft } = useMintNFT(notUsedContract);
+  const { mutateAsync: burnNFTUsingTransfer } = useTransferNFT(notUsedContract);
   const { hasPermission, requestPermission } = useCameraPermission();
 
   const cameraRef = useRef<Camera>(null);
 
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  let qrCodeValue = [];
+
   useEffect(() => {
     if (!hasPermission) requestPermission();
-  }, []);
+  }, [hasPermission]);
 
   if (!hasPermission) return <ActivityIndicator />;
 
@@ -49,115 +69,108 @@ const AdminCamera = () => {
 
   const codeScanner = useCodeScanner({
     codeTypes: ["qr", "ean-13"],
-    onCodeScanned: async (codes) => {
-      let userId = "";
+
+    onCodeScanned: async (codes, frame) => {
+      let userID = "";
       let forNFT = null;
+      if (qrCodeValue.length > 0) return;
+      qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue = JSON.parse(codes[0].value);
-        ({ userId, forNFT } = parsedValue);
+        const parsedValue: { userID: string; forNFT: boolean } = JSON.parse(
+          codes[0].value
+        );
+        ({ userID, forNFT } = parsedValue);
       }
 
-      // get number_of_orders, has_free_right, number_of_free_rights from user_missions table
+      // get number_of_orders from user_missions table
       const { data: userMissionInfo, error: errorUserMissionInfo } =
-        await supabase
+        await secretSupabase
           .from("user_missions")
-          .select("number_of_orders, has_free_right, number_of_free_rights")
-          .eq("user_id", userId);
+          .select("number_of_orders")
+          .eq("user_id", userID);
 
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
-        await supabase
-          .from("admin")
+        await secretSupabase
+          .from("admins")
           .select("number_for_reward")
-          .eq("id", adminId);
+          .eq("id", adminID);
 
       // If the order is for free, check the user's free right
       if (forNFT === true) {
-        // Check whether the user has a free right
-        if (userMissionInfo && userMissionInfo[0].has_free_right > 1) {
-          // If the user has more than one free right, decrease the number of free rights by one
-          await supabase
-            .from("user_missions")
-            .update({
-              number_of_free_rights:
-                userMissionInfo[0].number_of_free_rights - 1,
-            })
-            .eq("user_id", userId);
+        if (userMissionInfo && customerAddress) {
+          // We will mint new NFT for the collection
+          mintNft({
+            metadata: {
+              name: brandName,
+              description: "",
+              image: NFTSrc,
+            },
+            to: customerAddress,
+          });
+          // After minted the NFT, we will burn old NFT using transfer to 0x0 address
+          burnNFTUsingTransfer({
+            to: "0x0000000000000000000000000000000000000000",
+            tokenId: 0,
+            amount: 1,
+          });
           Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-        } else if (userMissionInfo && userMissionInfo[0].has_free_right === 1) {
-          // If the user has only one free right, delete the row
-          await supabase.from("user_missions").delete().eq("id", userId);
-          Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
+          await secretSupabase.from("user_missions").delete().eq("id", userID);
         } else {
-          Alert.alert("Müşterinizin ücretsiz hakkı bulunmamaktadır.");
+          Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
         }
       }
+
       // If the order is not for free, check the number of orders
       else {
-        if (!userMissionInfo) {
+        if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
-          await supabase.from("user_missions").insert({
+          await secretSupabase.from("user_missions").insert({
             number_of_orders: 1,
-            user_id: userId,
-            admin_id: adminId,
-            has_free_right: false,
-            number_of_free_rights: 0,
+            user_id: userID,
+            admin_id: adminID,
           });
+          Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders <
             numberForReward[0].number_for_reward
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
-          await supabase
-            .from("user_missions")
-            .update({
-              number_of_orders: userMissionInfo[0].number_of_orders + 1,
-            })
-            .eq("user_id", userId);
-        } else {
+          let { data, error } = await supabase.rpc(
+            "increment_user_missions_number_of_orders",
+            {
+              userID,
+            }
+          );
+          if (error) console.error(error);
+          else console.log(data);
+          Alert.alert("İşlem başarıyla gerçekleşti.");
+        }
+        // @todo - bug burada. kod bloğu burada çalışmıyor.
+        else if (
+          numberForReward &&
+          userMissionInfo[0].number_of_orders ===
+            numberForReward[0].number_for_reward
+        ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
-          if (userMissionInfo[0].has_free_right === false) {
-            await supabase
+          if (customerAddress) {
+            await secretSupabase
               .from("user_missions")
               .update({
-                has_free_right: true,
-                number_of_free_rights: 1,
                 number_of_orders: 0,
               })
-              .eq("user_id", userId);
-            if (address) {
-              mintNft({
-                metadata: {
-                  name: "Mega Playstation",
-                  description: "",
-                  image:
-                    "ipfs://QmP7NbUz8FhcBuRKC4NeXokkTWXZKtTRdPijM9yc2FPExU/Mega%20Playstation.png",
-                },
-                to: address,
-              });
-            }
-          } else {
-            await supabase
-              .from("user_missions")
-              .update({
-                number_of_free_rights:
-                  userMissionInfo[0].number_of_free_rights + 1,
-                number_of_orders: 0,
-              })
-              .eq("user_id", userId);
-            if (address) {
-              mintNft({
-                metadata: {
-                  name: "Mega Playstation",
-                  description: "",
-                  image:
-                    "ipfs://QmP7NbUz8FhcBuRKC4NeXokkTWXZKtTRdPijM9yc2FPExU/Mega%20Playstation.png",
-                },
-                to: address,
-              });
-            }
+              .eq("user_id", userID);
+            mintNotUsedNft({
+              metadata: {
+                name: brandName,
+                description: "",
+                image: notUsedNFTSrc,
+              },
+              to: customerAddress,
+            });
+            Alert.alert("Müşteriniz ödülünüzü kazandı.");
           }
         }
       }
@@ -165,17 +178,18 @@ const AdminCamera = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>←</Text>
+      </Pressable>
       <Camera
         ref={cameraRef}
         style={styles.camera}
         device={device}
         isActive={true}
-        photo={true}
         codeScanner={codeScanner}
       />
-      <TouchableOpacity style={styles.takePhotoButton}></TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -192,16 +206,22 @@ const styles = StyleSheet.create({
   camera: {
     ...StyleSheet.absoluteFillObject,
   },
-  takePhotoButton: {
-    position: "absolute",
-    bottom: 100 * heightConstant,
-    alignSelf: "center",
-    width: 75 * widthConstant,
-    height: 75 * widthConstant,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 50,
-    borderWidth: 5,
-    borderColor: "#fff",
+  backButton: {
+    width: 40,
+    height: 40,
+    padding: 5,
+    borderWidth: 2,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 20,
+    zIndex: 1,
+    backgroundColor: colors.pink,
+  },
+  backButtonText: {
+    fontSize: 20,
+    color: colors.white,
   },
 });
 

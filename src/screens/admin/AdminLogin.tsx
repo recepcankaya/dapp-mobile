@@ -13,13 +13,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import colors from "../../ui/colors";
 import supabase from "../../lib/supabase";
-import updateAdminId from "../../store/adminId";
+import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const setAdminId = updateAdminId((state) => state.setAdminId);
-  const setAdminEmail = updateAdminId((state) => state.setAdminEmail); // get the setAdminEmail function
+  const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
+  const admin = useAdminForAdminStore((state) => state.admin);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const submitForm = async () => {
@@ -33,13 +33,14 @@ const AdminLogin = () => {
     });
     if (data) {
       if (data.user) {
-        setAdminId(data.user.id);
-        setAdminEmail(email);
+        updateAdmin({
+          ...admin,
+          adminId: data.user.id,
+        });
         // Check if it's the first login
         if (data.user.last_sign_in_at === null) {
           navigation.navigate("Admin New Password");
-        }
-        else {
+        } else {
           setEmail("");
           setPassword("");
           navigation.navigate("Admin Home");
@@ -50,7 +51,6 @@ const AdminLogin = () => {
       console.error(error);
       return;
     }
-
   };
 
   return (

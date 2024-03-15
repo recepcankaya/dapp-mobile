@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,70 +6,151 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ScrollView,
 } from "react-native";
+import {
+  useOwnedNFTs,
+  useAddress,
+  useContract,
+} from "@thirdweb-dev/react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import {
   heightConstant,
   radiusConstant,
   widthConstant,
 } from "../../ui/responsiveScreen";
+import useUserStore from "../../store/userStore";
+import useAdminStore from "../../store/adminStore";
+import QrCodeModal from "../../ui/qrCodeModal";
+import colors from "../../ui/colors";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
+  const [qrCodeModalVisible, setQrCodeModalVisible] = useState<boolean>(false);
+  const username = useUserStore((state) => state.user.username);
+  const userID = useUserStore((state) => state.user.id);
+  const contractAddress = useAdminStore((state) => state.admin.contractAddress);
+  const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
+  const notUsedContractAddress = useAdminStore(
+    (state) => state.admin.notUsedContractAddress
+  );
+  const notUsedNFTSrc = useAdminStore((state) => state.admin.notUsedNFTSrc);
+  const address = useAddress();
+  const { contract: usedNFTContract } = useContract(contractAddress);
+  const { contract: notUsedNFTContract } = useContract(notUsedContractAddress);
+  const {
+    data: nftData,
+    isLoading,
+    error,
+  } = useOwnedNFTs(usedNFTContract, address);
+  const {
+    data: nftDataNotUsed,
+    isLoading: isLoadingNotUsed,
+    error: errorNotUsed,
+  } = useOwnedNFTs(notUsedNFTContract, address);
 
-  const waitingIcons = [{ key: "1", source: require("../../assets/Star.png") }];
-
-  const collectionIcons = [
-    { key: "1", source: require("../../assets/Arab.png") },
-    { key: "2", source: require("../../assets/Mean.png") },
-    { key: "3", source: require("../../assets/Mio.png") },
-  ];
-
+  // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Username</Text>
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity onPress={() => setSelectedTab("Waiting")}>
-          <Text
-            style={[
-              styles.waitingTabText,
-              selectedTab === "Waiting" && styles.selectedTab,
-            ]}>
-            Waiting
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
-          <Text
-            style={[
-              styles.collectionTabText,
-              selectedTab === "Your Collection" && styles.selectedTab,
-            ]}>
-            Your Collection
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.iconContainer}>
-        {selectedTab === "Waiting" && (
-          <FlatList
-            data={waitingIcons}
-            renderItem={({ item }) => (
-              <Image source={item.source} style={styles.icon} />
-            )}
-            keyExtractor={(item) => item.key}
-            numColumns={2}
-          />
-        )}
-        {selectedTab === "Your Collection" && (
-          <FlatList
-            data={collectionIcons}
-            renderItem={({ item }) => (
-              <Image source={item.source} style={styles.icon} />
-            )}
-            keyExtractor={(item) => item.key}
-            numColumns={2}
-          />
-        )}
-      </View>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Text style={styles.header}>{username}</Text>
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity onPress={() => setSelectedTab("Waiting")}>
+            <Text
+              style={[
+                styles.waitingTabText,
+                selectedTab === "Waiting" && styles.selectedTab,
+              ]}>
+              Bekleyenler
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setSelectedTab("Your Collection")}>
+            <Text
+              style={[
+                styles.collectionTabText,
+                selectedTab === "Your Collection" && styles.selectedTab,
+              ]}>
+              Koleksiyonunuz
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.iconContainer}>
+          {selectedTab === "Waiting" &&
+            (nftDataNotUsed && nftDataNotUsed?.length > 0 ? (
+              <FlatList
+                data={nftDataNotUsed}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <View>
+                    {Array.from({ length: Number(item.quantityOwned) }).map(
+                      (_, i) => (
+                        <TouchableOpacity
+                          key={i}
+                          onPress={() => setQrCodeModalVisible(true)}>
+                          <Image
+                            source={{
+                              uri: notUsedNFTSrc.replace(
+                                "ipfs://",
+                                "https://ipfs.io/ipfs/"
+                              ),
+                            }}
+                            style={styles.icon}
+                            resizeMode="contain"
+                          />
+                        </TouchableOpacity>
+                      )
+                    )}
+                  </View>
+                )}
+                keyExtractor={(item) => item.metadata.id + item.quantityOwned}
+                numColumns={1}
+              />
+            ) : (
+              <Text style={styles.infoText}>
+                Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
+              </Text>
+            ))}
+          {selectedTab === "Your Collection" &&
+            (nftData && nftData?.length > 0 ? (
+              <FlatList
+                data={nftData}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <View>
+                    {Array.from({ length: Number(item.quantityOwned) }).map(
+                      (_, i) => (
+                        <Image
+                          key={i}
+                          source={{
+                            uri: NFTSrc.replace(
+                              "ipfs://",
+                              "https://ipfs.io/ipfs/"
+                            ),
+                          }}
+                          style={styles.icon}
+                          resizeMode="contain"
+                        />
+                      )
+                    )}
+                  </View>
+                )}
+                keyExtractor={(item) => item.metadata.id + item.quantityOwned}
+                numColumns={1}
+              />
+            ) : (
+              <Text style={styles.infoText}>
+                Herhangi bir Koleksiyon parçasına sahip değilsiniz.
+              </Text>
+            ))}
+        </View>
+        <QrCodeModal
+          isVisible={qrCodeModalVisible}
+          value={JSON.stringify({ userId: userID, forNFT: true })}
+          onClose={() => setQrCodeModalVisible(false)}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -77,26 +158,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0C0C0C",
+    paddingTop: 70 * heightConstant,
   },
   header: {
     fontFamily: "Arial",
     fontSize: 28 * radiusConstant,
     fontWeight: "400",
-    lineHeight: 35 * heightConstant,
-    letterSpacing: 0.05,
-    textAlign: "left",
-    width: 159 * widthConstant,
-    height: 53 * heightConstant,
-    top: 165 * heightConstant,
-    left: 28 * widthConstant,
-    color: "#FFFFFF",
+    color: colors.white,
+    marginBottom: 60 * heightConstant,
+    marginLeft: 30 * widthConstant,
   },
   tabsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    top: 250 * heightConstant,
-    left: 35 * widthConstant,
+    justifyContent: "space-around",
   },
   waitingTabText: {
     fontFamily: "Rosarivo",
@@ -105,8 +180,6 @@ const styles = StyleSheet.create({
     lineHeight: 30 * heightConstant,
     letterSpacing: 0.15,
     textAlign: "left",
-    width: 101 * widthConstant,
-    height: 35 * heightConstant,
     color: "#FFFFFF",
   },
   collectionTabText: {
@@ -119,17 +192,19 @@ const styles = StyleSheet.create({
     width: 203 * widthConstant,
     height: 35 * heightConstant,
     color: "#FFFFFF",
-    right: 28 * widthConstant,
   },
   iconContainer: {
-    marginTop: 250 * heightConstant,
-    marginLeft: -45 * widthConstant,
+    alignItems: "center",
+  },
+  infoText: {
+    fontSize: 22 * radiusConstant,
+    color: colors.white,
+    marginTop: 60 * heightConstant,
   },
   icon: {
-    width: 125 * widthConstant,
-    height: 125 * heightConstant,
-    marginLeft: 90 * widthConstant,
-    marginTop: 40 * heightConstant,
+    width: 375 * widthConstant,
+    height: 375 * heightConstant,
+    aspectRatio: 1,
   },
   selectedTab: {
     borderBottomWidth: 3,
