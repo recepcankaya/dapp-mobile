@@ -50,6 +50,7 @@ export default function Profile() {
     error: errorNotUsed,
   } = useOwnedNFTs(notUsedNFTContract, address);
 
+
   // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
   return (
     <SafeAreaView style={styles.container}>
@@ -146,7 +147,7 @@ export default function Profile() {
         </View>
         <QrCodeModal
           isVisible={qrCodeModalVisible}
-          value={JSON.stringify({ userId: userID, forNFT: true })}
+          value={JSON.stringify({ userId: userID, forNFT: true, address })}
           onClose={() => setQrCodeModalVisible(false)}
         />
       </ScrollView>

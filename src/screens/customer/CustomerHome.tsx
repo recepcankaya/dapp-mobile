@@ -9,6 +9,7 @@ import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
 import supabase from "../../lib/supabase";
+import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 
@@ -24,6 +25,8 @@ const CustomerHome = () => {
   const userID = useUserStore((state) => state.user.id);
   const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
+
+  const customerAddress = useAddress();
 
   const fetchUserOrderNumber = async () => {
     try {
@@ -46,6 +49,7 @@ const CustomerHome = () => {
   const qrCodeValue = {
     userID,
     forNFT: false,
+    address: customerAddress
   };
 
   useEffect(() => {

@@ -67,7 +67,7 @@ const Brands = () => {
             />
           </TouchableOpacity>
         )}
-        keyExtractor={(index) => index.toString()}
+        keyExtractor={(item, index) => index.toString()}
         numColumns={2}
       />
     </SafeAreaView>
