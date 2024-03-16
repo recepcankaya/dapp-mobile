@@ -73,22 +73,24 @@ const AdminCamera = () => {
     onCodeScanned: async (codes, frame) => {
       let userID = "";
       let forNFT = null;
+      let address = null;
       if (qrCodeValue.length > 0) return;
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userID: string; forNFT: boolean } = JSON.parse(
+        const parsedValue: { userID: string; forNFT: boolean, address: any } = JSON.parse(
           codes[0].value
         );
-        ({ userID, forNFT } = parsedValue);
+        ({ userID, forNFT, address } = parsedValue);
       }
 
       // get number_of_orders from user_missions table
       const { data: userMissionInfo, error: errorUserMissionInfo } =
         await secretSupabase
           .from("user_missions")
-          .select("number_of_orders")
-          .eq("user_id", userID);
+          .select("number_of_orders, id")
+          .eq("user_id", userID)
+          .eq("admin_id", adminID);
 
       // get number_for_reward from admin table
       const { data: numberForReward, error: errorNumberForReward } =
@@ -135,13 +137,13 @@ const AdminCamera = () => {
         } else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders <
-            numberForReward[0].number_for_reward
+          numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
             "increment_user_missions_number_of_orders",
             {
-              userID,
+              mission_id: userMissionInfo[0].id,
             }
           );
           if (error) console.error(error);
@@ -152,23 +154,25 @@ const AdminCamera = () => {
         else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders ===
-            numberForReward[0].number_for_reward
+          numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
-          if (customerAddress) {
+          if (address) {
             await secretSupabase
               .from("user_missions")
               .update({
                 number_of_orders: 0,
               })
-              .eq("user_id", userID);
+              .eq("user_id", userID)
+              .eq("admin_id", adminID);
             mintNotUsedNft({
               metadata: {
                 name: brandName,
                 description: "",
                 image: notUsedNFTSrc,
               },
-              to: customerAddress,
+              to: address,
+              supply: 1,
             });
             Alert.alert("Müşteriniz ödülünüzü kazandı.");
           }

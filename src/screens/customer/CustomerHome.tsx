@@ -9,6 +9,7 @@ import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
 import supabase, { secretSupabase } from "../../lib/supabase";
+import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 
@@ -26,11 +27,10 @@ const CustomerHome = () => {
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
   const ticketCircles = new Array(admin.numberForReward);
 
+  const customerAddress = useAddress();
+
   const fetchUserOrderNumber = async () => {
     try {
-      // @todo - Burada user_missions tablosunda user_id ile eşleşen bütün verileri çekmiş oluyoruz ancak göreve özel bir veri çekmemiz gerekiyor.
-      console.log('adminID', admin.id);
-      console.log('userID', userID);
       const { data, error } = await supabase
         .from("user_missions")
         .select("number_of_orders")
@@ -49,6 +49,7 @@ const CustomerHome = () => {
   const qrCodeValue = {
     userID,
     forNFT: false,
+    address: customerAddress,
   };
 
   useEffect(() => {
