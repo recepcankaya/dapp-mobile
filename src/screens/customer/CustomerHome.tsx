@@ -8,16 +8,16 @@ import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
-import supabase from "../../lib/supabase";
+import supabase, { secretSupabase } from "../../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 
 const positions = [
-  { top: -50, left: -50 },
-  { top: -50, right: -50 },
-  { bottom: -50, left: -50 },
-  { bottom: -50, right: -50 },
+  { top: -60, left: -60 },
+  { top: -60, right: -60 },
+  { bottom: -60, left: -60 },
+  { bottom: -60, right: -60 },
 ];
 
 const CustomerHome = () => {
@@ -25,16 +25,17 @@ const CustomerHome = () => {
   const userID = useUserStore((state) => state.user.id);
   const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
+  const ticketCircles = new Array(admin.numberForReward);
 
   const customerAddress = useAddress();
 
   const fetchUserOrderNumber = async () => {
     try {
-      // @todo - Burada user_missions tablosunda user_id ile eşleşen bütün verileri çekmiş oluyoruz ancak göreve özel bir veri çekmemiz gerekiyor.
       const { data, error } = await supabase
         .from("user_missions")
         .select("number_of_orders")
-        .eq("user_id", userID);
+        .eq("user_id", userID)
+        .eq("admin_id", admin.id);
       if (error) {
         console.log(error);
       } else {
@@ -45,11 +46,10 @@ const CustomerHome = () => {
     }
   };
 
-  const ticketCircles = new Array(admin.numberForReward).fill(userOrderNumber);
   const qrCodeValue = {
     userID,
     forNFT: false,
-    address: customerAddress
+    address: customerAddress,
   };
 
   useEffect(() => {
@@ -99,13 +99,6 @@ const CustomerHome = () => {
             contentContainerStyle={styles.circles}
             scrollEnabled={false}
             keyExtractor={(item, index) => index.toString()}
-          />
-          <FlatList
-            data={positions}
-            renderItem={(item) => (
-              <View style={[styles.blackCircles, item.item]} />
-            )}
-            keyExtractor={(index) => index.toString()}
           />
         </View>
       </View>

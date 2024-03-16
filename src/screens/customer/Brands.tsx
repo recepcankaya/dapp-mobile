@@ -21,12 +21,13 @@ const Brands = () => {
       const { data, error } = await secretSupabase
         .from("admins")
         .select(
-          "brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"
+          "id, brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"
         );
       if (error) {
         console.log(error);
       } else {
         const admins: Admin[] = data.map((item) => ({
+          id: item.id,
           brandName: item.brand_name,
           brandLogo: item.brand_logo_ipfs_url,
           numberForReward: item.number_for_reward,
