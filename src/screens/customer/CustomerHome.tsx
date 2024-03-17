@@ -57,7 +57,6 @@ const CustomerHome = () => {
     };
   }, [userOrderNumber]);
 
-  // @todo - renk green' e dönmüyor
   const ticketRenderItem = ({ index }: { index: number }) => {
     return (
       <View
