@@ -17,6 +17,7 @@ import {
   useContract,
   useMintNFT,
   useTransferNFT,
+  useSigner,
 } from "@thirdweb-dev/react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -78,9 +79,8 @@ const AdminCamera = () => {
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userID: string; forNFT: boolean, address: any } = JSON.parse(
-          codes[0].value
-        );
+        const parsedValue: { userID: string; forNFT: boolean; address: any } =
+          JSON.parse(codes[0].value);
         ({ userID, forNFT, address } = parsedValue);
       }
 
@@ -137,7 +137,7 @@ const AdminCamera = () => {
         } else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders <
-          numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
@@ -154,7 +154,7 @@ const AdminCamera = () => {
         else if (
           numberForReward &&
           userMissionInfo[0].number_of_orders ===
-          numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
           if (address) {

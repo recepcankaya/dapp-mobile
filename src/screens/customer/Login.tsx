@@ -123,8 +123,6 @@ const Login = () => {
       updateUser({
         id: user.id.toString(),
         username: user.username,
-        numberOfNFTs: 0,
-        orderNumber: 0,
       });
 
       if (isNewUser) {

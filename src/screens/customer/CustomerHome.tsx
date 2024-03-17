@@ -8,7 +8,7 @@ import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
-import supabase, { secretSupabase } from "../../lib/supabase";
+import supabase from "../../lib/supabase";
 import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
@@ -29,23 +29,6 @@ const CustomerHome = () => {
 
   const customerAddress = useAddress();
 
-  const fetchUserOrderNumber = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("user_missions")
-        .select("number_of_orders")
-        .eq("user_id", userID)
-        .eq("admin_id", admin.id);
-      if (error) {
-        console.log(error);
-      } else {
-        setUserOrderNumber(data[0]?.number_of_orders ?? 0);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const qrCodeValue = {
     userID,
     forNFT: false,
@@ -53,8 +36,26 @@ const CustomerHome = () => {
   };
 
   useEffect(() => {
-    fetchUserOrderNumber();
-  }, []);
+    const orders = supabase
+      .channel("orders-change-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_missions",
+          filter: `user_id: eq.${userID}, admin_id: eq.${admin.id}`,
+        },
+        (payload: any) => {
+          setUserOrderNumber(payload.new.number_of_orders);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(orders);
+    };
+  }, [userOrderNumber]);
 
   // @todo - renk green' e dönmüyor
   const ticketRenderItem = ({ index }: { index: number }) => {
