@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Image,
   FlatList,
   ScrollView,
+  Alert,
 } from "react-native";
 import {
   useOwnedNFTs,
@@ -24,32 +25,67 @@ import useUserStore from "../../store/userStore";
 import useAdminStore from "../../store/adminStore";
 import QrCodeModal from "../../ui/qrCodeModal";
 import colors from "../../ui/colors";
+import supabase from "../../lib/supabase";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
   const [qrCodeModalVisible, setQrCodeModalVisible] = useState<boolean>(false);
+  const [numberOfFreeRights, setNumberOfFreeRights] = useState<number[]>([]);
   const username = useUserStore((state) => state.user.username);
   const userID = useUserStore((state) => state.user.id);
+  const adminId = useAdminStore((state) => state.admin.id);
   const contractAddress = useAdminStore((state) => state.admin.contractAddress);
   const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
-  const notUsedContractAddress = useAdminStore(
-    (state) => state.admin.notUsedContractAddress
-  );
+
   const notUsedNFTSrc = useAdminStore((state) => state.admin.notUsedNFTSrc);
   const address = useAddress();
   const { contract: usedNFTContract } = useContract(contractAddress);
-  const { contract: notUsedNFTContract } = useContract(notUsedContractAddress);
   const {
     data: nftData,
     isLoading,
     error,
   } = useOwnedNFTs(usedNFTContract, address);
-  const {
-    data: nftDataNotUsed,
-    isLoading: isLoadingNotUsed,
-    error: errorNotUsed,
-  } = useOwnedNFTs(notUsedNFTContract, address);
 
+  const renderImages = async () => {
+    const { data, error } = await supabase
+      .from("user_missions")
+      .select("number_of_free_rights")
+      .eq("user_id", userID)
+      .eq("admin_id", adminId);
+    if (data) {
+      setNumberOfFreeRights(new Array(data[0].number_of_free_rights).fill(0));
+    } else {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    renderImages();
+  }, []);
+
+  useEffect(() => {
+    const numberOfFreeRights = supabase
+      .channel("orders-change-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_missions",
+          filter: `user_id=eq.${userID}`,
+        },
+        (payload: any) => {
+          setNumberOfFreeRights(
+            new Array(payload.new.number_of_free_rights).fill(0)
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(numberOfFreeRights);
+    };
+  }, [numberOfFreeRights]);
 
   // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
   return (
@@ -78,33 +114,29 @@ export default function Profile() {
         </View>
         <View style={styles.iconContainer}>
           {selectedTab === "Waiting" &&
-            (nftDataNotUsed && nftDataNotUsed?.length > 0 ? (
+            (numberOfFreeRights.length > 0 ? (
               <FlatList
-                data={nftDataNotUsed}
+                data={numberOfFreeRights}
                 scrollEnabled={false}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <View>
-                    {Array.from({ length: Number(item.quantityOwned) }).map(
-                      (_, i) => (
-                        <TouchableOpacity
-                          key={i}
-                          onPress={() => setQrCodeModalVisible(true)}>
-                          <Image
-                            source={{
-                              uri: notUsedNFTSrc.replace(
-                                "ipfs://",
-                                "https://ipfs.io/ipfs/"
-                              ),
-                            }}
-                            style={styles.icon}
-                            resizeMode="contain"
-                          />
-                        </TouchableOpacity>
-                      )
-                    )}
+                    <TouchableOpacity
+                      key={index.toString()}
+                      onPress={() => setQrCodeModalVisible(true)}>
+                      <Image
+                        source={{
+                          uri: notUsedNFTSrc.replace(
+                            "ipfs://",
+                            "https://ipfs.io/ipfs/"
+                          ),
+                        }}
+                        style={styles.icon}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
                   </View>
                 )}
-                keyExtractor={(item) => item.metadata.id + item.quantityOwned}
+                keyExtractor={(item, index) => index.toString()}
                 numColumns={1}
               />
             ) : (

@@ -12,13 +12,6 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import {
-  useAddress,
-  useContract,
-  useMintNFT,
-  useTransferNFT,
-  useSigner,
-} from "@thirdweb-dev/react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
@@ -74,8 +67,6 @@ const AdminCamera = () => {
         .select("number_for_reward")
         .eq("id", adminID);
 
-      console.log('userID', userID);
-      console.log('adminID', adminID);
       // If the order is for free, make request
       if (forNFT === true) {
         const result = await fetch(
@@ -93,6 +84,12 @@ const AdminCamera = () => {
         );
         const { success } = await result.json();
         if (success === true) {
+          let { data, error } = await supabase.rpc(
+            "decrement_user_missions_number_of_free_rights",
+            {
+              mission_id: userMissionInfo[0].id,
+            }
+          );
           Alert.alert("Müşteriniz ödülünüzü kullandı.");
         } else {
           Alert.alert(
@@ -104,22 +101,21 @@ const AdminCamera = () => {
 
       // If the order is not for free, check the number of orders
       else {
-        console.log('userMissionInfo', userMissionInfo?.length);
         if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
-          const { data, error } = await secretSupabase.from("user_missions").insert({
-            number_of_orders: 1,
-            user_id: userID,
-            admin_id: adminID,
-          });
-          console.log('data', data);
-          console.log('error', error);
+          const { data, error } = await secretSupabase
+            .from("user_missions")
+            .insert({
+              number_of_orders: 1,
+              user_id: userID,
+              admin_id: adminID,
+            });
           Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
           userMissionInfo &&
           userMissionInfo[0].number_of_orders <
-          numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
@@ -135,54 +131,41 @@ const AdminCamera = () => {
           numberForReward &&
           userMissionInfo &&
           userMissionInfo[0].number_of_orders ===
-          numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
           try {
-            const result = await fetch(
-              "https://mint-nft-js.vercel.app/waitingNFT",
+            const { data, error: incrementError } = await supabase.rpc(
+              "increment_user_missions_number_of_free_rights",
               {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  admin_id: adminID,
-                  user_wallet: address,
-                }),
+                mission_id: userMissionInfo[0].id,
               }
             );
-            console.log('here3', await result.json());
-            const { success } = await result.json();
-            if (success === true) {
-              const { error } = await secretSupabase
-                .from("user_missions")
-                .update({
-                  number_of_orders: 0,
-                })
-                .eq("user_id", userID)
-                .eq("admin_id", adminID);
 
-              console.log('here', error);
-              if (error) {
-                Alert.alert("Bir şeyler yanlış gitti.", "Lütfen tekrar deneyiniz.");
-              } else {
-                Alert.alert("Müşteriniz ödülünüzü kazandı.");
-              }
-            } else {
+            const { error: zeroError } = await secretSupabase
+              .from("user_missions")
+              .update({
+                number_of_orders: 0,
+              })
+              .eq("user_id", userID)
+              .eq("admin_id", adminID);
+
+            console.log("here", zeroError);
+            if (zeroError) {
               Alert.alert(
-                "Müşteri ödülünü kullanamadı.",
+                "Bir şeyler yanlış gitti.",
                 "Lütfen tekrar deneyiniz."
               );
+            } else {
+              Alert.alert("Müşteriniz ödülünüzü kazandı.");
             }
           } catch (error) {
-            console.log('error', error);
+            console.log("error", error);
             Alert.alert(
               "Müşteriye ödülü verilemedi.",
               "Lütfen tekrar deneyiniz."
             );
           }
-
         }
       }
     },
