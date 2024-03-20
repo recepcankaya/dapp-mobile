@@ -16,8 +16,8 @@ import supabase from "../../lib/supabase";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("aotur@ladderit.app");
+  const [password, setPassword] = useState("1234abcd");
   const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
   const admin = useAdminForAdminStore((state) => state.admin);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();

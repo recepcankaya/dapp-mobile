@@ -9,7 +9,7 @@ import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
 import supabase from "../../lib/supabase";
-import { useAddress } from "@thirdweb-dev/react-native";
+import { useAddress, useContract } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 
@@ -26,6 +26,19 @@ const CustomerHome = () => {
   const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
   const ticketCircles = new Array(admin.numberForReward);
+
+  const { contract } = useContract(admin.notUsedContractAddress);
+
+  const handleApprove = async () => {
+    if (customerAddress && contract) {
+      const isApproved = await contract.erc1155.isApproved(customerAddress, "0x58BC2AdE1d6341d363Da428f735d0d6dEF5eB661")
+      if (!isApproved) await contract.erc1155.setApprovalForAll("0x58BC2AdE1d6341d363Da428f735d0d6dEF5eB661", true)
+    }
+  }
+  useEffect(() => {
+    console.log('admin.notUsedContractAddress', admin.notUsedContractAddress)
+    handleApprove();
+  }, []);
 
   const customerAddress = useAddress();
 
