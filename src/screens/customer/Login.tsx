@@ -23,7 +23,6 @@ import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
 
 const Login = () => {
-  const address = useAddress();
   const signer = useSigner();
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
@@ -141,7 +140,7 @@ const Login = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.form}>
-        {address ? (
+        {walletAddr ? (
           <>
             <Text style={styles.header}>Girişiniz yapılmıştır.</Text>
             <Text style={styles.subheader}>
