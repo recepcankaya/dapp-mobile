@@ -1,14 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  ThirdwebProvider,
-  metamaskWallet,
-  coinbaseWallet,
-  trustWallet,
-  rainbowWallet,
-  walletConnect,
-  embeddedWallet,
-} from "@thirdweb-dev/react-native";
+import { ThirdwebProvider, embeddedWallet } from "@thirdweb-dev/react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import {
@@ -18,7 +10,12 @@ import {
   UserInfo,
   Profile,
 } from "./src/screens/customer";
-import { AdminCamera, AdminHome, AdminLogin, AdminNewPassword } from "./src/screens/admin";
+import {
+  AdminCamera,
+  AdminHome,
+  AdminLogin,
+  AdminNewPassword,
+} from "./src/screens/admin";
 import colors from "./src/ui/colors";
 import { Image } from "react-native";
 
