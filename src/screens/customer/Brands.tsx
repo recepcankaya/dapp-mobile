@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -42,11 +42,12 @@ const Brands = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchAdmins();
   }, []);
 
-  const selectBrand = (item: Admin) => {
+  const selectBrand = async (item: Admin, index: number) => {
     updateAdmin(item);
     navigation.navigate("TabNavigator");
   };
@@ -56,10 +57,10 @@ const Brands = () => {
       <FlatList
         data={admins}
         extraData={admins}
-        renderItem={({ item }: { item: Admin }) => (
+        renderItem={({ item, index }: { item: Admin, index: number }) => (
           <TouchableOpacity
             style={styles.brand}
-            onPress={() => selectBrand(item)}>
+            onPress={() => selectBrand(item, index)}>
             <Image
               source={{
                 uri: item.brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),

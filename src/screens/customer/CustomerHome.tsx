@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image, FlatList } from "react-native";
+import { useAddress } from "@thirdweb-dev/react-native";
 import QRCode from "react-qr-code";
 
 import useUserStore from "../../store/userStore";
@@ -9,7 +10,6 @@ import Text from "../../ui/customText";
 import colors from "../../ui/colors";
 import useAdminStore from "../../store/adminStore";
 import supabase, { secretSupabase } from "../../lib/supabase";
-import { useAddress } from "@thirdweb-dev/react-native";
 
 const logo = require("../../assets/LadderLogo.png");
 
@@ -26,25 +26,7 @@ const CustomerHome = () => {
   const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
   const ticketCircles = new Array(admin.numberForReward);
-
   const customerAddress = useAddress();
-
-  const fetchUserOrderNumber = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("user_missions")
-        .select("number_of_orders")
-        .eq("user_id", userID)
-        .eq("admin_id", admin.id);
-      if (error) {
-        console.log(error);
-      } else {
-        setUserOrderNumber(data[0]?.number_of_orders ?? 0);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const qrCodeValue = {
     userID,
@@ -52,11 +34,46 @@ const CustomerHome = () => {
     address: customerAddress,
   };
 
+  const renderTickets = async () => {
+    const { data, error } = await supabase
+      .from("user_missions")
+      .select("number_of_orders")
+      .eq("user_id", userID)
+      .eq("admin_id", admin.id);
+    if (data) {
+      setUserOrderNumber(data[0].number_of_orders);
+    } else {
+      console.log("error", error);
+    }
+  };
+
   useEffect(() => {
-    fetchUserOrderNumber();
+    renderTickets();
   }, []);
 
-  // @todo - renk green' e dönmüyor
+  useEffect(() => {
+    const orders = supabase
+      .channel("orders-change-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_missions",
+          filter: `user_id=eq.${userID}`,
+        },
+        (payload: any) => {
+          console.log("payload", payload.new);
+          setUserOrderNumber(payload.new.number_of_orders);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(orders);
+    };
+  }, [userOrderNumber]);
+
   const ticketRenderItem = ({ index }: { index: number }) => {
     return (
       <View

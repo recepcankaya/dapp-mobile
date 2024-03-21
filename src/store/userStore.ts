@@ -3,8 +3,6 @@ import { create } from "zustand";
 export type User = {
   id: string;
   username: string;
-  numberOfNFTs: number;
-  orderNumber: number;
 };
 
 type State = {
@@ -19,8 +17,6 @@ const useUserStore = create<State & Action>((set) => ({
   user: {
     id: "",
     username: "",
-    numberOfNFTs: 0,
-    orderNumber: 0,
   },
   setUser: (user) => set(() => ({ user: user })),
 }));

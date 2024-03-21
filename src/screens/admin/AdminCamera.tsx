@@ -12,12 +12,6 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from "react-native-vision-camera";
-import {
-  useAddress,
-  useContract,
-  useMintNFT,
-  useTransferNFT,
-} from "@thirdweb-dev/react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
@@ -28,31 +22,8 @@ import supabase, { secretSupabase } from "../../lib/supabase";
 
 const AdminCamera = () => {
   const adminID = useAdminForAdminStore((state) => state.admin.adminId);
-  const brandName = useAdminForAdminStore((state) => state.admin.brandName);
-  const contractAddress = useAdminForAdminStore(
-    (state) => state.admin.contractAddress
-  );
-  const NFTSrc = useAdminForAdminStore((state) => state.admin.NFTSrc);
-  const notUsedNFTSrc = useAdminForAdminStore(
-    (state) => state.admin.notUsedNFTSrc
-  );
-  const notUsedContractAddress = useAdminForAdminStore(
-    (state) => state.admin.notUsedContractAddress
-  );
-  const customerAddress = useAddress();
-  const { contract } = useContract(contractAddress);
-  const { contract: notUsedContract } = useContract(notUsedContractAddress);
-  const {
-    mutateAsync: mintNft,
-    isLoading,
-    isError: mintNftError,
-  } = useMintNFT(contract);
-  const { mutateAsync: mintNotUsedNft } = useMintNFT(notUsedContract);
-  const { mutateAsync: burnNFTUsingTransfer } = useTransferNFT(notUsedContract);
   const { hasPermission, requestPermission } = useCameraPermission();
-
   const cameraRef = useRef<Camera>(null);
-
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   let qrCodeValue = [];
@@ -78,49 +49,51 @@ const AdminCamera = () => {
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userID: string; forNFT: boolean, address: any } = JSON.parse(
-          codes[0].value
-        );
+        const parsedValue: { userID: string; forNFT: boolean; address: any } =
+          JSON.parse(codes[0].value);
         ({ userID, forNFT, address } = parsedValue);
       }
-
       // get number_of_orders from user_missions table
-      const { data: userMissionInfo, error: errorUserMissionInfo } =
-        await secretSupabase
-          .from("user_missions")
-          .select("number_of_orders, id")
-          .eq("user_id", userID)
-          .eq("admin_id", adminID);
-
+      const { data: userMissionInfo } = await supabase
+        .from("user_missions")
+        .select("number_of_orders, id")
+        .eq("user_id", userID)
+        .eq("admin_id", adminID);
       // get number_for_reward from admin table
-      const { data: numberForReward, error: errorNumberForReward } =
-        await secretSupabase
-          .from("admins")
-          .select("number_for_reward")
-          .eq("id", adminID);
+      const { data: numberForReward } = await supabase
+        .from("admins")
+        .select("number_for_reward")
+        .eq("id", adminID);
 
-      // If the order is for free, check the user's free right
-      if (forNFT === true) {
-        if (userMissionInfo && customerAddress) {
-          // We will mint new NFT for the collection
-          mintNft({
-            metadata: {
-              name: brandName,
-              description: "",
-              image: NFTSrc,
+      // If the order is for free, make request
+      if (forNFT === true && userMissionInfo) {
+        const result = await fetch(
+          "https://mint-nft-js.vercel.app/collectionNFT",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-            to: customerAddress,
-          });
-          // After minted the NFT, we will burn old NFT using transfer to 0x0 address
-          burnNFTUsingTransfer({
-            to: "0x0000000000000000000000000000000000000000",
-            tokenId: 0,
-            amount: 1,
-          });
-          Alert.alert("Müşterinize ödülünüzü verebilirsiniz.");
-          await secretSupabase.from("user_missions").delete().eq("id", userID);
+            body: JSON.stringify({
+              admin_id: adminID,
+              user_wallet: address,
+            }),
+          }
+        );
+        const { success } = await result.json();
+        if (success === true) {
+          let { data, error } = await supabase.rpc(
+            "decrement_user_missions_number_of_free_rights",
+            {
+              mission_id: userMissionInfo[0].id,
+            }
+          );
+          Alert.alert("Müşteriniz ödülünüzü kullandı.");
         } else {
-          Alert.alert("Bir sorun oluştu.", "Lütfen tekrar deneyiniz.");
+          Alert.alert(
+            "Müşteri ödülünü kullanamadı.",
+            "Lütfen tekrar deneyiniz."
+          );
         }
       }
 
@@ -128,14 +101,17 @@ const AdminCamera = () => {
       else {
         if (userMissionInfo?.length === 0) {
           // If the user does not have a record in the user_missions table, add a new record
-          await secretSupabase.from("user_missions").insert({
-            number_of_orders: 1,
-            user_id: userID,
-            admin_id: adminID,
-          });
+          const { data, error } = await secretSupabase
+            .from("user_missions")
+            .insert({
+              number_of_orders: 1,
+              user_id: userID,
+              admin_id: adminID,
+            });
           Alert.alert("İşlem başarıyla gerçekleşti.");
         } else if (
           numberForReward &&
+          userMissionInfo &&
           userMissionInfo[0].number_of_orders <
           numberForReward[0].number_for_reward - 1
         ) {
@@ -149,32 +125,44 @@ const AdminCamera = () => {
           if (error) console.error(error);
           else console.log(data);
           Alert.alert("İşlem başarıyla gerçekleşti.");
-        }
-        // @todo - bug burada. kod bloğu burada çalışmıyor.
-        else if (
+        } else if (
           numberForReward &&
+          userMissionInfo &&
           userMissionInfo[0].number_of_orders ===
           numberForReward[0].number_for_reward - 1
         ) {
-          // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, mint the NFT and reset the number of orders
-          if (address) {
-            await secretSupabase
+          // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
+          try {
+            const { data, error: incrementError } = await supabase.rpc(
+              "increment_user_missions_number_of_free_rights",
+              {
+                mission_id: userMissionInfo[0].id,
+              }
+            );
+
+            const { error: zeroError } = await secretSupabase
               .from("user_missions")
               .update({
                 number_of_orders: 0,
               })
               .eq("user_id", userID)
               .eq("admin_id", adminID);
-            mintNotUsedNft({
-              metadata: {
-                name: brandName,
-                description: "",
-                image: notUsedNFTSrc,
-              },
-              to: address,
-              supply: 1,
-            });
-            Alert.alert("Müşteriniz ödülünüzü kazandı.");
+
+            console.log("here", zeroError);
+            if (zeroError) {
+              Alert.alert(
+                "Bir şeyler yanlış gitti.",
+                "Lütfen tekrar deneyiniz."
+              );
+            } else {
+              Alert.alert("Müşteriniz ödülünüzü kazandı.");
+            }
+          } catch (error) {
+            console.log("error", error);
+            Alert.alert(
+              "Müşteriye ödülü verilemedi.",
+              "Lütfen tekrar deneyiniz."
+            );
           }
         }
       }
