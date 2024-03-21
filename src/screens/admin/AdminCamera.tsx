@@ -53,14 +53,12 @@ const AdminCamera = () => {
           JSON.parse(codes[0].value);
         ({ userID, forNFT, address } = parsedValue);
       }
-
       // get number_of_orders from user_missions table
       const { data: userMissionInfo } = await supabase
         .from("user_missions")
         .select("number_of_orders, id")
         .eq("user_id", userID)
         .eq("admin_id", adminID);
-
       // get number_for_reward from admin table
       const { data: numberForReward } = await supabase
         .from("admins")
@@ -68,7 +66,7 @@ const AdminCamera = () => {
         .eq("id", adminID);
 
       // If the order is for free, make request
-      if (forNFT === true) {
+      if (forNFT === true && userMissionInfo) {
         const result = await fetch(
           "https://mint-nft-js.vercel.app/collectionNFT",
           {
@@ -115,7 +113,7 @@ const AdminCamera = () => {
           numberForReward &&
           userMissionInfo &&
           userMissionInfo[0].number_of_orders <
-            numberForReward[0].number_for_reward - 1
+          numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           let { data, error } = await supabase.rpc(
@@ -131,7 +129,7 @@ const AdminCamera = () => {
           numberForReward &&
           userMissionInfo &&
           userMissionInfo[0].number_of_orders ===
-            numberForReward[0].number_for_reward - 1
+          numberForReward[0].number_for_reward - 1
         ) {
           // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
           try {
