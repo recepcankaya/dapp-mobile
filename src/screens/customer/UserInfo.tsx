@@ -45,8 +45,6 @@ const UserInfo = () => {
         updateUser({
           id: user[0].id,
           username: user[0].username,
-          numberOfNFTs: 0,
-          orderNumber: 0,
         });
         navigation.navigate("Brands");
         Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");

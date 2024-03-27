@@ -12,11 +12,10 @@ import {
   ConnectEmbed,
   useSigner,
   useWallet,
-  useDisconnect,
 } from "@thirdweb-dev/react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
-import { ethers } from "ethers";
+import { utils } from "ethers";
 import { sha512 } from "js-sha512";
 
 import supabase from "../../lib/supabase";
@@ -24,11 +23,9 @@ import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
 
 const Login = () => {
-  const address = useAddress();
   const signer = useSigner();
   const walletAddr = useAddress();
   const embeddedWallet = useWallet("embeddedWallet");
-  const disconnect = useDisconnect();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const updateUser = useUserStore((state) => state.setUser);
 
@@ -108,7 +105,7 @@ const Login = () => {
         if (!signature) {
           throw new Error("Signature is undefined");
         }
-        const signerAddr = ethers.utils.verifyMessage(nonce, signature);
+        const signerAddr = utils.verifyMessage(nonce, signature);
         if (signerAddr !== walletAddr) {
           throw new Error("Signature verification failed.");
         }
@@ -143,7 +140,7 @@ const Login = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="transparent" translucent={true} />
       <View style={styles.form}>
-        {address ? (
+        {walletAddr ? (
           <>
             <Text style={styles.header}>Girişiniz yapılmıştır.</Text>
             <Text style={styles.subheader}>
@@ -163,11 +160,6 @@ const Login = () => {
           />
         )}
       </View>
-      {/* <TouchableOpacity
-        onPress={() => disconnect()}
-        style={styles.businessButton}>
-        <Text style={styles.businessText}>Disconnect</Text>
-      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Admin Login")}
         style={styles.businessButton}>

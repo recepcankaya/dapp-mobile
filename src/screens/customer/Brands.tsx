@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -57,7 +57,7 @@ const Brands = () => {
       <FlatList
         data={admins}
         extraData={admins}
-        renderItem={({ item, index }: { item: Admin, index: number }) => (
+        renderItem={({ item, index }: { item: Admin; index: number }) => (
           <TouchableOpacity
             style={styles.brand}
             onPress={() => selectBrand(item, index)}>
