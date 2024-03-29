@@ -9,6 +9,7 @@ import {
   Login,
   UserInfo,
   Profile,
+  Loading
 } from "./src/screens/customer";
 import {
   AdminCamera,
@@ -64,6 +65,8 @@ const TabNavigator = () => {
 };
 
 function App() {
+
+
   return (
     <ThirdwebProvider
       activeChain="polygon"
@@ -89,9 +92,14 @@ function App() {
           },
         }),
       ]}
-      autoConnect={true}>
+      autoConnect={false}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Loading">
+          <Stack.Screen
+            name="Loading"
+            component={Loading}
+            options={{ headerShown: false }} // Hide navigation bar
+          />
           <Stack.Screen
             name="Login"
             component={Login}
