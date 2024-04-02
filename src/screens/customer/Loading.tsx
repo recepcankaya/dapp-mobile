@@ -31,19 +31,14 @@ const Loading = () => {
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session)
+            checkLogin(session);
         })
-
         supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
+            setSession(session);
         })
     }, []);
 
-    useEffect(() => {
-        checkLogin();
-    }, [session])
-
-    const checkLogin = async () => {
-        console.log('session', session);
+    const checkLogin = async (session: Session | null) => {
         AsyncStorage.getAllKeys().then((keys) => {
             console.log('keys', keys);
         })
@@ -91,14 +86,14 @@ const Loading = () => {
                         ]
                     }))
                 }
-                return navigation.dispatch(CommonActions.reset({
-                    index: 0,
-                    routes: [
-                        { name: 'Login' }
-                    ]
-                }))
             }
         }
+        return navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [
+                { name: 'Login' }
+            ]
+        }))
     }
 
     return (
