@@ -4,7 +4,7 @@ import { Session } from "@supabase/supabase-js";
 import useUserStore from "../../store/userStore";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, AppState, ActivityIndicator } from "react-native";
+import { StyleSheet, AppState, ActivityIndicator, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CommonActions } from '@react-navigation/native';
@@ -13,7 +13,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 AppState.addEventListener('change', (state) => {
-    console.log('state', state);
     if (state === 'active') {
         supabase.auth.startAutoRefresh();
     } else {
@@ -39,20 +38,13 @@ const Loading = () => {
     }, []);
 
     const checkLogin = async (session: Session | null) => {
-        AsyncStorage.getAllKeys().then((keys) => {
-            console.log('keys', keys);
-        })
         if (session && session.user) {
-            const { data: user, error } = await supabase
+            const { data: user } = await supabase
                 .from("users")
-                .select("*")
+                .select("id, username")
                 .eq("id", session.user.id)
                 .single();
-            if (error) {
-                console.log('userError', error);
-            }
             if (user) {
-                console.log('user', user);
                 userUpdate({
                     id: user.id.toString(),
                     username: user.username,
@@ -65,16 +57,12 @@ const Loading = () => {
                 }))
             }
             else {
-                const { data: adminUser, error } = await supabase
+                const { data: adminUser } = await supabase
                     .from("admins")
                     .select("*")
                     .eq("id", session.user.id)
                     .single();
-                if (error) {
-                    console.log('adminError', error);
-                }
                 if (adminUser) {
-                    console.log('admin', adminUser);
                     updateAdmin({
                         ...admin,
                         adminId: adminUser.id,
