@@ -3,7 +3,10 @@ export type LatLng = {
   lng: number;
 };
 
-function haversine(userLocation: LatLng, storeLocation: LatLng): number {
+export const haversine = (
+  userLocation: LatLng,
+  storeLocation: LatLng
+): number => {
   const R: number = 6371.0;
 
   // Derece cinsinden koordinatları radyan cinsine dönüştürme
@@ -29,4 +32,4 @@ function haversine(userLocation: LatLng, storeLocation: LatLng): number {
   const distance: number = R * c;
 
   return distance;
-}
+};

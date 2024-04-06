@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -8,12 +8,15 @@ import useAdminStore, { Admin } from "../../store/adminStore";
 import { widthConstant } from "../../ui/responsiveScreen";
 import colors from "../..//ui/colors";
 import { secretSupabase } from "../../lib/supabase";
+import Geolocation, { GeolocationResponse } from '@react-native-community/geolocation';
+import { haversine } from "../../lib/haversine";
 
 const Brands = () => {
   const admins = useAdminStore((state) => state.admins);
   const updateAdmin = useAdminStore((state) => state.updateAdmin);
   const updateAdmins = useAdminStore((state) => state.updateAdmins);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const [customerLocation, setCustomerLocation] = useState<{ lat: number, long: number }>({ lat: 0, long: 0 })
 
   const fetchAdmins = async () => {
     try {
@@ -21,7 +24,7 @@ const Brands = () => {
       const { data, error } = await secretSupabase
         .from("admins")
         .select(
-          "id, brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address"
+          "id, brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address, coords"
         );
       if (error) {
         console.log(error);
@@ -35,6 +38,10 @@ const Brands = () => {
           contractAddress: item.contract_address,
           notUsedNFTSrc: item.not_used_nft_src,
           notUsedContractAddress: item.not_used_contract_address,
+          coords: {
+            lat: item.coords.lat,
+            long: item.coords.long,
+          }
         }));
         updateAdmins(admins);
       }
@@ -44,8 +51,18 @@ const Brands = () => {
   };
 
   useEffect(() => {
+    Geolocation.getCurrentPosition((info: GeolocationResponse) => setCustomerLocation({ lat: info.coords.latitude, long: info.coords.longitude }));
     fetchAdmins();
   }, []);
+
+  useEffect(() => {
+    const sortedAdmins: Admin[] = admins.sort((a, b): any => {
+      const distanceA = haversine({ lat: customerLocation.lat, lng: customerLocation.long }, { lat: a.coords.lat, lng: a.coords.long });
+      const distanceB = haversine({ lat: customerLocation.lat, lng: customerLocation.long }, { lat: b.coords.lat, lng: b.coords.long });
+      return distanceA - distanceB;
+    })
+    updateAdmins(sortedAdmins);
+  }, [customerLocation]);
 
   const selectBrand = async (item: Admin, index: number) => {
     updateAdmin(item);
