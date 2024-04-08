@@ -6,20 +6,21 @@ import {
   TouchableOpacity,
   TextInput,
   View,
+  Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
-
-import useAdminStore, { Admin } from "../../store/adminStore";
-import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
-import colors from "../..//ui/colors";
-import { secretSupabase } from "../../lib/supabase";
 import Geolocation, {
   GeolocationResponse,
 } from "@react-native-community/geolocation";
+import Icon from "react-native-vector-icons/Ionicons";
+
+import useAdminStore, { Admin } from "../../store/adminStore";
+import { secretSupabase } from "../../lib/supabase";
 import { haversine } from "../../lib/haversine";
+import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
+import colors from "../..//ui/colors";
 
 const Brands = () => {
   const [searchedAdmin, setSearchedAdmin] = useState<string>("");
@@ -57,11 +58,25 @@ const Brands = () => {
             long: item.coords.long,
           },
         }));
-        updateAdmins(admins);
+        if (searchedAdmin.length > 0) {
+          const filteredAdmins = admins.filter(searchAdmin);
+          updateAdmins(filteredAdmins);
+        } else {
+          updateAdmins(admins);
+        }
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const searchAdmin = (admin: Admin) => {
+    return admin.brandName.toLowerCase().includes(searchedAdmin.toLowerCase());
+  };
+
+  const selectBrand = async (item: Admin, index: number) => {
+    updateAdmin(item);
+    navigation.navigate("TabNavigator");
   };
 
   useEffect(() => {
@@ -72,7 +87,7 @@ const Brands = () => {
     //   })
     // );
     fetchAdmins();
-  }, []);
+  }, [searchedAdmin]);
 
   // useEffect(() => {
   //   const sortedAdmins: Admin[] = admins.sort((a, b): any => {
@@ -88,11 +103,6 @@ const Brands = () => {
   //   });
   //   updateAdmins(sortedAdmins);
   // }, [customerLocation]);
-
-  const selectBrand = async (item: Admin, index: number) => {
-    updateAdmin(item);
-    navigation.navigate("TabNavigator");
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -122,6 +132,9 @@ const Brands = () => {
               }}
               style={styles.brandImage}
             />
+            <Text style={{ color: colors.white, marginTop: 10 }}>
+              {item.brandName}
+            </Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item, index) => index.toString()}
@@ -142,7 +155,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     width: 350 * widthConstant,
     height: 50 * heightConstant,
-    marginBottom: 20 * heightConstant,
+    marginBottom: 50 * heightConstant,
     justifyContent: "center",
   },
   searchBar: {
@@ -167,6 +180,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 30 * widthConstant,
+    marginBottom: 40 * heightConstant,
   },
   brandImage: {
     width: "100%",
