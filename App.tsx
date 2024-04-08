@@ -9,7 +9,7 @@ import {
   Login,
   UserInfo,
   Profile,
-  Loading
+  Loading,
 } from "./src/screens/customer";
 import {
   AdminCamera,
@@ -19,6 +19,7 @@ import {
 } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 import { Image } from "react-native";
+import Toast from "react-native-toast-message";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -65,8 +66,6 @@ const TabNavigator = () => {
 };
 
 function App() {
-
-
   return (
     <ThirdwebProvider
       activeChain="polygon"
@@ -142,6 +141,7 @@ function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </ThirdwebProvider>
   );
 }

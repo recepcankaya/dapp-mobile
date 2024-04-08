@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
   Text,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +22,7 @@ import { secretSupabase } from "../../lib/supabase";
 import { haversine } from "../../lib/haversine";
 import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import colors from "../..//ui/colors";
+import { errorToast } from "../../ui/toast";
 
 const Brands = () => {
   const [searchedAdmin, setSearchedAdmin] = useState<string>("");
@@ -42,7 +44,10 @@ const Brands = () => {
           "id, brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address, coords"
         );
       if (error) {
-        console.log(error);
+        errorToast(
+          "Kafeleri gösterirken bir sorun oluştu.",
+          "Lütfen tekrar dener misiniz 👉👈."
+        );
       } else {
         const admins: Admin[] = data.map((item) => ({
           id: item.id,
@@ -66,7 +71,10 @@ const Brands = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      errorToast(
+        "Bunu biz de beklemiyorduk 🤔",
+        "Lütfen tekrar dener misiniz 👉👈"
+      );
     }
   };
 
@@ -106,6 +114,7 @@ const Brands = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={colors.black} />
       <View style={styles.searchContainer}>
         <Icon
           name="search"
