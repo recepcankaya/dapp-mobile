@@ -1,38 +1,31 @@
 import { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  View,
-  Text,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, FlatList, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import Geolocation, {
   GeolocationResponse,
 } from "@react-native-community/geolocation";
-import Icon from "react-native-vector-icons/Ionicons";
+
+import BrandsList from "../../components/customer/brands/BrandsList";
+import BrandsSearch from "../../components/customer/brands/BrandsSearch";
 
 import useAdminStore, { Admin } from "../../store/adminStore";
 import { secretSupabase } from "../../lib/supabase";
 import { haversine } from "../../lib/haversine";
-import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
-import colors from "../..//ui/colors";
+import { heightConstant } from "../../ui/responsiveScreen";
 import { errorToast } from "../../ui/toast";
+import colors from "../../ui/colors";
 
 const Brands = () => {
+  const [admins, updateAdmins] = useState<Admin[]>([]);
+  const [sortedAdmins, setSortedAdmins] = useState<Admin[]>([]);
   const [searchedAdmin, setSearchedAdmin] = useState<string>("");
   const [customerLocation, setCustomerLocation] = useState<{
     lat: number;
     long: number;
-  }>({ lat: 0, long: 0 });
-  const updateAdmins = useAdminStore((state) => state.updateAdmins);
+  } | null>(null);
   const updateAdmin = useAdminStore((state) => state.updateAdmin);
-  const admins = useAdminStore((state) => state.admins);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const fetchAdmins = async () => {
@@ -78,73 +71,69 @@ const Brands = () => {
     }
   };
 
+  /**
+   * Searches for an admin based on the brand name.
+   * @param admin - The admin object to search.
+   * @returns True if the admin's brand name includes the searched admin, false otherwise.
+   */
   const searchAdmin = (admin: Admin) => {
     return admin.brandName.toLowerCase().includes(searchedAdmin.toLowerCase());
   };
 
+  /**
+   * Selects a brand and updates the admin state.
+   * @param item - The selected admin item.
+   * @param index - The index of the selected admin item.
+   */
   const selectBrand = async (item: Admin, index: number) => {
     updateAdmin(item);
     navigation.navigate("TabNavigator");
   };
 
   useEffect(() => {
-    // Geolocation.getCurrentPosition((info: GeolocationResponse) =>
-    //   setCustomerLocation({
-    //     lat: info.coords.latitude,
-    //     long: info.coords.longitude,
-    //   })
-    // );
+    Geolocation.getCurrentPosition((info: GeolocationResponse) => {
+      setCustomerLocation({
+        lat: info.coords.latitude,
+        long: info.coords.longitude,
+      });
+    });
     fetchAdmins();
   }, [searchedAdmin]);
 
-  // useEffect(() => {
-  //   const sortedAdmins: Admin[] = admins.sort((a, b): any => {
-  //     const distanceA = haversine(
-  //       { lat: customerLocation.lat, lng: customerLocation.long },
-  //       { lat: a.coords.lat, lng: a.coords.long }
-  //     );
-  //     const distanceB = haversine(
-  //       { lat: customerLocation.lat, lng: customerLocation.long },
-  //       { lat: b.coords.lat, lng: b.coords.long }
-  //     );
-  //     return distanceA - distanceB;
-  //   });
-  //   updateAdmins(sortedAdmins);
-  // }, [customerLocation]);
+  /**
+   * Sorts the array of admins based on their distance from the customer's location.
+   * @param admins - The array of admins to be sorted.
+   * @param customerLocation - The coordinates of the customer's location.
+   * @returns The sorted array of admins.
+   */
+  useEffect(() => {
+    if (!customerLocation) return;
+    const sorted: Admin[] = [...admins].sort((a, b): any => {
+      const distanceA = haversine(
+        { lat: customerLocation.lat, lng: customerLocation.long },
+        { lat: a.coords.lat, lng: a.coords.long }
+      );
+      const distanceB = haversine(
+        { lat: customerLocation.lat, lng: customerLocation.long },
+        { lat: b.coords.lat, lng: b.coords.long }
+      );
+      return distanceA - distanceB;
+    });
+    setSortedAdmins(sorted);
+  }, [customerLocation, admins]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={colors.black} />
-      <View style={styles.searchContainer}>
-        <Icon
-          name="search"
-          color="#808080"
-          size={20 * heightConstant}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          value={searchedAdmin}
-          onChangeText={setSearchedAdmin}
-          style={styles.searchBar}
-        />
-      </View>
+      <BrandsSearch
+        searchedAdmin={searchedAdmin}
+        setSearchedAdmin={setSearchedAdmin}
+      />
       <FlatList
-        data={admins}
-        extraData={admins}
+        data={customerLocation ? sortedAdmins : admins}
+        extraData={customerLocation ? sortedAdmins : admins}
         renderItem={({ item, index }: { item: Admin; index: number }) => (
-          <TouchableOpacity
-            style={styles.brand}
-            onPress={() => selectBrand(item, index)}>
-            <Image
-              source={{
-                uri: item.brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
-              }}
-              style={styles.brandImage}
-            />
-            <Text style={{ color: colors.white, marginTop: 10 }}>
-              {item.brandName}
-            </Text>
-          </TouchableOpacity>
+          <BrandsList item={item} index={index} selectBrand={selectBrand} />
         )}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
@@ -160,45 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 50 * heightConstant,
-  },
-  searchContainer: {
-    width: 350 * widthConstant,
-    height: 50 * heightConstant,
-    marginBottom: 50 * heightConstant,
-    justifyContent: "center",
-  },
-  searchBar: {
-    width: "100%",
-    height: "100%",
-    color: colors.white,
-    fontSize: 18 * heightConstant,
-    borderColor: colors.pink,
-    borderWidth: 1,
-    borderRadius: 50,
-    paddingLeft: 40 * widthConstant,
-  },
-  searchIcon: {
-    position: "absolute",
-    top: "50%",
-    transform: [{ translateY: -10 }],
-    marginLeft: 10 * widthConstant,
-  },
-  brand: {
-    width: 130 * widthConstant,
-    height: 130 * widthConstant,
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 30 * widthConstant,
-    marginBottom: 40 * heightConstant,
-  },
-  brandImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-    borderWidth: 2,
-    borderRadius: 20,
-    borderColor: colors.pink,
-    aspectRatio: 1,
   },
 });
 

@@ -22,7 +22,6 @@ type State = {
 
 type Action = {
   updateAdmin: (admin: State["admin"]) => void;
-  updateAdmins: (admins: State["admins"]) => void;
 };
 
 const useAdminStore = create<State & Action>((set) => ({
@@ -42,10 +41,6 @@ const useAdminStore = create<State & Action>((set) => ({
   },
   admins: [],
   updateAdmin: (admin) => set(() => ({ admin })),
-  updateAdmins: (admins) =>
-    set(() => ({
-      admins,
-    })),
 }));
 
 export default useAdminStore;
