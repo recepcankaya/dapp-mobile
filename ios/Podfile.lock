@@ -65,9 +65,9 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.10)
   - hermes-engine/Pre-built (0.72.10)
   - libevent (2.1.12)
-  - MMKV (1.3.3):
-    - MMKVCore (~> 1.3.3)
-  - MMKVCore (1.3.3)
+  - MMKV (1.3.4):
+    - MMKVCore (~> 1.3.4)
+  - MMKVCore (1.3.4)
   - OpenSSL-Universal (1.1.2200)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -91,7 +91,7 @@ PODS:
     - FBLazyVector (= 0.72.10)
     - RCTRequired (= 0.72.10)
     - React-Core (= 0.72.10)
-  - ReachabilitySwift (5.0.0)
+  - ReachabilitySwift (5.2.1)
   - React (0.72.10):
     - React-Core (= 0.72.10)
     - React-Core/DevSupport (= 0.72.10)
@@ -372,14 +372,16 @@ PODS:
     - glog
   - react-native-aes-gcm-crypto (0.2.2):
     - React-Core
+  - react-native-geolocation (3.2.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - react-native-get-random-values (1.9.0):
     - React-Core
-  - react-native-mmkv (2.12.1):
+  - react-native-mmkv (2.12.2):
     - MMKV (>= 1.3.3)
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-netinfo (9.3.10):
-    - React-Core
-  - react-native-quick-base64 (2.0.8):
     - React-Core
   - react-native-quick-crypto (0.6.1):
     - OpenSSL-Universal
@@ -504,9 +506,9 @@ PODS:
     - React-jsi (= 0.72.10)
     - React-logger (= 0.72.10)
     - React-perflogger (= 0.72.10)
-  - RNAWSCognito (6.3.12):
+  - RNAWSCognito (6.3.13):
     - React-Core
-  - RNCAsyncStorage (1.18.2):
+  - RNCAsyncStorage (1.23.1):
     - React-Core
   - RNGestureHandler (2.12.1):
     - React-Core
@@ -518,7 +520,7 @@ PODS:
   - RNSVG (13.9.0):
     - React-Core
   - SocketRocket (0.6.1)
-  - VisionCamera (3.9.1):
+  - VisionCamera (3.9.2):
     - React
     - React-callinvoker
     - React-Core
@@ -567,10 +569,10 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-aes-gcm-crypto (from `../node_modules/react-native-aes-gcm-crypto`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
-  - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
   - react-native-quick-crypto (from `../node_modules/react-native-quick-crypto`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -693,14 +695,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-aes-gcm-crypto:
     :path: "../node_modules/react-native-aes-gcm-crypto"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
-  react-native-quick-base64:
-    :path: "../node_modules/react-native-quick-base64"
   react-native-quick-crypto:
     :path: "../node_modules/react-native-quick-crypto"
   react-native-randombytes:
@@ -787,13 +789,13 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 90e4033deb00bee33330a9f15eff0f874bd82f6d
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MMKV: f902fb6719da13c2ab0965233d8963a59416f911
-  MMKVCore: d26e4d3edd5cb8588c2569222cbd8be4231374e9
+  MMKV: ed58ad794b3f88c24d604a5b74f3fba17fcbaf74
+  MMKVCore: a67a1cede26175c413176f404a7cedec43f96a0b
   OpenSSL-Universal: 6e1ae0555546e604dbc632a2b9a24a9c46c41ef6
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: b4d3068afa6f52ec5260a8417053b1f1b421483d
   RCTTypeSafety: a4551b3d338c96435f63bf06d564055c1d3cc0ac
-  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  ReachabilitySwift: 5ae15e16814b5f9ef568963fb2c87aeb49158c66
   React: 66caa2a8192a35d7ba466a5fdf5dc06ee4a5f6dd
   React-callinvoker: e5b55e46894c2dd1bcdc19d4f82b0f7f631d1237
   React-Codegen: 0cf41e00026c5eba61f6bdcabd6e4bf659754f33
@@ -807,10 +809,10 @@ SPEC CHECKSUMS:
   React-jsinspector: de0198127395fec3058140a20c045167f761bb16
   React-logger: dc3a2b174d79c2da635059212747d8d929b54e06
   react-native-aes-gcm-crypto: f1bade1824458569b0e0f27ef4bc647ffe48ebbc
+  react-native-geolocation: 1279fd4390e311ec3f2fc2878279934147fdd061
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
-  react-native-mmkv: 124b22209aacdcd172b6ac39071b9647080f0411
+  react-native-mmkv: 38d484ccd8f5760fe0e46d206ed07add5ddda1fc
   react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
-  react-native-quick-base64: 777057ea4286f806b00259ede65dc79c7c706320
   react-native-quick-crypto: 455c1b411db006dba1026a30681ececb19180187
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 36cc67648134e89465663b8172336a19eeda493d
@@ -831,14 +833,14 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 6ca43e8deadf01ff06b3f01abf8f0e4d508e23c3
   React-utils: 372b83030a74347331636909278bf0a60ec30d59
   ReactCommon: 38824bfffaf4c51fbe03a2730b4fd874ef34d67b
-  RNAWSCognito: fe0c870c7cd9970a2efefc075b3f2d75eac913c7
-  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
+  RNAWSCognito: cb58fd45efe752ea69a806d5e2afe840000e9c20
+  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  VisionCamera: 52f98e7628f9deea3e311c3b6d4870bb44445e05
+  VisionCamera: 36c460338692788a0d377dce7d32f8ba049fb4f2
   Yoga: d0003f849d2b5224c072cef6568b540d8bb15cd3
 
 PODFILE CHECKSUM: bc65806dfef06377e534a092032410121ab2fe6d

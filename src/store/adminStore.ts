@@ -9,6 +9,10 @@ export type Admin = {
   contractAddress: string;
   notUsedNFTSrc: string;
   notUsedContractAddress: string;
+  coords: {
+    lat: number;
+    long: number;
+  };
 };
 
 type State = {
@@ -18,7 +22,6 @@ type State = {
 
 type Action = {
   updateAdmin: (admin: State["admin"]) => void;
-  updateAdmins: (admins: State["admins"]) => void;
 };
 
 const useAdminStore = create<State & Action>((set) => ({
@@ -31,13 +34,13 @@ const useAdminStore = create<State & Action>((set) => ({
     contractAddress: "",
     notUsedNFTSrc: "",
     notUsedContractAddress: "",
+    coords: {
+      lat: 0,
+      long: 0,
+    },
   },
   admins: [],
   updateAdmin: (admin) => set(() => ({ admin })),
-  updateAdmins: (admins) =>
-    set(() => ({
-      admins,
-    })),
 }));
 
 export default useAdminStore;
