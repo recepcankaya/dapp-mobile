@@ -1,22 +1,36 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import useAdminStore, { Admin } from "../../store/adminStore";
-import { widthConstant } from "../../ui/responsiveScreen";
+import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import colors from "../..//ui/colors";
 import { secretSupabase } from "../../lib/supabase";
-import Geolocation, { GeolocationResponse } from '@react-native-community/geolocation';
+import Geolocation, {
+  GeolocationResponse,
+} from "@react-native-community/geolocation";
 import { haversine } from "../../lib/haversine";
 
 const Brands = () => {
-  const admins = useAdminStore((state) => state.admins);
-  const updateAdmin = useAdminStore((state) => state.updateAdmin);
+  const [searchedAdmin, setSearchedAdmin] = useState<string>("");
+  const [customerLocation, setCustomerLocation] = useState<{
+    lat: number;
+    long: number;
+  }>({ lat: 0, long: 0 });
   const updateAdmins = useAdminStore((state) => state.updateAdmins);
+  const updateAdmin = useAdminStore((state) => state.updateAdmin);
+  const admins = useAdminStore((state) => state.admins);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const [customerLocation, setCustomerLocation] = useState<{ lat: number, long: number }>({ lat: 0, long: 0 })
 
   const fetchAdmins = async () => {
     try {
@@ -41,7 +55,7 @@ const Brands = () => {
           coords: {
             lat: item.coords.lat,
             long: item.coords.long,
-          }
+          },
         }));
         updateAdmins(admins);
       }
@@ -51,18 +65,29 @@ const Brands = () => {
   };
 
   useEffect(() => {
-    Geolocation.getCurrentPosition((info: GeolocationResponse) => setCustomerLocation({ lat: info.coords.latitude, long: info.coords.longitude }));
+    // Geolocation.getCurrentPosition((info: GeolocationResponse) =>
+    //   setCustomerLocation({
+    //     lat: info.coords.latitude,
+    //     long: info.coords.longitude,
+    //   })
+    // );
     fetchAdmins();
   }, []);
 
-  useEffect(() => {
-    const sortedAdmins: Admin[] = admins.sort((a, b): any => {
-      const distanceA = haversine({ lat: customerLocation.lat, lng: customerLocation.long }, { lat: a.coords.lat, lng: a.coords.long });
-      const distanceB = haversine({ lat: customerLocation.lat, lng: customerLocation.long }, { lat: b.coords.lat, lng: b.coords.long });
-      return distanceA - distanceB;
-    })
-    updateAdmins(sortedAdmins);
-  }, [customerLocation]);
+  // useEffect(() => {
+  //   const sortedAdmins: Admin[] = admins.sort((a, b): any => {
+  //     const distanceA = haversine(
+  //       { lat: customerLocation.lat, lng: customerLocation.long },
+  //       { lat: a.coords.lat, lng: a.coords.long }
+  //     );
+  //     const distanceB = haversine(
+  //       { lat: customerLocation.lat, lng: customerLocation.long },
+  //       { lat: b.coords.lat, lng: b.coords.long }
+  //     );
+  //     return distanceA - distanceB;
+  //   });
+  //   updateAdmins(sortedAdmins);
+  // }, [customerLocation]);
 
   const selectBrand = async (item: Admin, index: number) => {
     updateAdmin(item);
@@ -71,6 +96,19 @@ const Brands = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.searchContainer}>
+        <Icon
+          name="search"
+          color="#808080"
+          size={20 * heightConstant}
+          style={styles.searchIcon}
+        />
+        <TextInput
+          value={searchedAdmin}
+          onChangeText={setSearchedAdmin}
+          style={styles.searchBar}
+        />
+      </View>
       <FlatList
         data={admins}
         extraData={admins}
@@ -99,6 +137,29 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 50 * heightConstant,
+  },
+  searchContainer: {
+    width: 350 * widthConstant,
+    height: 50 * heightConstant,
+    marginBottom: 20 * heightConstant,
+    justifyContent: "center",
+  },
+  searchBar: {
+    width: "100%",
+    height: "100%",
+    color: colors.white,
+    fontSize: 18 * heightConstant,
+    borderColor: colors.pink,
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingLeft: 40 * widthConstant,
+  },
+  searchIcon: {
+    position: "absolute",
+    top: "50%",
+    transform: [{ translateY: -10 }],
+    marginLeft: 10 * widthConstant,
   },
   brand: {
     width: 130 * widthConstant,
