@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, Image, FlatList } from "react-native";
-import { useAddress } from "@thirdweb-dev/react-native";
-import QRCode from "react-qr-code";
 
 import useUserStore from "../../store/userStore";
+import useAdminStore from "../../store/adminStore";
+import supabase from "../../lib/supabase";
 import { heightConstant, widthConstant } from "../../ui/responsiveScreen";
 import Text from "../../ui/customText";
 import colors from "../../ui/colors";
-import useAdminStore from "../../store/adminStore";
-import supabase, { secretSupabase } from "../../lib/supabase";
 
 const logo = require("../../assets/LadderLogo.png");
 
@@ -26,13 +24,6 @@ const CustomerHome = () => {
   const admin = useAdminStore((state) => state.admin);
   const brandLogo = useAdminStore((state) => state.admin.brandLogo);
   const ticketCircles = new Array(admin.numberForReward);
-  const customerAddress = useAddress();
-
-  const qrCodeValue = {
-    userID,
-    forNFT: false,
-    address: customerAddress,
-  };
 
   const renderTickets = async () => {
     const { data, error } = await supabase
@@ -119,15 +110,6 @@ const CustomerHome = () => {
           />
         </View>
       </View>
-      <View style={styles.qrCodeContainer}>
-        <View style={styles.qrCode}>
-          <QRCode
-            size={240}
-            value={JSON.stringify(qrCodeValue)}
-            viewBox={`0 0 240 240`}
-          />
-        </View>
-      </View>
     </SafeAreaView>
   );
 };
@@ -187,14 +169,6 @@ const styles = StyleSheet.create({
   qrCodeContainer: {
     flex: 1,
     alignSelf: "center",
-  },
-  qrCode: {
-    height: 340 * heightConstant,
-    width: 340 * heightConstant,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    borderRadius: 20,
   },
 });
 

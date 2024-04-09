@@ -87,7 +87,7 @@ const Brands = () => {
    */
   const selectBrand = async (item: Admin, index: number) => {
     updateAdmin(item);
-    navigation.navigate("TabNavigator");
+    navigation.navigate("TabNavigator", { screen: "Home" });
   };
 
   useEffect(() => {

@@ -2,6 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ThirdwebProvider, embeddedWallet } from "@thirdweb-dev/react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Image } from "react-native";
+import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/AntDesign";
 
 import {
   Brands,
@@ -10,6 +13,7 @@ import {
   UserInfo,
   Profile,
   Loading,
+  QrCode,
 } from "./src/screens/customer";
 import {
   AdminCamera,
@@ -18,8 +22,6 @@ import {
   AdminNewPassword,
 } from "./src/screens/admin";
 import colors from "./src/ui/colors";
-import { Image } from "react-native";
-import Toast from "react-native-toast-message";
 
 /**
  * Since we are using ERC4337 for Account Abstraction, this is the configuration object for it
@@ -47,7 +49,7 @@ const TabNavigator = () => {
         tabBarLabelStyle: { color: colors.black },
         tabBarIcon: ({ focused }) => {
           let iconName;
-          if (route.name === "Home") {
+          if (route.name === "Brands") {
             iconName = focused
               ? require("../dapp-mobile/src/assets/customer-home-icon.png")
               : require("../dapp-mobile/src/assets/inactive-customer-home-icon.png");
@@ -55,11 +57,18 @@ const TabNavigator = () => {
             iconName = focused
               ? require("../dapp-mobile/src/assets/profile-icon.png")
               : require("../dapp-mobile/src/assets/inactive-profile-icon.png");
+          } else if (route.name === "Home") {
+          } else if (route.name === "QrCode") {
+            iconName === focused
+              ? require("../dapp-mobile/src/assets/qr-code.png")
+              : require("../dapp-mobile/src/assets/qr-code.png");
           }
           return <Image source={iconName} />;
         },
       })}>
+      <TabStack.Screen name="Brands" component={Brands} />
       <TabStack.Screen name="Home" component={CustomerHome} />
+      <TabStack.Screen name="QrCode" component={QrCode} />
       <TabStack.Screen name="Profile" component={Profile} />
     </TabStack.Navigator>
   );
@@ -91,7 +100,7 @@ function App() {
           },
         }),
       ]}
-      autoConnect={false}>
+      autoConnect={true}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Loading">
           <Stack.Screen
@@ -127,11 +136,6 @@ function App() {
           <Stack.Screen
             name="User Info"
             component={UserInfo}
-            options={{ headerShown: false }} // Hide navigation bar
-          />
-          <Stack.Screen
-            name="Brands"
-            component={Brands}
             options={{ headerShown: false }} // Hide navigation bar
           />
           <Stack.Screen
