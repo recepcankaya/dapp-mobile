@@ -51,17 +51,17 @@ const TabNavigator = () => {
           let iconName;
           if (route.name === "Brands") {
             iconName = focused
-              ? require("../dapp-mobile/src/assets/customer-home-icon.png")
-              : require("../dapp-mobile/src/assets/inactive-customer-home-icon.png");
+              ? require("./src/assets/customer-home-icon.png")
+              : require("./src/assets/inactive-customer-home-icon.png");
           } else if (route.name === "Profile") {
             iconName = focused
-              ? require("../dapp-mobile/src/assets/profile-icon.png")
-              : require("../dapp-mobile/src/assets/inactive-profile-icon.png");
+              ? require("./src/assets/profile-icon.png")
+              : require("./src/assets/inactive-profile-icon.png");
           } else if (route.name === "Home") {
           } else if (route.name === "QrCode") {
             iconName === focused
-              ? require("../dapp-mobile/src/assets/qr-code.png")
-              : require("../dapp-mobile/src/assets/qr-code.png");
+              ? require("./src/assets/qr-code.png")
+              : require("./src/assets/qr-code.png");
           }
           return <Image source={iconName} />;
         },
