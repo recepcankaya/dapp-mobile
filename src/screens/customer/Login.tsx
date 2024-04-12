@@ -4,7 +4,7 @@ import {
   StatusBar,
   Text,
   TouchableOpacity,
-  AppState
+  AppState,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -30,7 +30,6 @@ const Login = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const updateUser = useUserStore((state) => state.setUser);
   const user = useUserStore((state) => state.user);
-
 
   const checkIfEmbeddedWallet = async () => {
     const email = await embeddedWallet?.getEmail();
@@ -128,7 +127,7 @@ const Login = () => {
       if (isNewUser) {
         navigation.navigate("User Info");
       } else {
-        navigation.navigate("Brands");
+        navigation.navigate("TabNavigator");
       }
     } catch (error) {
       // Alert.alert(
