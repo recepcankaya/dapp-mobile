@@ -46,7 +46,7 @@ const UserInfo = () => {
           id: user[0].id,
           username: user[0].username,
         });
-        navigation.navigate("Brands");
+        navigation.navigate("TabNavigator");
         Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");
       }
     } catch (error) {

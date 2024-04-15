@@ -33,11 +33,20 @@ import colors from "./src/ui/colors";
 
 const Stack = createNativeStackNavigator();
 const TabStack = createBottomTabNavigator();
+const BrandsStack = createNativeStackNavigator();
+const BrandsNavigator = () => {
+  return (
+    <BrandsStack.Navigator screenOptions={{ headerShown: false }}>
+      <BrandsStack.Screen name="Brands" component={Brands} />
+      <BrandsStack.Screen name="CustomerHome" component={CustomerHome} />
+    </BrandsStack.Navigator>
+  );
+}
 
 const TabNavigator = () => {
   return (
     <TabStack.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route }) => (console.log('route', route), {
         headerShown: false,
         tabBarShowLabel: false,
         headerBackgroundContainerStyle: { borderWidth: 0 },
@@ -49,7 +58,8 @@ const TabNavigator = () => {
         tabBarLabelStyle: { color: colors.black },
         tabBarIcon: ({ focused }) => {
           let iconName;
-          if (route.name === "Brands") {
+          console.log('focused', focused);
+          if (route.name === "BrandsNavigator") {
             iconName = focused
               ? require("./src/assets/customer-home-icon.png")
               : require("./src/assets/inactive-customer-home-icon.png");
@@ -57,18 +67,18 @@ const TabNavigator = () => {
             iconName = focused
               ? require("./src/assets/profile-icon.png")
               : require("./src/assets/inactive-profile-icon.png");
-          } else if (route.name === "Home") {
+          } else if (route.name === "CustomerHome") {
+
           } else if (route.name === "QrCode") {
-            iconName === focused
+            iconName = focused
               ? require("./src/assets/qr-code.png")
               : require("./src/assets/qr-code.png");
           }
           return <Image source={iconName} />;
-        },
+        }
       })}>
-      <TabStack.Screen name="Brands" component={Brands} />
-      <TabStack.Screen name="Home" component={CustomerHome} />
-      <TabStack.Screen name="QrCode" component={QrCode} />
+      <TabStack.Screen name="BrandsNavigator" component={BrandsNavigator} />
+      <BrandsStack.Screen name="QrCode" component={QrCode} />
       <TabStack.Screen name="Profile" component={Profile} />
     </TabStack.Navigator>
   );
