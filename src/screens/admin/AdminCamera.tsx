@@ -6,7 +6,7 @@ import {
   Alert,
   Pressable,
   View,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import {
   Camera,
@@ -31,7 +31,6 @@ const AdminCamera = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   let qrCodeValue = [];
-
 
   useEffect(() => {
     if (!hasPermission) requestPermission();
@@ -61,19 +60,23 @@ const AdminCamera = () => {
       // get number_of_orders from user_missions table
       const { data: userMissionInfo } = await supabase
         .from("user_missions")
-        .select("number_of_orders, id, customer_number_of_orders_so_far")
+        .select(
+          "number_of_orders, id, customer_number_of_orders_so_far, number_of_free_rights"
+        )
         .eq("user_id", userID)
         .eq("admin_id", adminID);
+
       // get number_for_reward from admin table
       const { data: numberForReward } = await supabase
         .from("admins")
         .select("number_for_reward")
         .eq("id", adminID);
 
-      const { data: user } = await supabase
+      const { data: user } = await secretSupabase
         .from("users")
         .select("username")
-        .eq("id", userID);
+        .eq("id", userID)
+        .single();
 
       // If the order is for free, make request
       if (forNFT === true && userMissionInfo) {
@@ -92,23 +95,21 @@ const AdminCamera = () => {
         );
         const { success } = await result.json();
         if (success === true) {
-          let { data, error } = await supabase.rpc(
-            "decrement_user_missions_number_of_free_rights",
+          await supabase.rpc("decrement_user_missions_number_of_free_rights", {
+            mission_id: userMissionInfo[0].id,
+          });
+
+          await supabase.rpc(
+            "increment_user_missions_customer_number_of_orders_so_far",
             {
               mission_id: userMissionInfo[0].id,
             }
           );
-          if (error) console.error(error);
-          else console.log(data);
-          let { data: numberOfOrdersSoFarData, error: numberOfOrdersSoFarError } = await supabase.rpc(
-            "increment_user_missions_customer_number_of_orders_so_far",
-            {
-              mission_id: data
-            }
+
+          Alert.alert(
+            `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
+            `Bugüne kadar verilen sipariş sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1} {"\n"} Kalan ödül hakkı: ${userMissionInfo[0].number_of_free_rights - 1}`
           );
-          if (numberOfOrdersSoFarError) console.error(numberOfOrdersSoFarError);
-          else console.log(numberOfOrdersSoFarData);
-          Alert.alert(`Müşteriniz ödülünüzü kullandı. ${userMissionInfo[0].number_of_orders} sipariş.`);
         } else {
           Alert.alert(
             "Müşteri ödülünü kullanamadı.",
@@ -122,61 +123,72 @@ const AdminCamera = () => {
         if (user) {
           // If the user does not have a record in the user_missions table, add a new record
           if (userMissionInfo?.length === 0) {
-            const { data, error } = await secretSupabase
-              .from("user_missions")
-              .insert({
-                number_of_orders: 1,
-                user_id: userID,
-                admin_id: adminID,
-                number_of_free_rights: 0,
-                customer_number_of_orders_so_far: 1
-              });
-            Alert.alert(`${user[0].username}`, `İşlem başarıyla gerçekleşti. İlk sipariş!`);
-          } else if (
-            numberForReward &&
-            userMissionInfo &&
-            userMissionInfo[0].number_of_orders <
-            numberForReward[0].number_for_reward - 1
-            // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
-          ) {
-            let { data: numberOfOrdersData, error: numberOfOrdersError } = await supabase.rpc(
-              "increment_user_missions_number_of_orders",
-              {
-                mission_id: userMissionInfo[0].id,
-              }
-            );
-            if (numberOfOrdersError) console.error(numberOfOrdersError);
-            else console.log(numberOfOrdersData);
-            let { data: numberOfOrdersSoFarData, error: numberOfOrdersSoFarError } = await supabase.rpc(
+            await supabase.from("user_missions").insert({
+              number_of_orders: 1,
+              user_id: userID,
+              admin_id: adminID,
+              number_of_free_rights: 0,
+              customer_number_of_orders_so_far: 1,
+            });
+
+            await supabase.rpc(
               "increment_user_missions_customer_number_of_orders_so_far",
               {
                 mission_id: userMissionInfo[0].id,
               }
             );
-            if (numberOfOrdersSoFarError) console.error(numberOfOrdersSoFarError);
-            else console.log(numberOfOrdersSoFarData);
-            Alert.alert(`${user[0].username}`, `İşlem başarıyla gerçekleşti.${userMissionInfo[0].number_of_orders + 1}. sipariş!`);
+
+            Alert.alert(
+              `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
+              `İlk sipariş!`
+            );
+          } else if (
+            numberForReward &&
+            userMissionInfo &&
+            userMissionInfo[0].number_of_orders <
+              numberForReward[0].number_for_reward - 1
+            // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
+          ) {
+            await supabase.rpc("increment_user_missions_number_of_orders", {
+              mission_id: userMissionInfo[0].id,
+            });
+
+            await supabase.rpc(
+              "increment_user_missions_customer_number_of_orders_so_far",
+              {
+                mission_id: userMissionInfo[0].id,
+              }
+            );
+
+            Alert.alert(
+              `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
+              `Müşteri detayları: ${"\n"} Bugüne kadar sipariş edilen kahve sayısı: ${
+                userMissionInfo[0].customer_number_of_orders_so_far + 1
+              } {"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 0 : userMissionInfo[0].number_of_free_rights}`
+            );
           } else if (
             numberForReward &&
             userMissionInfo &&
             userMissionInfo[0].number_of_orders ===
-            numberForReward[0].number_for_reward - 1
+              numberForReward[0].number_for_reward - 1
             // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
           ) {
             try {
-              const { data, error: incrementError } = await supabase.rpc(
+              await supabase.rpc(
                 "increment_user_missions_number_of_free_rights",
                 {
                   mission_id: userMissionInfo[0].id,
                 }
               );
-              let { data: numberOfOrdersSoFarData, error: numberOfOrdersSoFarError } = await supabase.rpc(
+
+              await supabase.rpc(
                 "increment_user_missions_customer_number_of_orders_so_far",
                 {
                   mission_id: userMissionInfo[0].id,
                 }
               );
-              const { error: zeroError } = await secretSupabase
+
+              const { error: zeroError } = await supabase
                 .from("user_missions")
                 .update({
                   number_of_orders: 0,
@@ -184,19 +196,19 @@ const AdminCamera = () => {
                 .eq("user_id", userID)
                 .eq("admin_id", adminID);
 
-              console.log("here", zeroError);
               if (zeroError) {
                 Alert.alert(
                   "Bir şeyler yanlış gitti.",
                   "Lütfen tekrar deneyiniz."
                 );
               } else {
-                Alert.alert(`${user[0].username}`, `Müşteriniz ödülünüzü kazandı.${userMissionInfo[0].number_of_orders + 1}. sipariş!`);
+                Alert.alert(
+                  `${user.username} adlı müşteriniz ödülünüzü kazandı.`,
+                  `Müşteri detayları: ${"\n"} Bugüne kadar sipariş edilen kahve sayısı: ${
+                    userMissionInfo[0].customer_number_of_orders_so_far + 1
+                  } {"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 1 : userMissionInfo[0].number_of_free_rights + 1}`
+                );
               }
-              if (incrementError) console.error(incrementError);
-              else console.log("here", data);
-              if (numberOfOrdersSoFarError) console.error(numberOfOrdersSoFarError);
-              else console.log(numberOfOrdersSoFarData);
             } catch (error) {
               console.log("error", error);
               Alert.alert(
@@ -206,7 +218,6 @@ const AdminCamera = () => {
             }
           }
         }
-
       }
     },
   });
@@ -224,16 +235,14 @@ const AdminCamera = () => {
         codeScanner={codeScanner}
       />
       <View style={styles.transparentView}>
-        <View
-          style={styles.border}
-        />
+        <View style={styles.border} />
         <View
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             height: 10,
-            width: 10
+            width: 10,
           }}
         />
       </View>
@@ -274,13 +283,13 @@ const styles = StyleSheet.create({
   transparentView: {
     position: "absolute",
     zIndex: 1,
-    borderColor: 'rgba(0, 0, 0, 0.6)',
+    borderColor: "rgba(0, 0, 0, 0.6)",
     borderWidth: height / 3,
     borderRightWidth: width / 7,
     borderLeftWidth: width / 7,
     height,
     width,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 0,
@@ -292,7 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 2,
     borderColor: colors.pink,
-  }
+  },
 });
 
 export default AdminCamera;
