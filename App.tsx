@@ -51,15 +51,18 @@ const TabNavigator = () => {
           let iconName;
           if (route.name === "Brands") {
             iconName = focused
-              ? require("./src/assets/customer-home-icon.png")
-              : require("./src/assets/inactive-customer-home-icon.png");
+              ? require("./src/assets/brands-icon.png")
+              : require("./src/assets/inactive-brands-icon.png");
           } else if (route.name === "Profile") {
             iconName = focused
               ? require("./src/assets/profile-icon.png")
               : require("./src/assets/inactive-profile-icon.png");
           } else if (route.name === "Home") {
+            iconName = focused
+              ? require("./src/assets/customer-home-icon.png")
+              : require("./src/assets/inactive-customer-home-icon.png");
           } else if (route.name === "QrCode") {
-            iconName === focused
+            iconName = focused
               ? require("./src/assets/qr-code.png")
               : require("./src/assets/qr-code.png");
           }
@@ -102,7 +105,7 @@ function App() {
       ]}
       autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Loading">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Loading"
             component={Loading}

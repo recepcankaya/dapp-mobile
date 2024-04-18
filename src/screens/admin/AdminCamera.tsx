@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
+  View,
+  Dimensions,
 } from "react-native";
 import {
   Camera,
@@ -19,6 +21,8 @@ import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../ui/colors";
 import supabase, { secretSupabase } from "../../lib/supabase";
+
+const { width, height } = Dimensions.get("window");
 
 const AdminCamera = () => {
   const adminID = useAdminForAdminStore((state) => state.admin.adminId);
@@ -56,14 +60,23 @@ const AdminCamera = () => {
       // get number_of_orders from user_missions table
       const { data: userMissionInfo } = await supabase
         .from("user_missions")
-        .select("number_of_orders, id")
+        .select(
+          "number_of_orders, id, customer_number_of_orders_so_far, number_of_free_rights"
+        )
         .eq("user_id", userID)
         .eq("admin_id", adminID);
+
       // get number_for_reward from admin table
       const { data: numberForReward } = await supabase
         .from("admins")
         .select("number_for_reward")
         .eq("id", adminID);
+
+      const { data: user } = await secretSupabase
+        .from("users")
+        .select("username")
+        .eq("id", userID)
+        .single();
 
       // If the order is for free, make request
       if (forNFT === true && userMissionInfo) {
@@ -82,13 +95,25 @@ const AdminCamera = () => {
         );
         const { success } = await result.json();
         if (success === true) {
-          let { data, error } = await supabase.rpc(
-            "decrement_user_missions_number_of_free_rights",
+          await supabase.rpc("decrement_user_missions_number_of_free_rights", {
+            mission_id: userMissionInfo[0].id,
+          });
+
+          await supabase.rpc(
+            "increment_user_missions_customer_number_of_orders_so_far",
             {
               mission_id: userMissionInfo[0].id,
             }
           );
-          Alert.alert("Müşteriniz ödülünüzü kullandı.");
+
+          await supabase.rpc("increment_admins_number_of_orders_so_far", {
+            id: adminID,
+          });
+
+          Alert.alert(
+            `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
+            `Bugüne kadar verilen sipariş sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1} ${"\n"} Kalan ödül hakkı: ${userMissionInfo[0].number_of_free_rights - 1}`
+          );
         } else {
           Alert.alert(
             "Müşteri ödülünü kullanamadı.",
@@ -99,70 +124,107 @@ const AdminCamera = () => {
 
       // If the order is not for free, check the number of orders
       else {
-        if (userMissionInfo?.length === 0) {
+        if (user) {
           // If the user does not have a record in the user_missions table, add a new record
-          const { data, error } = await secretSupabase
-            .from("user_missions")
-            .insert({
+          if (userMissionInfo?.length === 0) {
+            await supabase.from("user_missions").insert({
               number_of_orders: 1,
               user_id: userID,
               admin_id: adminID,
+              number_of_free_rights: 0,
+              customer_number_of_orders_so_far: 1,
             });
-          Alert.alert("İşlem başarıyla gerçekleşti.");
-        } else if (
-          numberForReward &&
-          userMissionInfo &&
-          userMissionInfo[0].number_of_orders <
-          numberForReward[0].number_for_reward - 1
-        ) {
-          // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
-          let { data, error } = await supabase.rpc(
-            "increment_user_missions_number_of_orders",
-            {
+
+            await supabase.rpc("increment_admins_number_of_orders_so_far", {
+              id: adminID,
+            });
+
+            Alert.alert(
+              `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
+              `İlk sipariş!`
+            );
+          } else if (
+            numberForReward &&
+            userMissionInfo &&
+            userMissionInfo[0].number_of_orders <
+              numberForReward[0].number_for_reward - 1
+            // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
+          ) {
+            await supabase.rpc("increment_user_missions_number_of_orders", {
               mission_id: userMissionInfo[0].id,
-            }
-          );
-          if (error) console.error(error);
-          else console.log(data);
-          Alert.alert("İşlem başarıyla gerçekleşti.");
-        } else if (
-          numberForReward &&
-          userMissionInfo &&
-          userMissionInfo[0].number_of_orders ===
-          numberForReward[0].number_for_reward - 1
-        ) {
-          // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
-          try {
-            const { data, error: incrementError } = await supabase.rpc(
-              "increment_user_missions_number_of_free_rights",
+            });
+
+            await supabase.rpc(
+              "increment_user_missions_customer_number_of_orders_so_far",
               {
                 mission_id: userMissionInfo[0].id,
               }
             );
 
-            const { error: zeroError } = await secretSupabase
-              .from("user_missions")
-              .update({
-                number_of_orders: 0,
-              })
-              .eq("user_id", userID)
-              .eq("admin_id", adminID);
+            await supabase.rpc("increment_admins_number_of_orders_so_far", {
+              id: adminID,
+            });
 
-            console.log("here", zeroError);
-            if (zeroError) {
+            Alert.alert(
+              `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
+              `Bugüne kadar sipariş edilen kahve sayısı: ${
+                userMissionInfo[0].customer_number_of_orders_so_far + 1
+              } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 0 : userMissionInfo[0].number_of_free_rights}`
+            );
+          } else if (
+            numberForReward &&
+            userMissionInfo &&
+            userMissionInfo[0].number_of_orders ===
+              numberForReward[0].number_for_reward - 1
+            // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
+          ) {
+            try {
+              await supabase.rpc(
+                "increment_user_missions_number_of_free_rights",
+                {
+                  mission_id: userMissionInfo[0].id,
+                }
+              );
+
+              await supabase.rpc(
+                "increment_user_missions_customer_number_of_orders_so_far",
+                {
+                  mission_id: userMissionInfo[0].id,
+                }
+              );
+
+              await supabase.rpc("increment_admins_number_of_orders_so_far", {
+                id: adminID,
+              });
+
+              const { error: zeroError } = await supabase
+                .from("user_missions")
+                .update({
+                  number_of_orders: 0,
+                })
+                .eq("user_id", userID)
+                .eq("admin_id", adminID);
+
+              if (zeroError) {
+                Alert.alert(
+                  "Bir şeyler yanlış gitti.",
+                  "Lütfen tekrar deneyiniz."
+                );
+              } else {
+                Alert.alert(
+                  `${user.username} adlı müşteriniz ödülünüzü kazandı.`,
+                  `Bugüne kadar sipariş edilen kahve sayısı: ${
+                    userMissionInfo[0].customer_number_of_orders_so_far + 1
+                  } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 1 : userMissionInfo[0].number_of_free_rights + 1}`
+                );
+              }
+            } catch (error) {
+              console.log("error", error);
               Alert.alert(
-                "Bir şeyler yanlış gitti.",
+                "Müşteriye ödülü verilemedi.",
                 "Lütfen tekrar deneyiniz."
               );
-            } else {
-              Alert.alert("Müşteriniz ödülünüzü kazandı.");
             }
-          } catch (error) {
-            console.log("error", error);
-            Alert.alert(
-              "Müşteriye ödülü verilemedi.",
-              "Lütfen tekrar deneyiniz."
-            );
           }
         }
       }
@@ -181,6 +243,18 @@ const AdminCamera = () => {
         isActive={true}
         codeScanner={codeScanner}
       />
+      <View style={styles.transparentView}>
+        <View style={styles.border} />
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            height: 10,
+            width: 10,
+          }}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -208,12 +282,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 20,
-    zIndex: 1,
+    zIndex: 2,
     backgroundColor: colors.pink,
   },
   backButtonText: {
     fontSize: 20,
     color: colors.white,
+  },
+  transparentView: {
+    position: "absolute",
+    zIndex: 1,
+    borderColor: "rgba(0, 0, 0, 0.6)",
+    borderWidth: height / 3,
+    borderRightWidth: width / 7,
+    borderLeftWidth: width / 7,
+    height,
+    width,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  border: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: colors.pink,
   },
 });
 
