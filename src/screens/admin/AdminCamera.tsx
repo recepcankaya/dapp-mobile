@@ -95,6 +95,10 @@ const AdminCamera = () => {
         );
         const { success } = await result.json();
         if (success === true) {
+          await supabase.rpc("decrement_admins_not_used_nfts", {
+            admin_id: adminID
+          })
+
           await supabase.rpc("decrement_user_missions_number_of_free_rights", {
             mission_id: userMissionInfo[0].id,
           });
@@ -107,7 +111,7 @@ const AdminCamera = () => {
           );
 
           await supabase.rpc("increment_admins_number_of_orders_so_far", {
-            id: adminID,
+            admin_id: adminID,
           });
 
           Alert.alert(
@@ -136,18 +140,28 @@ const AdminCamera = () => {
             });
 
             await supabase.rpc("increment_admins_number_of_orders_so_far", {
-              id: adminID,
+              admin_id: adminID,
             });
+
+            await supabase.rpc("increment_user_missions_number_of_orders_so_far", {
+              mission_id: adminID,
+            })
 
             Alert.alert(
               `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
-              `İlk sipariş!`
+              `İlk sipariş!`,
+              [
+                {
+                  text: "Tamam",
+                  onPress: () => qrCodeValue = [],
+                },
+              ]
             );
           } else if (
             numberForReward &&
             userMissionInfo &&
             userMissionInfo[0].number_of_orders <
-              numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
             // If the user has a record in the user_missions table and the number of orders is less than the number_for_reward, increase the number of orders by one
           ) {
             await supabase.rpc("increment_user_missions_number_of_orders", {
@@ -155,30 +169,40 @@ const AdminCamera = () => {
             });
 
             await supabase.rpc(
-              "increment_user_missions_customer_number_of_orders_so_far",
+              "increment_user_missions_number_of_orders_so_far",
               {
                 mission_id: userMissionInfo[0].id,
               }
             );
 
             await supabase.rpc("increment_admins_number_of_orders_so_far", {
-              id: adminID,
+              admin_id: adminID,
             });
+
 
             Alert.alert(
               `${user?.username} adlı müşterinizin işlemi başarıyla gerçekleştirildi.`,
-              `Bugüne kadar sipariş edilen kahve sayısı: ${
-                userMissionInfo[0].customer_number_of_orders_so_far + 1
-              } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 0 : userMissionInfo[0].number_of_free_rights}`
+              `Bugüne kadar sipariş edilen kahve sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1
+              } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 0 : userMissionInfo[0].number_of_free_rights}`,
+              [
+                {
+                  text: "Tamam",
+                  onPress: () => qrCodeValue = [],
+                },
+              ]
             );
           } else if (
             numberForReward &&
             userMissionInfo &&
             userMissionInfo[0].number_of_orders ===
-              numberForReward[0].number_for_reward - 1
+            numberForReward[0].number_for_reward - 1
             // If the user has a record in the user_missions table and the number of orders is equal to the number_for_reward, make request
           ) {
             try {
+              await supabase.rpc("increment_admins_not_used_nfts", {
+                admin_id: adminID
+              });
+
               await supabase.rpc(
                 "increment_user_missions_number_of_free_rights",
                 {
@@ -187,14 +211,14 @@ const AdminCamera = () => {
               );
 
               await supabase.rpc(
-                "increment_user_missions_customer_number_of_orders_so_far",
+                "increment_user_missions_number_of_orders_so_far",
                 {
                   mission_id: userMissionInfo[0].id,
                 }
               );
 
               await supabase.rpc("increment_admins_number_of_orders_so_far", {
-                id: adminID,
+                admin_id: adminID,
               });
 
               const { error: zeroError } = await supabase
@@ -208,14 +232,25 @@ const AdminCamera = () => {
               if (zeroError) {
                 Alert.alert(
                   "Bir şeyler yanlış gitti.",
-                  "Lütfen tekrar deneyiniz."
+                  "Lütfen tekrar deneyiniz.",
+                  [
+                    {
+                      text: "Tamam",
+                      onPress: () => qrCodeValue = [],
+                    },
+                  ]
                 );
               } else {
                 Alert.alert(
                   `${user.username} adlı müşteriniz ödülünüzü kazandı.`,
-                  `Bugüne kadar sipariş edilen kahve sayısı: ${
-                    userMissionInfo[0].customer_number_of_orders_so_far + 1
-                  } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 1 : userMissionInfo[0].number_of_free_rights + 1}`
+                  `Bugüne kadar sipariş edilen kahve sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1
+                  } ${"\n"} Müşterinin ödül hakkı: ${userMissionInfo[0].number_of_free_rights === null ? 1 : userMissionInfo[0].number_of_free_rights + 1}`,
+                  [
+                    {
+                      text: "Tamam",
+                      onPress: () => qrCodeValue = [],
+                    },
+                  ]
                 );
               }
             } catch (error) {

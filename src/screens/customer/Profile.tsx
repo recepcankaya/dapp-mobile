@@ -36,7 +36,7 @@ export default function Profile() {
   const contractAddress = useAdminStore((state) => state.admin.contractAddress);
   const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
 
-  const notUsedNFTSrc = useAdminStore((state) => state.admin.notUsedNFTSrc);
+  const freeRightImageUrl = useAdminStore((state) => state.admin.freeRightImageUrl);
   const address = useAddress();
   const { contract: usedNFTContract } = useContract(contractAddress);
   const {
@@ -124,7 +124,7 @@ export default function Profile() {
                       onPress={() => setQrCodeModalVisible(true)}>
                       <Image
                         source={{
-                          uri: notUsedNFTSrc.replace(
+                          uri: freeRightImageUrl.replace(
                             "ipfs://",
                             "https://ipfs.io/ipfs/"
                           ),

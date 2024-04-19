@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import supabase from "../../lib/supabase";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import colors from "../../ui/colors";
+import { useTotalCount, useContract } from "@thirdweb-dev/react-native";
 
 const AdminHome = () => {
   const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
@@ -23,11 +24,16 @@ const AdminHome = () => {
   const numberOfOrdersSoFar = useAdminForAdminStore(
     (state) => state.admin.numberOfOrdersSoFar
   );
-  const usedNFTs = useAdminForAdminStore((state) => state.admin.usedNFTs);
   const notUsedNFTs = useAdminForAdminStore((state) => state.admin.notUsedNFTs);
   const numberForReward = useAdminForAdminStore(
     (state) => state.admin.numberForReward
   );
+  const contractAddress = useAdminForAdminStore(
+    (state) => state.admin.contractAddress
+  );
+  const { contract: usedNFTContract } = useContract(contractAddress);
+  const { data: nftData, isLoading, error } = useTotalCount(usedNFTContract);
+
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const fetchAdminDashboard = async () => {
@@ -35,7 +41,7 @@ const AdminHome = () => {
       const { data: adminData, error: adminError } = await supabase
         .from("admins")
         .select(
-          "brand_name, brand_branch, used_nfts, not_used_nfts, number_for_reward, number_of_orders_so_far, contract_address, nft_src, not_used_nft_src, not_used_contract_address"
+          "brand_name, brand_branch, not_used_nfts, number_for_reward, number_of_orders_so_far, contract_address"
         )
         .eq("id", adminID);
       if (adminData) {
@@ -43,14 +49,10 @@ const AdminHome = () => {
           adminId: adminID,
           brandName: adminData[0].brand_name,
           brandBranch: adminData[0].brand_branch,
-          numberOfOrdersSoFar: adminData[0].number_of_orders_so_far,
-          usedNFTs: adminData[0].used_nfts,
           notUsedNFTs: adminData[0].not_used_nfts,
           numberForReward: adminData[0].number_for_reward,
+          numberOfOrdersSoFar: adminData[0].number_of_orders_so_far,
           contractAddress: adminData[0].contract_address,
-          NFTSrc: adminData[0].nft_src,
-          notUsedContractAddress: adminData[0].not_used_contract_address,
-          notUsedNFTSrc: adminData[0].not_used_nft_src,
         });
       } else {
         console.error(adminError);
@@ -103,7 +105,8 @@ const AdminHome = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            <Text style={styles.adminData}>{usedNFTs}</Text>
+            {/* heree */}
+            <Text style={styles.adminData}>{!isLoading ? nftData?.toString() : "..."}</Text>
           </View>
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoText}>Verilen Ödüllerin Sayısı</Text>

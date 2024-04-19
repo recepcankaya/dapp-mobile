@@ -105,7 +105,7 @@ function App() {
       ]}
       autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Loading">
           <Stack.Screen
             name="Loading"
             component={Loading}
