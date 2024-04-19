@@ -34,7 +34,7 @@ const Brands = () => {
       const { data, error } = await secretSupabase
         .from("admins")
         .select(
-          "id, brand_name, brand_logo_ipfs_url, number_for_reward, nft_src, contract_address, not_used_nft_src, not_used_contract_address, coords"
+          "id, brand_name, brand_logo_ipfs_url, ticket_ipfs_url, number_for_reward, nft_src, contract_address, coords, free_right_image_url, brand_video_url, campaigns"
         );
       if (error) {
         errorToast(
@@ -46,15 +46,17 @@ const Brands = () => {
           id: item.id,
           brandName: item.brand_name,
           brandLogo: item.brand_logo_ipfs_url,
+          ticketImage: item.ticket_ipfs_url,
           numberForReward: item.number_for_reward,
+          campaigns: item.campaigns,
           NFTSrc: item.nft_src,
           contractAddress: item.contract_address,
-          notUsedNFTSrc: item.not_used_nft_src,
-          notUsedContractAddress: item.not_used_contract_address,
           coords: {
             lat: item.coords.lat,
             long: item.coords.long,
           },
+          freeRightImageUrl: item.free_right_image_url,
+          brandVideoUrl: item.brand_video_url,
         }));
         if (searchedAdmin.length > 0) {
           const filteredAdmins = admins.filter(searchAdmin);
@@ -70,6 +72,10 @@ const Brands = () => {
       );
     }
   };
+
+  useEffect(() => {
+    console.log('admins', admins[0]?.campaigns);
+  }, [admins])
 
   /**
    * Searches for an admin based on the brand name.

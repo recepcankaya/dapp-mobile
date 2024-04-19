@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions, View, Text, Image, Linking, TouchableOpacity, Button, ScrollView } from "react-native";
 
 import HomeHeader from "../../components/customer/home/HomeHeader";
 import RenderTicket from "../../components/customer/home/RenderTicket";
@@ -10,6 +10,12 @@ import useAdminStore from "../../store/adminStore";
 import supabase from "../../lib/supabase";
 import { heightConstant } from "../../ui/responsiveScreen";
 import colors from "../../ui/colors";
+
+import Carousel from 'react-native-reanimated-carousel';
+
+import { Video, ResizeMode } from 'expo-av';
+
+const { width, height } = Dimensions.get("window");
 
 const CustomerHome = () => {
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
@@ -54,16 +60,67 @@ const CustomerHome = () => {
         }
       )
       .subscribe();
-
     return () => {
       supabase.removeChannel(orders);
     };
   }, [userOrderNumber]);
 
+  const video = useRef(null);
+  const [status, setStatus] = useState({});
+
+  const campaigns = useAdminStore((state) => state.admin.campaigns).map((campaign) => {
+    return {
+      image: campaign.campaign_image.replace("ipfs://", "https://ipfs.io/ipfs/"),
+    };
+  });
+
+  const brandVideoUrl = useAdminStore((state) => state.admin.brandVideoUrl);
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <HomeHeader />
-      <RenderTicket userOrderNumber={userOrderNumber} />
+      <ScrollView>
+        <RenderTicket userOrderNumber={userOrderNumber} ticketImage={admin.ticketImage} />
+        <TouchableOpacity style={styles.menuButton} onPress={() => Linking.openURL("http://claincoffe.com")}>
+          <Text style={styles.menuText}>
+            Menü
+          </Text>
+        </TouchableOpacity>
+        <Carousel
+          loop
+          width={width}
+          height={width / 2}
+          autoPlay={false}
+          mode="parallax"
+          data={campaigns}
+          scrollAnimationDuration={1000}
+          onSnapToItem={(index) => console.log('current index:', index)}
+          renderItem={({ item, index }) => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+              }}
+            >
+              <Image source={{ uri: item.image }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" />
+            </View>
+          )}
+        />
+        <View style={styles.container}>
+          <Video
+            ref={video}
+            style={styles.video}
+            source={{
+              uri: brandVideoUrl.replace("ipfs://", "https://ipfs.io/ipfs/"),
+            }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
+            onPlaybackStatusUpdate={status => setStatus(() => status)}
+          />
+        </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 };
@@ -73,6 +130,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.black,
     paddingTop: 20 * heightConstant,
+  },
+  menuButton: {
+    padding: 10,
+    paddingRight: 40,
+    paddingLeft: 40,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.white,
+    alignSelf: 'center',
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuText: {
+    color: colors.white,
+    fontSize: 20
+  },
+  video: {
+    alignSelf: 'center',
+    width: 320,
+    height: 200,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

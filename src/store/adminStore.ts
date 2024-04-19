@@ -4,15 +4,21 @@ export type Admin = {
   id: string;
   brandName: string;
   brandLogo: string;
+  ticketImage: string;
   numberForReward: number;
+  campaigns: {
+    campaign_id: string;
+    campaign_name: string;
+    campaign_image: string;
+  }[];
   NFTSrc: string;
   contractAddress: string;
-  notUsedNFTSrc: string;
-  notUsedContractAddress: string;
   coords: {
     lat: number;
     long: number;
   };
+  freeRightImageUrl: string;
+  brandVideoUrl: string;
 };
 
 type State = {
@@ -29,15 +35,17 @@ const useAdminStore = create<State & Action>((set) => ({
     id: "",
     brandName: "",
     brandLogo: "",
+    ticketImage: "",
     numberForReward: 0,
+    campaigns: [],
     NFTSrc: "",
     contractAddress: "",
-    notUsedNFTSrc: "",
-    notUsedContractAddress: "",
     coords: {
       lat: 0,
       long: 0,
     },
+    freeRightImageUrl: "",
+    brandVideoUrl: "",
   },
   admins: [],
   updateAdmin: (admin) => set(() => ({ admin })),
