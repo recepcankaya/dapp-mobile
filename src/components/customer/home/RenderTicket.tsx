@@ -17,36 +17,35 @@ export default function RenderTicket({ userOrderNumber, ticketImage }: RenderTic
     const ticketCircles = new Array(admin.numberForReward);
 
     return (
-        <View>
-            <ImageBackground source={{
-                uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
-            }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" >
-                <FlatList
-                    data={ticketCircles}
-                    extraData={ticketCircles}
-                    renderItem={({ item, index }) => (
-                        <TicketRenderItem index={index} userOrderNumber={userOrderNumber} />
-                    )}
-                    numColumns={4}
-                    columnWrapperStyle={{ justifyContent: "space-between", height: 100 * heightConstant, alignItems: 'center' }}
-                    contentContainerStyle={styles.circles}
-                    scrollEnabled={false}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </ImageBackground>
-        </View>
+        <ImageBackground source={{
+            uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
+        }} style={styles.ticket} resizeMode="contain" >
+            <FlatList
+                data={ticketCircles}
+                extraData={ticketCircles}
+                renderItem={({ item, index }) => (
+                    <TicketRenderItem index={index} userOrderNumber={userOrderNumber} />
+                )}
+                numColumns={4}
+                columnWrapperStyle={{ justifyContent: "space-between", height: 95 * heightConstant, alignItems: 'center' }}
+                contentContainerStyle={styles.circles}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+            />
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
     ticket: {
         width: "100%",
-        height: 200 * heightConstant,
-        backgroundColor: colors.white,
+        height: 190 * heightConstant,
+        alignSelf: 'center',
     },
     circles: {
         flex: 1,
         alignItems: "flex-end",
-        marginRight: 10
+        marginRight: 10,
+        justifyContent: 'center'
     },
 });

@@ -77,53 +77,34 @@ const AdminCamera = () => {
         .select("username")
         .eq("id", userID)
         .single();
-
       // If the order is for free, make request
-      if (forNFT === true && userMissionInfo) {
-        const result = await fetch(
-          "https://mint-nft-js.vercel.app/collectionNFT",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              admin_id: adminID,
-              user_wallet: address,
-            }),
-          }
-        );
-        const { success } = await result.json();
-        if (success === true) {
-          await supabase.rpc("decrement_admins_not_used_nfts", {
-            admin_id: adminID
-          })
+      if (forNFT == true && userMissionInfo) {
+        await supabase.rpc("decrement_admins_not_used_nfts", {
+          admin_id: adminID,
+        });
 
-          await supabase.rpc("decrement_user_missions_number_of_free_rights", {
-            mission_id: userMissionInfo[0].id,
-          });
+        await supabase.rpc("decrement_user_missions_number_of_free_rigths", {
+          mission_id: userMissionInfo[0].id,
+        });
 
-          await supabase.rpc(
-            "increment_user_missions_customer_number_of_orders_so_far",
+        await supabase.rpc("increment_admins_number_of_orders_so_far", {
+          admin_id: adminID,
+        });
+
+        await supabase.rpc("increment_user_missions_number_of_orders_so_far", {
+          mission_id: userMissionInfo[0].id,
+        });
+
+        Alert.alert(
+          `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
+          `Bugüne kadar verilen sipariş sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1} ${"\n"} Kalan ödül hakkı: ${userMissionInfo[0].number_of_free_rights - 1}`,
+          [
             {
-              mission_id: userMissionInfo[0].id,
-            }
-          );
-
-          await supabase.rpc("increment_admins_number_of_orders_so_far", {
-            admin_id: adminID,
-          });
-
-          Alert.alert(
-            `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
-            `Bugüne kadar verilen sipariş sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1} ${"\n"} Kalan ödül hakkı: ${userMissionInfo[0].number_of_free_rights - 1}`
-          );
-        } else {
-          Alert.alert(
-            "Müşteri ödülünü kullanamadı.",
-            "Lütfen tekrar deneyiniz."
-          );
-        }
+              text: "Tamam",
+              onPress: () => qrCodeValue = [],
+            },
+          ]
+        );
       }
 
       // If the order is not for free, check the number of orders
@@ -200,18 +181,11 @@ const AdminCamera = () => {
           ) {
             try {
               await supabase.rpc("increment_admins_not_used_nfts", {
-                admin_id: adminID
+                admin_id: adminID,
               });
 
               await supabase.rpc(
-                "increment_user_missions_number_of_free_rights",
-                {
-                  mission_id: userMissionInfo[0].id,
-                }
-              );
-
-              await supabase.rpc(
-                "increment_user_missions_number_of_orders_so_far",
+                "increment_user_missions_number_of_free_rigths",
                 {
                   mission_id: userMissionInfo[0].id,
                 }
@@ -220,6 +194,13 @@ const AdminCamera = () => {
               await supabase.rpc("increment_admins_number_of_orders_so_far", {
                 admin_id: adminID,
               });
+
+              await supabase.rpc(
+                "increment_user_missions_number_of_orders_so_far",
+                {
+                  mission_id: userMissionInfo[0].id,
+                }
+              );
 
               const { error: zeroError } = await supabase
                 .from("user_missions")

@@ -76,6 +76,10 @@ const CustomerHome = () => {
 
   const brandVideoUrl = useAdminStore((state) => state.admin.brandVideoUrl);
 
+  useEffect(() => {
+    console.log("brandVideoUrl", brandVideoUrl)
+  }, [brandVideoUrl])
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <HomeHeader />
@@ -111,7 +115,7 @@ const CustomerHome = () => {
             ref={video}
             style={styles.video}
             source={{
-              uri: brandVideoUrl.replace("ipfs://", "https://ipfs.io/ipfs/"),
+              uri: brandVideoUrl,
             }}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}
