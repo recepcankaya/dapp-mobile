@@ -28,7 +28,7 @@ export default function RenderTicket({ userOrderNumber, ticketImage }: RenderTic
                 )}
                 numColumns={4}
                 columnWrapperStyle={{ justifyContent: "space-between", height: 95 * heightConstant, alignItems: 'center' }}
-                contentContainerStyle={styles.circles}
+                contentContainerStyle={[userOrderNumber > 4 && { justifyContent: 'center' }, styles.circles]}
                 scrollEnabled={false}
                 keyExtractor={(item, index) => index.toString()}
             />
@@ -46,6 +46,5 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "flex-end",
         marginRight: 10,
-        justifyContent: 'center'
     },
 });

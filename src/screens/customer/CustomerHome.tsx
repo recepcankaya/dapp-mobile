@@ -6,7 +6,7 @@ import HomeHeader from "../../components/customer/home/HomeHeader";
 import RenderTicket from "../../components/customer/home/RenderTicket";
 
 import useUserStore from "../../store/userStore";
-import useAdminStore from "../../store/adminStore";
+import useAdminStore, { Campaign } from "../../store/adminStore";
 import supabase from "../../lib/supabase";
 import { heightConstant } from "../../ui/responsiveScreen";
 import colors from "../../ui/colors";
@@ -16,6 +16,8 @@ import Carousel from 'react-native-reanimated-carousel';
 import { Video, ResizeMode } from 'expo-av';
 
 const { width, height } = Dimensions.get("window");
+
+import CustomCarousel from "../../components/customer/home/CustomCarousel";
 
 const CustomerHome = () => {
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
@@ -90,26 +92,7 @@ const CustomerHome = () => {
             Menü
           </Text>
         </TouchableOpacity>
-        <Carousel
-          loop
-          width={width}
-          height={width / 2}
-          autoPlay={false}
-          mode="parallax"
-          data={campaigns}
-          scrollAnimationDuration={1000}
-          onSnapToItem={(index) => console.log('current index:', index)}
-          renderItem={({ item, index }) => (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-              }}
-            >
-              <Image source={{ uri: item.image }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" />
-            </View>
-          )}
-        />
+        <CustomCarousel data={campaigns} />
         <View style={styles.container}>
           <Video
             ref={video}
