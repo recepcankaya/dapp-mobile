@@ -6,18 +6,16 @@ import HomeHeader from "../../components/customer/home/HomeHeader";
 import RenderTicket from "../../components/customer/home/RenderTicket";
 
 import useUserStore from "../../store/userStore";
-import useAdminStore, { Campaign } from "../../store/adminStore";
+import useAdminStore from "../../store/adminStore";
 import supabase from "../../lib/supabase";
 import { heightConstant } from "../../ui/responsiveScreen";
 import colors from "../../ui/colors";
-
-import Carousel from 'react-native-reanimated-carousel';
 
 import { Video, ResizeMode } from 'expo-av';
 
 const { width, height } = Dimensions.get("window");
 
-import CustomCarousel from "../../components/customer/home/CustomCarousel";
+import Carousel from "../../components/customer/home/CustomCarousel/Carousel";
 
 const CustomerHome = () => {
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
@@ -92,7 +90,7 @@ const CustomerHome = () => {
             Menü
           </Text>
         </TouchableOpacity>
-        <CustomCarousel data={campaigns} />
+        <Carousel data={campaigns} />
         <View style={styles.container}>
           <Video
             ref={video}

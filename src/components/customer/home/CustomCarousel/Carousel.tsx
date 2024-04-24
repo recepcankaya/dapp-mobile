@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Pressable, Image, Dimensions, Modal, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Pressable, Image, Dimensions, Modal, StyleSheet, ViewToken } from 'react-native';
 
-import colors from '../../../ui/colors';
+import colors from '../../../../ui/colors';
 import { Gesture, GestureDetector, GestureHandlerRootView, } from 'react-native-gesture-handler';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    withTiming
+    withTiming,
+    useAnimatedRef,
 } from 'react-native-reanimated';
+import Pagination from './Pagination';
 
 type CustomCarouselProps = {
     data: { image: string }[]
@@ -17,12 +19,15 @@ const CARD_WIDTH = width;
 const END_POSITION = 200;
 
 const CustomCarousel = ({ data }: CustomCarouselProps) => {
+    const ref = useAnimatedRef<Animated.FlatList<any>>();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [carouselItems, setCarouselItems] = useState(data);
+    const [paginationIndex, setPaginationIndex] = useState(0);
 
     const onLeft = useSharedValue(true);
     const position = useSharedValue(0);
 
+    //pinch to zoom
     const panGesture = Gesture.Pan()
         .onUpdate((e) => {
             if (onLeft.value) {
@@ -56,6 +61,7 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
         transform: [{ scale: scale.value }, { translateX: position.value }],
     }));
 
+    //modal
     const openImage = (imageUri: string) => {
         setSelectedImage(imageUri);
     };
@@ -66,9 +72,33 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
         position.value = 0;
     };
 
+    //pagination
+    const onViewableItemsChanged = ({
+        viewableItems,
+    }: {
+        viewableItems: ViewToken[];
+    }) => {
+        if (
+            viewableItems[0].index !== undefined &&
+            viewableItems[0].index !== null
+        ) {
+            setPaginationIndex(viewableItems[0].index % carouselItems.length);
+        }
+    };
+
+    const viewabilityConfig = {
+        itemVisiblePercentThreshold: 50,
+    };
+
+    const viewabilityConfigCallbackPairs = useRef([
+        { viewabilityConfig, onViewableItemsChanged },
+    ]);
+
+
     return (
         <GestureHandlerRootView style={styles.container}>
-            <FlatList
+            <Animated.FlatList
+                ref={ref}
                 data={carouselItems}
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -78,6 +108,7 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
                 decelerationRate={0}
                 style={styles.carousel}
                 contentContainerStyle={styles.carouselContentContainer}
+                viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 pagingEnabled
                 onEndReachedThreshold={0.5}
                 onEndReached={() => setCarouselItems([...carouselItems, ...data])}
@@ -93,6 +124,7 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
                     )
                 }}
             />
+            <Pagination paginationIndex={paginationIndex} data={data} />
             <Modal visible={!!selectedImage} transparent={true} onRequestClose={closeImage}>
                 <Animated.View style={styles.modalBackground}>
                     <GestureDetector gesture={panGesture}>
