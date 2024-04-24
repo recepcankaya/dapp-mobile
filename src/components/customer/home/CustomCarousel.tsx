@@ -1,57 +1,75 @@
-import * as React from "react";
-import { Dimensions, View, Image } from "react-native";
-import Carousel from "react-native-reanimated-carousel";
+import React, { useState } from 'react';
+import { View, ScrollView, Pressable, Image, Dimensions, Modal, StyleSheet, FlatList } from 'react-native';
 
-const window = Dimensions.get("window");
-const PAGE_WIDTH = window.width;
+import colors from '../../../ui/colors';
 
 type CustomCarouselProps = {
     data: { image: string }[]
-};
-
-function Index({ data }: CustomCarouselProps) {
-    const baseOptions = {
-        vertical: false,
-        width: PAGE_WIDTH,
-        height: PAGE_WIDTH * 0.6,
-    } as const;
-
-    return (
-        <View
-            style={{
-                alignItems: "center",
-            }}
-        >
-            <Carousel
-                {...baseOptions}
-                style={{
-                    width: PAGE_WIDTH,
-                }}
-                loop
-                pagingEnabled={true}
-                snapEnabled={true}
-                autoPlay={false}
-                autoPlayInterval={1500}
-                mode="parallax"
-                modeConfig={{
-                    parallaxScrollingScale: 0.9,
-                    parallaxScrollingOffset: 50,
-                }}
-                data={data}
-                renderItem={({ item, index }) => (
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Image source={{ uri: item.image }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" />
-                    </View>
-                )}
-            />
-        </View>
-    );
 }
 
+const CustomCarousel = ({ data }: CustomCarouselProps) => {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [carouselItems, setCarouselItems] = useState(data);
+    const { width, height } = Dimensions.get('window');
+    const CARD_WIDTH = width;
 
-export default Index;
+    const openImage = (imageUri: string) => {
+        setSelectedImage(imageUri);
+    };
+
+    const closeImage = () => {
+        setSelectedImage(null);
+    };
+
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}>
+            <FlatList
+                data={carouselItems}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={CARD_WIDTH}
+                snapToAlignment="center"
+                scrollEventThrottle={16}
+                decelerationRate={0}
+                contentContainerStyle={{ backgroundColor: colors.black, marginTop: 10 }}
+                style={{ backgroundColor: colors.black }}
+                pagingEnabled
+                onEndReachedThreshold={0.5}
+                onEndReached={() => setCarouselItems([...carouselItems, ...data])}
+                renderItem={({ item, index }) => {
+                    return (
+                        <Pressable
+                            key={index}
+                            style={{ width: CARD_WIDTH, alignSelf: 'center', alignItems: 'center' }}
+                            onPress={() => openImage(item.image)}
+                        >
+                            <Image source={{ uri: item.image }} style={{ height: 200, width: CARD_WIDTH }} resizeMode='contain' />
+                        </Pressable>
+                    )
+                }}
+            />
+            <Modal visible={!!selectedImage} transparent={true} onRequestClose={closeImage}>
+                <View style={styles.modalBackground}>
+                    <Pressable style={styles.modalContent} onPress={closeImage}>
+                        <Image source={{ uri: selectedImage ? selectedImage : '' }} style={{ flex: 1 }} resizeMode='contain' />
+                    </Pressable>
+                </View>
+            </Modal>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    modalBackground: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '100%',
+        height: '100%',
+    },
+});
+
+export default CustomCarousel;
