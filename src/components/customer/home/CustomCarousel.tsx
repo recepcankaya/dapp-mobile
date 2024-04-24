@@ -6,6 +6,7 @@ import { Gesture, GestureDetector, GestureHandlerRootView, } from 'react-native-
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
+    withTiming
 } from 'react-native-reanimated';
 
 type CustomCarouselProps = {
@@ -13,10 +14,32 @@ type CustomCarouselProps = {
 }
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width;
+const END_POSITION = 200;
 
 const CustomCarousel = ({ data }: CustomCarouselProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [carouselItems, setCarouselItems] = useState(data);
+
+    const onLeft = useSharedValue(true);
+    const position = useSharedValue(0);
+
+    const panGesture = Gesture.Pan()
+        .onUpdate((e) => {
+            if (onLeft.value) {
+                position.value = e.translationX;
+            } else {
+                position.value = END_POSITION + e.translationX;
+            }
+        })
+        .onEnd((e) => {
+            if (position.value > END_POSITION / 2) {
+                position.value = withTiming(END_POSITION, { duration: 100 });
+                onLeft.value = false;
+            } else {
+                position.value = withTiming(0, { duration: 100 });
+                onLeft.value = true;
+            }
+        });
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
@@ -30,7 +53,7 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
         });
 
     const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
+        transform: [{ scale: scale.value }, { translateX: position.value }],
     }));
 
     const openImage = (imageUri: string) => {
@@ -40,6 +63,7 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
     const closeImage = () => {
         setSelectedImage(null);
         scale.value = 1;
+        position.value = 0;
     };
 
     return (
@@ -71,11 +95,13 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
             />
             <Modal visible={!!selectedImage} transparent={true} onRequestClose={closeImage}>
                 <Animated.View style={styles.modalBackground}>
-                    <Pressable style={styles.modalContent} onPress={closeImage}>
-                        <GestureDetector gesture={pinchGesture}>
-                            <Animated.Image source={{ uri: selectedImage ? selectedImage : '' }} style={[styles.modalImage, animatedStyle]} resizeMode='contain' />
-                        </GestureDetector>
-                    </Pressable>
+                    <GestureDetector gesture={panGesture}>
+                        <Pressable style={styles.modalContent} onPress={closeImage}>
+                            <GestureDetector gesture={pinchGesture}>
+                                <Animated.Image source={{ uri: selectedImage ? selectedImage : '' }} style={[styles.modalImage, animatedStyle]} resizeMode='contain' />
+                            </GestureDetector>
+                        </Pressable>
+                    </GestureDetector>
                 </Animated.View>
             </Modal>
         </GestureHandlerRootView>
