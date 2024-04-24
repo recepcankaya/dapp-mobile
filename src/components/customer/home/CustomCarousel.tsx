@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { View, Pressable, Image, Dimensions, Modal, StyleSheet, FlatList } from 'react-native';
+import { Pressable, Image, Dimensions, Modal, StyleSheet, FlatList } from 'react-native';
 
 import colors from '../../../ui/colors';
+import { Gesture, GestureDetector, GestureHandlerRootView, } from 'react-native-gesture-handler';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+} from 'react-native-reanimated';
 
 type CustomCarouselProps = {
     data: { image: string }[]
@@ -13,16 +18,32 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [carouselItems, setCarouselItems] = useState(data);
 
+    const scale = useSharedValue(1);
+    const savedScale = useSharedValue(1);
+
+    const pinchGesture = Gesture.Pinch()
+        .onUpdate((e) => {
+            scale.value = savedScale.value * e.scale;
+        })
+        .onEnd(() => {
+            savedScale.value = scale.value;
+        });
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
+
     const openImage = (imageUri: string) => {
         setSelectedImage(imageUri);
     };
 
     const closeImage = () => {
         setSelectedImage(null);
+        scale.value = 1;
     };
 
     return (
-        <View style={styles.container}>
+        <GestureHandlerRootView style={styles.container}>
             <FlatList
                 data={carouselItems}
                 horizontal
@@ -49,13 +70,15 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
                 }}
             />
             <Modal visible={!!selectedImage} transparent={true} onRequestClose={closeImage}>
-                <View style={styles.modalBackground}>
+                <Animated.View style={styles.modalBackground}>
                     <Pressable style={styles.modalContent} onPress={closeImage}>
-                        <Image source={{ uri: selectedImage ? selectedImage : '' }} style={styles.modalImage} resizeMode='contain' />
+                        <GestureDetector gesture={pinchGesture}>
+                            <Animated.Image source={{ uri: selectedImage ? selectedImage : '' }} style={[styles.modalImage, animatedStyle]} resizeMode='contain' />
+                        </GestureDetector>
                     </Pressable>
-                </View>
+                </Animated.View>
             </Modal>
-        </View>
+        </GestureHandlerRootView>
     );
 };
 
