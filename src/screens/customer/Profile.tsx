@@ -128,7 +128,6 @@ export default function Profile() {
                   scrollEnabled={false}
                   ListEmptyComponent={() => <ActivityIndicator color={colors.purple} size={"large"} />}
                   renderItem={({ item, index }) => (
-                    console.log('item', item),
                     <View>
                       <TouchableOpacity
                         key={index.toString()}
