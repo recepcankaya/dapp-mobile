@@ -7,6 +7,7 @@ import {
   Image,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import {
   useOwnedNFTs,
@@ -35,17 +36,19 @@ export default function Profile() {
   const adminId = useAdminStore((state) => state.admin.id);
   const contractAddress = useAdminStore((state) => state.admin.contractAddress);
   const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const freeRightImageUrl = useAdminStore((state) => state.admin.freeRightImageUrl);
   const address = useAddress();
   const { contract: usedNFTContract } = useContract(contractAddress);
   const {
     data: nftData,
-    isLoading,
+
     error,
   } = useOwnedNFTs(usedNFTContract, address);
 
   const renderImages = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase
       .from("user_missions")
       .select("number_of_free_rights")
@@ -56,11 +59,14 @@ export default function Profile() {
     } else {
       console.log("error", error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     renderImages();
   }, []);
+
+
 
   useEffect(() => {
     const numberOfFreeRights = supabase
@@ -80,13 +86,14 @@ export default function Profile() {
         }
       )
       .subscribe();
-
+      if(qrCodeModalVisible) setQrCodeModalVisible(false);
     return () => {
       supabase.removeChannel(numberOfFreeRights);
     };
   }, [numberOfFreeRights]);
 
   // Touchable opacity compunun yüksekliği NFT' den büyük. Şu anda bi sıkıntı yok ama sonrasında yüksekliği her nft içn ayarlayalım
+  // Tmm knk olr
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -112,37 +119,42 @@ export default function Profile() {
           </TouchableOpacity>
         </View>
         <View style={styles.iconContainer}>
-          {selectedTab === "Waiting" &&
-            (numberOfFreeRights.length > 0 ? (
-              <FlatList
-                data={numberOfFreeRights}
-                scrollEnabled={false}
-                renderItem={({ item, index }) => (
-                  <View>
-                    <TouchableOpacity
-                      key={index.toString()}
-                      onPress={() => setQrCodeModalVisible(true)}>
-                      <Image
-                        source={{
-                          uri: freeRightImageUrl.replace(
-                            "ipfs://",
-                            "https://ipfs.io/ipfs/"
-                          ),
-                        }}
-                        style={styles.icon}
-                        resizeMode="contain"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-                numColumns={1}
-              />
-            ) : (
-              <Text style={styles.infoText}>
-                Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
-              </Text>
-            ))}
+          {!isLoading ?
+            (selectedTab === "Waiting" &&
+              (numberOfFreeRights.length > 0 ? (
+                <FlatList
+                  data={numberOfFreeRights}
+                  extraData={numberOfFreeRights}
+                  scrollEnabled={false}
+                  ListEmptyComponent={() => <ActivityIndicator color={colors.purple} size={"large"} />}
+                  renderItem={({ item, index }) => (
+                    <View>
+                      <TouchableOpacity
+                        key={index.toString()}
+                        onPress={() => setQrCodeModalVisible(true)}>
+                        <Image
+                          source={{
+                            uri: freeRightImageUrl.replace(
+                              "ipfs://",
+                              "https://ipfs.io/ipfs/"
+                            ),
+                          }}
+                          style={styles.icon}
+                          resizeMode="contain"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={1}
+                />
+              ) : (
+                <Text style={styles.infoText}>
+                  Şu anda indirim/ücretsiz hakkınız bulunmamaktadır.
+                </Text>
+              ))) : (
+              <ActivityIndicator color={colors.purple} size={"large"} />
+            )}
           {selectedTab === "Your Collection" &&
             (nftData && nftData?.length > 0 ? (
               <FlatList

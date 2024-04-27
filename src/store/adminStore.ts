@@ -1,22 +1,26 @@
 import { create } from "zustand";
 
+export type Campaign = {
+  campaign_id: string;
+  campaign_name: string;
+  campaign_image: string;
+};
+
+export type Coord = {
+  lat: number;
+  long: number;
+};
+
 export type Admin = {
   id: string;
   brandName: string;
   brandLogo: string;
   ticketImage: string;
   numberForReward: number;
-  campaigns: {
-    campaign_id: string;
-    campaign_name: string;
-    campaign_image: string;
-  }[];
+  campaigns: Campaign[];
   NFTSrc: string;
   contractAddress: string;
-  coords: {
-    lat: number;
-    long: number;
-  };
+  coords: Coord;
   freeRightImageUrl: string;
   brandVideoUrl: string;
 };

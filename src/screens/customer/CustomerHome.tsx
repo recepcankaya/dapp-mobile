@@ -11,11 +11,11 @@ import supabase from "../../lib/supabase";
 import { heightConstant } from "../../ui/responsiveScreen";
 import colors from "../../ui/colors";
 
-import Carousel from 'react-native-reanimated-carousel';
-
 import { Video, ResizeMode } from 'expo-av';
 
 const { width, height } = Dimensions.get("window");
+
+import Carousel from "../../components/customer/home/CustomCarousel/Carousel";
 
 const CustomerHome = () => {
   const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
@@ -76,6 +76,10 @@ const CustomerHome = () => {
 
   const brandVideoUrl = useAdminStore((state) => state.admin.brandVideoUrl);
 
+  useEffect(() => {
+    console.log("brandVideoUrl", brandVideoUrl)
+  }, [brandVideoUrl])
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <HomeHeader />
@@ -86,32 +90,13 @@ const CustomerHome = () => {
             Menü
           </Text>
         </TouchableOpacity>
-        <Carousel
-          loop
-          width={width}
-          height={width / 2}
-          autoPlay={false}
-          mode="parallax"
-          data={campaigns}
-          scrollAnimationDuration={1000}
-          onSnapToItem={(index) => console.log('current index:', index)}
-          renderItem={({ item, index }) => (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-              }}
-            >
-              <Image source={{ uri: item.image }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" />
-            </View>
-          )}
-        />
+        <Carousel data={campaigns} />
         <View style={styles.container}>
           <Video
             ref={video}
             style={styles.video}
             source={{
-              uri: brandVideoUrl.replace("ipfs://", "https://ipfs.io/ipfs/"),
+              uri: brandVideoUrl,
             }}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}

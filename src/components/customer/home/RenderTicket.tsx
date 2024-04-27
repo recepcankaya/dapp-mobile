@@ -6,6 +6,7 @@ import useAdminStore from "../../../store/adminStore";
 import colors from "../../../ui/colors";
 import Text from "../../../ui/customText";
 import { heightConstant } from "../../../ui/responsiveScreen";
+import { useEffect } from "react";
 
 type RenderTicketProps = {
     userOrderNumber: number;
@@ -15,38 +16,38 @@ type RenderTicketProps = {
 export default function RenderTicket({ userOrderNumber, ticketImage }: RenderTicketProps) {
     const admin = useAdminStore((state) => state.admin);
     const ticketCircles = new Array(admin.numberForReward);
-
+    useEffect(() => {
+        console.log(admin.numberForReward <= 4 ? 2 : (admin.numberForReward == 5 || admin.numberForReward == 6 ? 3 : 4))
+    }, [admin.numberForReward])
     return (
-        <View>
-            <ImageBackground source={{
-                uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
-            }} style={{ width: '100%', height: 200, alignSelf: 'center' }} resizeMode="contain" >
-                <FlatList
-                    data={ticketCircles}
-                    extraData={ticketCircles}
-                    renderItem={({ item, index }) => (
-                        <TicketRenderItem index={index} userOrderNumber={userOrderNumber} />
-                    )}
-                    numColumns={4}
-                    columnWrapperStyle={{ justifyContent: "space-between", height: 100 * heightConstant, alignItems: 'center' }}
-                    contentContainerStyle={styles.circles}
-                    scrollEnabled={false}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </ImageBackground>
-        </View>
+        <ImageBackground source={{
+            uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
+        }} style={styles.ticket} resizeMode="contain" >
+            <FlatList
+                data={ticketCircles}
+                extraData={ticketCircles}
+                renderItem={({ item, index }) => (
+                    <TicketRenderItem index={index} userOrderNumber={userOrderNumber} />
+                )}
+                numColumns={admin.numberForReward <= 4 ? 2 : (admin.numberForReward == 5 || admin.numberForReward == 6 ? 3 : 4)}
+                columnWrapperStyle={{ justifyContent: "space-between", height: 95 * heightConstant, alignItems: 'center' }}
+                contentContainerStyle={[userOrderNumber > 4 && { justifyContent: 'center' }, styles.circles]}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+            />
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
     ticket: {
         width: "100%",
-        height: 200 * heightConstant,
-        backgroundColor: colors.white,
+        height: 190 * heightConstant,
+        alignSelf: 'center',
     },
     circles: {
         flex: 1,
         alignItems: "flex-end",
-        marginRight: 10
+        marginRight: 10,
     },
 });

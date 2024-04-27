@@ -73,10 +73,6 @@ const Brands = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('admins', admins[0]?.campaigns);
-  }, [admins])
-
   /**
    * Searches for an admin based on the brand name.
    * @param admin - The admin object to search.
