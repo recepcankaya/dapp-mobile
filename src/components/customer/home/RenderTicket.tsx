@@ -24,6 +24,7 @@ export default function RenderTicket({ userOrderNumber, ticketImage }: RenderTic
             uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
         }} style={styles.ticket} resizeMode="contain" >
             <FlatList
+                key={admin.numberForReward <= 4 ? 2 : (admin.numberForReward == 5 || admin.numberForReward == 6 ? 3 : 4)}
                 data={ticketCircles}
                 extraData={ticketCircles}
                 renderItem={({ item, index }) => (
