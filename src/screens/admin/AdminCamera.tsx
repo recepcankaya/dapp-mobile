@@ -25,7 +25,7 @@ import supabase, { secretSupabase } from "../../lib/supabase";
 const { width, height } = Dimensions.get("window");
 
 const AdminCamera = () => {
-  const adminID = useAdminForAdminStore((state) => state.admin.adminId);
+  const adminId = useAdminForAdminStore((state) => state.admin.adminId);
   const { hasPermission, requestPermission } = useCameraPermission();
   const cameraRef = useRef<Camera>(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -47,15 +47,16 @@ const AdminCamera = () => {
 
     onCodeScanned: async (codes, frame) => {
       let userID = "";
+      let adminID = "";
       let forNFT = null;
       let address = null;
       if (qrCodeValue.length > 0) return;
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userID: string; forNFT: boolean; address: any } =
+        const parsedValue: { userID: string; adminID: string; forNFT: boolean; address: any } =
           JSON.parse(codes[0].value);
-        ({ userID, forNFT, address } = parsedValue);
+        ({ userID, adminID, forNFT, address } = parsedValue);
       }
       // get number_of_orders from user_missions table
       const { data: userMissionInfo } = await supabase
@@ -64,13 +65,13 @@ const AdminCamera = () => {
           "number_of_orders, id, customer_number_of_orders_so_far, number_of_free_rights"
         )
         .eq("user_id", userID)
-        .eq("admin_id", adminID);
+        .eq("admin_id", adminId);
 
       // get number_for_reward from admin table
       const { data: numberForReward } = await supabase
         .from("admins")
         .select("number_for_reward")
-        .eq("id", adminID);
+        .eq("id", adminId);
 
       const { data: user } = await secretSupabase
         .from("users")
@@ -79,8 +80,20 @@ const AdminCamera = () => {
         .single();
       // If the order is for free, make request
       if (forNFT == true && userMissionInfo) {
+        if (adminID != adminId) return Alert.alert(`Bu sizin işletmenizin ödülü değildir.`, `Lütfen müşterinizden doğru ödülü kullanmasını isteyiniz.`, [
+          {
+            text: "Tamam",
+            onPress: () => qrCodeValue = [],
+          },
+        ]);
+        if (userMissionInfo[0].number_of_free_rights == 0) return Alert.alert(`Bu ödül kullanılamaz.`, `Lütfen daha sonra tekrar deneyiniz.`, [
+          {
+            text: "Tamam",
+            onPress: () => qrCodeValue = [],
+          },
+        ])
         await supabase.rpc("decrement_admins_not_used_nfts", {
-          admin_id: adminID,
+          admin_id: adminId,
         });
 
         await supabase.rpc("decrement_user_missions_number_of_free_rigths", {
@@ -88,7 +101,7 @@ const AdminCamera = () => {
         });
 
         await supabase.rpc("increment_admins_number_of_orders_so_far", {
-          admin_id: adminID,
+          admin_id: adminId,
         });
 
         await supabase.rpc("increment_user_missions_number_of_orders_so_far", {
@@ -115,17 +128,17 @@ const AdminCamera = () => {
             await supabase.from("user_missions").insert({
               number_of_orders: 1,
               user_id: userID,
-              admin_id: adminID,
+              admin_id: adminId,
               number_of_free_rights: 0,
               customer_number_of_orders_so_far: 1,
             });
 
             await supabase.rpc("increment_admins_number_of_orders_so_far", {
-              admin_id: adminID,
+              admin_id: adminId,
             });
 
             await supabase.rpc("increment_user_missions_number_of_orders_so_far", {
-              mission_id: adminID,
+              mission_id: adminId,
             })
 
             Alert.alert(
@@ -157,7 +170,7 @@ const AdminCamera = () => {
             );
 
             await supabase.rpc("increment_admins_number_of_orders_so_far", {
-              admin_id: adminID,
+              admin_id: adminId,
             });
 
 
@@ -181,7 +194,7 @@ const AdminCamera = () => {
           ) {
             try {
               await supabase.rpc("increment_admins_not_used_nfts", {
-                admin_id: adminID,
+                admin_id: adminId,
               });
 
               await supabase.rpc(
@@ -192,7 +205,7 @@ const AdminCamera = () => {
               );
 
               await supabase.rpc("increment_admins_number_of_orders_so_far", {
-                admin_id: adminID,
+                admin_id: adminId,
               });
 
               await supabase.rpc(
@@ -208,7 +221,7 @@ const AdminCamera = () => {
                   number_of_orders: 0,
                 })
                 .eq("user_id", userID)
-                .eq("admin_id", adminID);
+                .eq("admin_id", adminId);
 
               if (zeroError) {
                 Alert.alert(

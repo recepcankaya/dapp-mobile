@@ -6,11 +6,12 @@ import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
 
 const QrCode = () => {
-  const userID = useUserStore((state) => state.user.id);
+  const userId = useUserStore((state) => state.user.id);
   const customerAddress = useAddress();
 
   const qrCodeValue = {
-    userID,
+    userID: userId,
+    adminID: "",
     forNFT: false,
     address: customerAddress,
   };

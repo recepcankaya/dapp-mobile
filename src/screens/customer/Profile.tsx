@@ -190,7 +190,7 @@ export default function Profile() {
         </View>
         <QrCodeModal
           isVisible={qrCodeModalVisible}
-          value={JSON.stringify({ userID, forNFT: true, address })}
+          value={JSON.stringify({ userID, forNFT: true, address, adminID: adminId })}
           onClose={() => setQrCodeModalVisible(false)}
         />
       </ScrollView>
