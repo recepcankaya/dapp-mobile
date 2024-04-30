@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Alert,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  RefreshControl
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +30,7 @@ const AdminHome = () => {
   const numberForReward = useAdminForAdminStore(
     (state) => state.admin.numberForReward
   );
+  const usedRewards = useAdminForAdminStore((state) => state.admin.usedRewards)
   const contractAddress = useAdminForAdminStore(
     (state) => state.admin.contractAddress
   );
@@ -36,12 +39,14 @@ const AdminHome = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
+  const [refreshing, setRefreshing] = useState(false);
+
   const fetchAdminDashboard = async () => {
     try {
       const { data: adminData, error: adminError } = await supabase
         .from("admins")
         .select(
-          "brand_name, brand_branch, not_used_nfts, number_for_reward, number_of_orders_so_far, contract_address"
+          "brand_name, brand_branch, not_used_nfts, number_for_reward, number_of_orders_so_far, contract_address ,admin_used_rewards"
         )
         .eq("id", adminID);
       if (adminData) {
@@ -53,6 +58,7 @@ const AdminHome = () => {
           numberForReward: adminData[0].number_for_reward,
           numberOfOrdersSoFar: adminData[0].number_of_orders_so_far,
           contractAddress: adminData[0].contract_address,
+          usedRewards: adminData[0].admin_used_rewards,
         });
       } else {
         console.error(adminError);
@@ -66,9 +72,21 @@ const AdminHome = () => {
     fetchAdminDashboard();
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchAdminDashboard();
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    console.log('usedRewards', usedRewards);
+  }, [usedRewards])
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.infoContainer}>
+      <ScrollView style={styles.infoContainer} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View style={styles.info}>
           <View style={styles.circle}>
             {/* Brand Logo */}
@@ -105,7 +123,6 @@ const AdminHome = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            {/* heree */}
             <Text style={styles.adminData}>{!isLoading ? nftData?.toString() : "..."}</Text>
           </View>
           <View style={styles.infoTextContainer}>
@@ -120,7 +137,15 @@ const AdminHome = () => {
             <Text style={styles.infoText}>Kaç Alışverişte Ödül Verileceği</Text>
           </View>
         </View>
-      </View>
+        <View style={styles.info}>
+          <View style={styles.circle}>
+            <Text style={styles.adminData}>{usedRewards}</Text>
+          </View>
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoText}>Verilen Ödüller</Text>
+          </View>
+        </View>
+      </ScrollView>
       <TouchableOpacity
         style={styles.qrCode}
         onPress={() => navigation.navigate("Admin Camera")}>
@@ -142,14 +167,12 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     width: "90%",
-    height: 650,
-    alignItems: "stretch",
-    justifyContent: "space-between",
   },
   info: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
+    marginTop: 15
   },
   circle: {
     width: 90,

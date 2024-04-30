@@ -7,6 +7,7 @@ type Admin = {
   numberOfOrdersSoFar: number;
   notUsedNFTs: number;
   numberForReward: number;
+  usedRewards: number;
   contractAddress: string;
 };
 
@@ -26,6 +27,7 @@ const useAdminForAdminStore = create<State & Action>((set) => ({
     numberOfOrdersSoFar: 0,
     notUsedNFTs: 0,
     numberForReward: 0,
+    usedRewards: 0,
     contractAddress: "",
   },
   updateAdmin: (admin) => set(() => ({ admin: admin })),

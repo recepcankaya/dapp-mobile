@@ -108,6 +108,14 @@ const AdminCamera = () => {
           mission_id: userMissionInfo[0].id,
         });
 
+        await supabase.rpc("increment_admins_used_rewards", {
+          admin_id: adminId
+        });
+
+        await supabase.rpc("increment_user_missions_used_rewards", {
+          mission_id: userMissionInfo[0].id
+        })
+
         Alert.alert(
           `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
           `Bugüne kadar verilen sipariş sayısı: ${userMissionInfo[0].customer_number_of_orders_so_far + 1} ${"\n"} Kalan ödül hakkı: ${userMissionInfo[0].number_of_free_rights - 1}`,
