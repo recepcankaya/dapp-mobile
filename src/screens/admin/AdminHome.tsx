@@ -17,6 +17,7 @@ import supabase from "../../lib/supabase";
 import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import colors from "../../ui/colors";
 import { useTotalCount, useContract } from "@thirdweb-dev/react-native";
+import CustomLoading from "../../components/common/CustomLoading";
 
 const AdminHome = () => {
   const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
@@ -150,6 +151,7 @@ const AdminHome = () => {
           style={styles.qrCode}
         />
       </TouchableOpacity>
+      <CustomLoading visible={!refreshing} />
     </SafeAreaView>
   );
 };
