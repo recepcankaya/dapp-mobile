@@ -151,7 +151,7 @@ const AdminHome = () => {
           style={styles.qrCode}
         />
       </TouchableOpacity>
-      <CustomLoading visible={!refreshing} />
+      <CustomLoading visible={refreshing} />
     </SafeAreaView>
   );
 };
