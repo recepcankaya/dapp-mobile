@@ -78,10 +78,6 @@ const AdminHome = () => {
     setRefreshing(false);
   }, []);
 
-  useEffect(() => {
-    console.log('usedRewards', usedRewards);
-  }, [usedRewards])
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.infoContainer} refreshControl={
