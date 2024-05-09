@@ -8,18 +8,21 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import colors from "../../ui/colors";
 import supabase from "../../lib/supabase";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
-  const admin = useAdminForAdminStore((state) => state.admin);
+  const brand = useBrandStore((state) => state.brand);
+  const setBrand = useBrandStore((state) => state.setBrand);
+  const brandBranch = useBrandBranchStore((state) => state.brandBranch);
+  const setBrandBranch = useBrandBranchStore((state) => state.setBrandBranch);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const submitForm = async () => {
@@ -33,17 +36,84 @@ const AdminLogin = () => {
     });
     if (data) {
       if (data.user) {
-        updateAdmin({
-          ...admin,
-          adminId: data.user.id,
-        });
+        const { data: brandData, error: brandError } = await supabase
+          .from("brand")
+          .select("id,brand_name, contract_address, total_unused_free_rights, required_number_for_free_right")
+          .eq("id", data.user.id)
+          .single();
+        console.log("brandData", brandData);
+        if (brandData) {
+          setBrand({
+            ...brand,
+            id: brandData.id,
+            brandName: brandData.brand_name,
+            contractAddress: brandData.contract_address,
+            totalUnusedFreeRights: brandData.total_unused_free_rights,
+            requiredNumberForFreeRight: brandData.required_number_for_free_right
+          });
+          const { data: brandBranchData } = await supabase
+            .from("brand_branch")
+            .select("id,branch_name, total_order, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders")
+            .eq("brand_id", brandData.id)
+            .single();
+          console.log("brandBranchData", brandBranchData);
+          if (brandBranchData) setBrandBranch({
+            ...brandBranch,
+            id: brandBranchData.id,
+            branchName: brandBranchData.branch_name,
+            totalOrders: brandBranchData.total_order,
+            totalUsedFreeRights: brandBranchData.total_used_free_rights,
+            dailyTotalOrders: brandBranchData.daily_total_orders,
+            dailyTotalUsedFreeRights: brandBranchData.daily_total_used_free_rights,
+            monthlyTotalOrders: brandBranchData.monthly_total_orders
+          });
+        } else {
+          const { data: brandBrancData } = await supabase
+            .from("brand_branch")
+            .select("id, brand_id,branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders")
+            .eq("id", data.user.id)
+            .single();
+          if (brandBrancData) {
+            setBrandBranch({
+              ...brandBranch,
+              id: brandBrancData.id,
+              brandId: brandBrancData.brand_id,
+              branchName: brandBrancData.branch_name,
+              totalOrders: brandBrancData.total_orders,
+              totalUsedFreeRights: brandBrancData.total_used_free_rights,
+              dailyTotalOrders: brandBrancData.daily_total_orders,
+              dailyTotalUsedFreeRights: brandBrancData.daily_total_used_free_rights,
+              monthlyTotalOrders: brandBrancData.monthly_total_orders
+            });
+            const { data: brandData } = await supabase
+              .from("brand")
+              .select("brand_name, contract_address, total_unused_free_rights, required_number_for_free_right")
+              .eq("id", brandBrancData.brand_id)
+              .single();
+            if (brandData) {
+              setBrand({
+                ...brand,
+                id: brandBrancData.brand_id,
+                brandName: brandData.brand_name,
+                contractAddress: brandData.contract_address,
+                totalUnusedFreeRights: brandData.total_unused_free_rights,
+                requiredNumberForFreeRight: brandData.required_number_for_free_right
+              });
+            }
+          }
+        }
         // Check if it's the first login
         if (data.user.last_sign_in_at === null) {
           navigation.navigate("Admin New Password");
         } else {
           setEmail("");
           setPassword("");
-          navigation.navigate("Admin Home");
+          return navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Admin Home" }],
+            })
+          );
         }
       }
     }

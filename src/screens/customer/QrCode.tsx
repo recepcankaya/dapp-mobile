@@ -11,7 +11,8 @@ const QrCode = () => {
 
   const qrCodeValue = {
     userID: userId,
-    adminID: "",
+    brandID: "",
+    branchID: "",
     forNFT: false,
     address: customerAddress,
   };

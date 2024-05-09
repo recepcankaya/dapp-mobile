@@ -45,6 +45,8 @@ const UserInfo = () => {
         updateUser({
           id: user[0].id,
           username: user[0].username,
+          lastLogin: new Date().toString(),
+          walletAddr: walletAddr ? walletAddr.toString() : "",
         });
         navigation.navigate("TabNavigator");
         Alert.alert("Uygulamamıza hoşgeldin 🤗🥳", "");

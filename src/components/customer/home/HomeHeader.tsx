@@ -2,11 +2,11 @@ import { Image, StyleSheet, View } from "react-native";
 
 import { heightConstant, widthConstant } from "../../../ui/responsiveScreen";
 import colors from "../../../ui/colors";
-import useAdminStore from "../../../store/adminStore";
+import useBrandStore from "../../../store/brandStore";
 const logo = require("../../../assets/LadderLogo.png");
 
 export default function HomeHeader() {
-  const brandLogo = useAdminStore((state) => state.admin.brandLogo);
+  const brandLogoIpfsUrl = useBrandStore((state) => state.brand.brandLogoIpfsUrl);
 
   return (
     <View style={styles.header}>
@@ -14,7 +14,7 @@ export default function HomeHeader() {
         resizeMode="contain"
         style={styles.headerImage}
         source={{
-          uri: brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+          uri: brandLogoIpfsUrl?.replace("ipfs://", "https://ipfs.io/ipfs/"),
         }}
       />
       <Image resizeMode="stretch" style={styles.headerImage} source={logo} />

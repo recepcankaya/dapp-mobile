@@ -1,48 +1,59 @@
 import { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Dimensions, View, Text, Image, Linking, TouchableOpacity, Button, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Linking, TouchableOpacity, ScrollView } from "react-native";
 
 import HomeHeader from "../../components/customer/home/HomeHeader";
 import RenderTicket from "../../components/customer/home/RenderTicket";
 
 import useUserStore from "../../store/userStore";
-import useAdminStore from "../../store/adminStore";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
 import supabase from "../../lib/supabase";
 import { heightConstant } from "../../ui/responsiveScreen";
 import colors from "../../ui/colors";
 
 import { Video, ResizeMode } from 'expo-av';
 
-const { width, height } = Dimensions.get("window");
-
 import Carousel from "../../components/customer/home/CustomCarousel/Carousel";
+import useBrandBranchDetailsStore from "../../store/brandBranchDetailsStore";
 
 const CustomerHome = () => {
-  const [userOrderNumber, setUserOrderNumber] = useState<number>(0);
-  const userID = useUserStore((state) => state.user.id);
-  const admin = useAdminStore((state) => state.admin);
+  const [totalTicketOrders, setTotalTicketOrders] = useState<number>(0);
+  const userId = useUserStore((state) => state.user.id);
+  const brand = useBrandStore((state) => state.brand);
+  const brandId = useBrandStore((state) => state.brand.id);
+  const brandBranch = useBrandBranchStore((state) => state.brandBranch);
+  const brandBranchId = useBrandBranchStore((state) => state.brandBranch.id);
+  const brandBranchDetails = useBrandBranchDetailsStore((state) => state.brandBranchDetails);
+  const campaigns = useBrandBranchStore((state) => state.brandBranch.campaigns)?.map((campaign: any) => {
+    return {
+      image: campaign.campaign_image.replace("ipfs://", "https://ipfs.io/ipfs/"),
+    };
+  })
+  const brandBranchVideoUrl = useBrandBranchStore((state) => state.brandBranch.videoUrl);
 
   const renderTickets = async () => {
     try {
       const { data } = await supabase
-        .from("user_missions")
-        .select("number_of_orders")
-        .eq("user_id", userID)
-        .eq("admin_id", admin.id);
+        .from("user_orders")
+        .select("total_user_orders,total_ticket_orders")
+        .eq("user_id", userId)
+        .eq("brand_id", brandId)
+        .eq("branch_id", brandBranchId);
       if (data && data.length > 0) {
-        setUserOrderNumber(data[0].number_of_orders);
+        setTotalTicketOrders(data[0].total_ticket_orders);
       } else {
-        setUserOrderNumber(0);
+        setTotalTicketOrders(0);
       }
     } catch (error) {
       console.log("error", error);
     }
-  };
+  }
 
   // @todo - renderTickets() fonksiyonunu her brands'e girişte iki defa renderlıyor. Düzeltilmesi gerekiyor.
   useEffect(() => {
     renderTickets();
-  }, [admin, userOrderNumber]);
+  }, [brand, totalTicketOrders]);
 
   useEffect(() => {
     const orders = supabase
@@ -52,58 +63,52 @@ const CustomerHome = () => {
         {
           event: "*",
           schema: "public",
-          table: "user_missions",
-          filter: `user_id=eq.${userID}`,
+          table: "user_orders",
+          filter: `user_id=eq.${userId}`,
         },
         (payload: any) => {
-          setUserOrderNumber(payload.new.number_of_orders);
+          setTotalTicketOrders(payload.new.total_ticket_orders);
         }
       )
       .subscribe();
     return () => {
       supabase.removeChannel(orders);
     };
-  }, [userOrderNumber]);
+  }, [totalTicketOrders]);
 
   const video = useRef(null);
   const [status, setStatus] = useState({});
 
-  const campaigns = useAdminStore((state) => state.admin.campaigns).map((campaign) => {
-    return {
-      image: campaign.campaign_image.replace("ipfs://", "https://ipfs.io/ipfs/"),
-    };
-  });
 
-  const brandVideoUrl = useAdminStore((state) => state.admin.brandVideoUrl);
-
-  useEffect(() => {
-    console.log("brandVideoUrl", brandVideoUrl)
-  }, [brandVideoUrl])
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <HomeHeader />
       <ScrollView>
-        <RenderTicket userOrderNumber={userOrderNumber} ticketImage={admin.ticketImage} />
+        <RenderTicket totalTicketOrders={totalTicketOrders} ticketIpfsUrl={brand.ticketIpfsUrl} />
         <TouchableOpacity style={styles.menuButton} onPress={() => Linking.openURL("http://claincoffe.com")}>
           <Text style={styles.menuText}>
             Menü
           </Text>
         </TouchableOpacity>
-        <Carousel data={campaigns} />
-        <View style={styles.container}>
-          <Video
-            ref={video}
-            style={styles.video}
-            source={{
-              uri: brandVideoUrl,
-            }}
-            useNativeControls
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping
-            onPlaybackStatusUpdate={status => setStatus(() => status)}
-          />
-        </View>
+        {campaigns &&
+          <Carousel data={campaigns} />
+        }
+        {brandBranchVideoUrl &&
+          <View style={styles.container}>
+            <Video
+              ref={video}
+              style={styles.video}
+              source={{
+                uri: brandBranchVideoUrl,
+              }}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping
+              onPlaybackStatusUpdate={status => setStatus(() => status)}
+            />
+          </View>
+        }
       </ScrollView>
 
     </SafeAreaView>
