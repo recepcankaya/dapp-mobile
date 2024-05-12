@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { v4 as uuidv4 } from "uuid";
 import { utils } from "ethers";
 import { sha512 } from "js-sha512";
+import bcrypt from "bcrypt";
 
 import supabase from "../../lib/supabase";
 import useUserStore from "../../store/userStore";
@@ -52,10 +53,10 @@ const Login = () => {
       }
 
       const nonce = uuidv4();
-      const passwordHash = sha512(`${walletAddr}l4dder1t`).slice(0, 50);
-
+      const salt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(walletAddr, salt);
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: `${walletAddr}@ladderuser.com`,
+        email: `${walletAddr}@ladderuser.com ⁠`,
         password: passwordHash,
       });
 

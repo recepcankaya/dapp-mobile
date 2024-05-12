@@ -53,12 +53,12 @@ export default function Profile() {
   const renderImages = async () => {
     setIsLoading(true);
     const { data, error } = await supabase
-      .from("user_missions")
-      .select("number_of_free_rights")
+      .from("user_orders")
+      .select("user_total_free_rights")
       .eq("user_id", userID)
-      .eq("admin_id", brandId);
+      .eq("brand_id", brandId);
     if (data) {
-      setNumberOfFreeRights(new Array(data[0].number_of_free_rights).fill(0));
+      setNumberOfFreeRights(new Array(data[0].user_total_free_rights).fill(0));
     } else {
       console.log("error", error);
     }
@@ -69,9 +69,9 @@ export default function Profile() {
     renderImages();
   }, []);
 
-
-
   useEffect(() => {
+    console.log("userID", userID);
+    console.log("brandID", brandId)
     const numberOfFreeRights = supabase
       .channel("orders-change-channel")
       .on(
@@ -79,18 +79,19 @@ export default function Profile() {
         {
           event: "*",
           schema: "public",
-          table: "user_missions",
+          table: "user_orders",
           filter: `user_id=eq.${userID}`,
         },
         (payload: any) => {
           setNumberOfFreeRights(
-            new Array(payload.new.number_of_free_rights).fill(0)
+            new Array(payload.new.user_total_free_rights).fill(0)
           );
         }
       )
       .subscribe();
     if (qrCodeModalVisible) setQrCodeModalVisible(false);
     return () => {
+      console.log("numberOfFreeRights", numberOfFreeRights);
       supabase.removeChannel(numberOfFreeRights);
     };
   }, [numberOfFreeRights]);
@@ -193,7 +194,7 @@ export default function Profile() {
         </View>
         <QrCodeModal
           isVisible={qrCodeModalVisible}
-          value={JSON.stringify({ userID, forNFT: true, address, adminID: brandId })}
+          value={JSON.stringify({ forNFT: true, userID, brandBranchID: branchId })}
           onClose={() => setQrCodeModalVisible(false)}
         />
       </ScrollView>

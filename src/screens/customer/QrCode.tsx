@@ -1,20 +1,30 @@
 import { useAddress } from "@thirdweb-dev/react-native";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import QRCode from "react-qr-code";
 
 import useUserStore from "../../store/userStore";
 import colors from "../../ui/colors";
+import { useEffect } from "react";
+import useBrandBranchStore from "../../store/brandBranchStore";
 
 const QrCode = () => {
   const userId = useUserStore((state) => state.user.id);
-  const customerAddress = useAddress();
+  const brandBranchId = useBrandBranchStore((state) => state.brandBranch.id);
+
+  useEffect(() => {
+    console.log('userId', userId, 'brandBranchId', brandBranchId)
+  }, [userId, brandBranchId])
+
+  useEffect(() => {
+    if (!brandBranchId) {
+      Alert.alert('Hata', 'QR kod oluşturulurken bir hata oluştu. Lütfen öncelikle bir marka seçer misiniz. 👉👈')
+    }
+  }, [brandBranchId])
 
   const qrCodeValue = {
     userID: userId,
-    brandID: "",
-    branchID: "",
+    brandBranchID: brandBranchId,
     forNFT: false,
-    address: customerAddress,
   };
 
   return (

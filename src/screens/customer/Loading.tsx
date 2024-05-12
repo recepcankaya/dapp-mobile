@@ -65,7 +65,7 @@ const Loading = () => {
       } else {
         const { data: brandData } = await supabase
           .from("brand")
-          .select("id,brand_name, contract_address, total_unused_free_rights, required_number_for_free_right")
+          .select("id,brand_name, contract_address, required_number_for_free_right")
           .eq("id", session.user.id)
           .single();
         console.log("brandData", brandData);
@@ -75,12 +75,11 @@ const Loading = () => {
             id: brandData.id,
             brandName: brandData.brand_name,
             contractAddress: brandData.contract_address,
-            totalUnusedFreeRights: brandData.total_unused_free_rights,
             requiredNumberForFreeRight: brandData.required_number_for_free_right
           });
           const { data: brandBranchData, error } = await supabase
             .from("brand_branch")
-            .select("id, branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders")
+            .select("id, branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders, total_unused_free_rights, monthly_total_orders_with_years")
             .eq("brand_id", brandData.id)
             .single();
           console.log("brandBranchDatax", brandBranchData, error);
@@ -92,7 +91,9 @@ const Loading = () => {
             totalUsedFreeRights: brandBranchData.total_used_free_rights,
             dailyTotalOrders: brandBranchData.daily_total_orders,
             dailyTotalUsedFreeRights: brandBranchData.daily_total_used_free_rights,
-            monthlyTotalOrders: brandBranchData.monthly_total_orders
+            monthlyTotalOrders: brandBranchData.monthly_total_orders,
+            totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
+            monthlyTotalOrdersWithYears: brandBranchData.monthly_total_orders_with_years
           });
         }
         else {

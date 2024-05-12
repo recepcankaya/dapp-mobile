@@ -24,7 +24,7 @@ export default function BrandBranchesList({
         }}
         style={styles.brandImage}
       />
-      <Text style={styles.brandName}>{item.brandName + " " + item.branchName}</Text>
+      <Text style={styles.brandName}>{item.brandName}</Text>
     </TouchableOpacity>
   );
 }

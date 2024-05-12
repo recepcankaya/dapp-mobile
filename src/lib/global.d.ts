@@ -14,7 +14,6 @@ declare global {
     freeRightImageUrl: SupabaseBrand["free_right_image_url"];
     nftSrc: SupabaseBrand["nft_src"];
     ticketIpfsUrl: SupabaseBrand["ticket_ipfs_url"];
-    totalUnusedFreeRights: SupabaseBrand["total_unused_free_rights"];
     requiredNumberForFreeRight: SupabaseBrand["required_number_for_free_right"];
   };
 
@@ -34,6 +33,8 @@ declare global {
     totalOrders: SupabaseBrandBranch["total_orders"];
     totalUsedFreeRights: SupabaseBrandBranch["total_used_free_rights"];
     videoUrl: SupabaseBrandBranch["video_url"];
+    totalUnusedFreeRights: SupabaseBrandBranch["total_unused_free_rights"];
+    monthlyTotalOrdersWithYears: SupabaseBrandBranch["monthly_total_orders_with_years"]
   };
 
   type SupabaseUser = Database["public"]["Tables"]["users"]["Row"];

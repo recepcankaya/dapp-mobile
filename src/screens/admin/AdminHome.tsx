@@ -33,8 +33,6 @@ const AdminHome = () => {
   const brandName = useBrandStore((state) => state.brand.brandName);
   //contractAddress
   const contractAddress = useBrandStore((state) => state.brand.contractAddress);
-  //notUsedNFTs
-  const totalUnusedFreeRights = useBrandStore(state => state.brand.totalUnusedFreeRights);
   //numberForReward
   const requiredNumberForFreeRight = useBrandStore(state => state.brand.requiredNumberForFreeRight);
   const brandBranch = useBrandBranchStore((state) => state.brandBranch);
@@ -44,6 +42,8 @@ const AdminHome = () => {
   const totalOrder = useBrandBranchStore(state => state.brandBranch.totalOrders);
   //usedRewards
   const totalUsedFreeRights = useBrandBranchStore(state => state.brandBranch.totalUsedFreeRights);
+  //totalUnusedFreeRights
+  const totalUnusedFreeRights = useBrandBranchStore(state => state.brandBranch.totalUnusedFreeRights);
   //--------------------------------------------------------------------------------
   const { contract: usedNFTContract } = useContract(contractAddress);
   const { data: nftData, isLoading, error } = useTotalCount(usedNFTContract);
@@ -57,7 +57,7 @@ const AdminHome = () => {
       console.log("brandBranchId", brandBranchId);
       const { data: brandBranchData } = await supabase
         .from("brand_branch")
-        .select("branch_name, total_used_free_rights, total_orders,brand( brand_name, required_number_for_free_right, contract_address, total_unused_free_rights)")
+        .select("branch_name, total_used_free_rights, total_orders, total_unused_free_rights, brand( brand_name, required_number_for_free_right, contract_address)")
         .eq("id", brandBranchId)
         .single();
       console.log("brandBranchData", brandBranchData);
@@ -67,13 +67,13 @@ const AdminHome = () => {
           brandName: brandBranchData.brand.brand_name,
           requiredNumberForFreeRight: brandBranchData.brand.required_number_for_free_right,
           contractAddress: brandBranchData.brand.contract_address,
-          totalUnusedFreeRights: brandBranchData.brand.total_unused_free_rights,
         });
         setBrandBranch({
           ...brandBranch,
           branchName: brandBranchData.branch_name,
           totalUsedFreeRights: brandBranchData.total_used_free_rights,
           totalOrders: brandBranchData.total_orders,
+          totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
         });
       }
     } catch (error) {
