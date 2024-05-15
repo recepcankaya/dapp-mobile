@@ -22,10 +22,11 @@ import {
   widthConstant,
 } from "../../ui/responsiveScreen";
 import useUserStore from "../../store/userStore";
-import useAdminStore from "../../store/adminStore";
 import QrCodeModal from "../../ui/qrCodeModal";
 import colors from "../../ui/colors";
 import supabase from "../../lib/supabase";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
 
 export default function Profile() {
   const [selectedTab, setSelectedTab] = useState("Waiting");
@@ -33,12 +34,14 @@ export default function Profile() {
   const [numberOfFreeRights, setNumberOfFreeRights] = useState<number[]>([]);
   const username = useUserStore((state) => state.user.username);
   const userID = useUserStore((state) => state.user.id);
-  const adminId = useAdminStore((state) => state.admin.id);
-  const contractAddress = useAdminStore((state) => state.admin.contractAddress);
-  const NFTSrc = useAdminStore((state) => state.admin.NFTSrc);
+  const brandId = useBrandStore((state) => state.brand.id);
+  const branchId = useBrandBranchStore((state) => state.brandBranch.id);
+  const contractAddress = useBrandStore((state) => state.brand.contractAddress);
+  const nftSrc = useBrandStore((state) => state.brand.nftSrc);
+  const freeRightImageUrl = useBrandStore(state => state.brand.freeRightImageUrl)
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const freeRightImageUrl = useAdminStore((state) => state.admin.freeRightImageUrl);
   const address = useAddress();
   const { contract: usedNFTContract } = useContract(contractAddress);
   const {
@@ -50,12 +53,12 @@ export default function Profile() {
   const renderImages = async () => {
     setIsLoading(true);
     const { data, error } = await supabase
-      .from("user_missions")
-      .select("number_of_free_rights")
+      .from("user_orders")
+      .select("user_total_free_rights")
       .eq("user_id", userID)
-      .eq("admin_id", adminId);
+      .eq("brand_id", brandId);
     if (data) {
-      setNumberOfFreeRights(new Array(data[0].number_of_free_rights).fill(0));
+      setNumberOfFreeRights(new Array(data[0].user_total_free_rights).fill(0));
     } else {
       console.log("error", error);
     }
@@ -66,9 +69,9 @@ export default function Profile() {
     renderImages();
   }, []);
 
-
-
   useEffect(() => {
+    console.log("userID", userID);
+    console.log("brandID", brandId)
     const numberOfFreeRights = supabase
       .channel("orders-change-channel")
       .on(
@@ -76,18 +79,19 @@ export default function Profile() {
         {
           event: "*",
           schema: "public",
-          table: "user_missions",
+          table: "user_orders",
           filter: `user_id=eq.${userID}`,
         },
         (payload: any) => {
           setNumberOfFreeRights(
-            new Array(payload.new.number_of_free_rights).fill(0)
+            new Array(payload.new.user_total_free_rights).fill(0)
           );
         }
       )
       .subscribe();
-      if(qrCodeModalVisible) setQrCodeModalVisible(false);
+    if (qrCodeModalVisible) setQrCodeModalVisible(false);
     return () => {
+      console.log("numberOfFreeRights", numberOfFreeRights);
       supabase.removeChannel(numberOfFreeRights);
     };
   }, [numberOfFreeRights]);
@@ -167,7 +171,7 @@ export default function Profile() {
                         <Image
                           key={i}
                           source={{
-                            uri: NFTSrc.replace(
+                            uri: nftSrc?.replace(
                               "ipfs://",
                               "https://ipfs.io/ipfs/"
                             ),
@@ -190,7 +194,7 @@ export default function Profile() {
         </View>
         <QrCodeModal
           isVisible={qrCodeModalVisible}
-          value={JSON.stringify({ userID, forNFT: true, address, adminID: adminId })}
+          value={JSON.stringify({ forNFT: true, userID, brandBranchID: branchId })}
           onClose={() => setQrCodeModalVisible(false)}
         />
       </ScrollView>

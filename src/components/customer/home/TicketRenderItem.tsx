@@ -4,14 +4,14 @@ import { heightConstant, widthConstant } from "../../../ui/responsiveScreen";
 
 type TicketRenderItemProps = {
   index: number;
-  userOrderNumber: number;
+  totalUserOrders: number;
 };
 
 export default function TicketRenderItem({
   index,
-  userOrderNumber,
+  totalUserOrders,
 }: TicketRenderItemProps) {
-  if (index < userOrderNumber) return (
+  if (index < totalUserOrders) return (
     <ImageBackground source={{ uri: "https://ipfs.io/ipfs/Qmea5bapN7ktQxRqJy1QxCfbXvKJppa7wnPENGFjDVkKHz" }} style={styles.circle} resizeMode="contain" imageStyle={{ borderRadius: 40 }}>
 
     </ImageBackground>

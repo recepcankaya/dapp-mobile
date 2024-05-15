@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import supabase from "../../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import useUserStore from "../../store/userStore";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, AppState, ActivityIndicator, Alert } from "react-native";
+import { StyleSheet, AppState, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CommonActions } from "@react-navigation/native";
 import colors from "../../ui/colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -21,8 +21,14 @@ AppState.addEventListener("change", (state) => {
 
 const Loading = () => {
   const userUpdate = useUserStore((state) => state.setUser);
-  const admin = useAdminForAdminStore((state) => state.admin);
-  const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
+
+  const brand = useBrandStore(state => state.brand);
+  const setBrand = useBrandStore(state => state.setBrand);
+
+  const brandBranch = useBrandBranchStore(state => state.brandBranch);
+  const setBrandBranch = useBrandBranchStore(state => state.setBrandBranch);
+
+
   const [session, setSession] = useState<Session | null>(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -40,13 +46,15 @@ const Loading = () => {
     if (session && session.user) {
       const { data: user } = await supabase
         .from("users")
-        .select("id, username")
+        .select("*")
         .eq("id", session.user.id)
         .single();
       if (user) {
         userUpdate({
           id: user.id.toString(),
           username: user.username,
+          lastLogin: user.last_login,
+          walletAddr: user.wallet_addr,
         });
         return navigation.dispatch(
           CommonActions.reset({
@@ -55,23 +63,49 @@ const Loading = () => {
           })
         );
       } else {
-        const { data: adminUser } = await supabase
-          .from("admins")
-          .select("*")
+        const { data: brandData } = await supabase
+          .from("brand")
+          .select("id,brand_name, contract_address, required_number_for_free_right")
           .eq("id", session.user.id)
           .single();
-        if (adminUser) {
-          updateAdmin({
-            ...admin,
-            adminId: adminUser.id,
+        console.log("brandData", brandData);
+        if (brandData) {
+          setBrand({
+            ...brand,
+            id: brandData.id,
+            brandName: brandData.brand_name,
+            contractAddress: brandData.contract_address,
+            requiredNumberForFreeRight: brandData.required_number_for_free_right
           });
-          return navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Admin Home" }],
-            })
-          );
+          const { data: brandBranchData, error } = await supabase
+            .from("brand_branch")
+            .select("id, branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders, total_unused_free_rights, monthly_total_orders_with_years")
+            .eq("brand_id", brandData.id)
+            .single();
+          console.log("brandBranchDatax", brandBranchData, error);
+          if (brandBranchData) setBrandBranch({
+            ...brandBranch,
+            id: brandBranchData.id,
+            branchName: brandBranchData.branch_name,
+            totalOrders: brandBranchData.total_orders,
+            totalUsedFreeRights: brandBranchData.total_used_free_rights,
+            dailyTotalOrders: brandBranchData.daily_total_orders,
+            dailyTotalUsedFreeRights: brandBranchData.daily_total_used_free_rights,
+            monthlyTotalOrders: brandBranchData.monthly_total_orders,
+            totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
+            monthlyTotalOrdersWithYears: brandBranchData.monthly_total_orders_with_years
+          });
         }
+        else {
+          setBrand({ ...brand, id: session.user.id });
+          setBrandBranch({ ...brandBranch, id: session.user.id });
+        }
+        return navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Admin Home" }],
+          })
+        );
       }
     }
     return navigation.dispatch(

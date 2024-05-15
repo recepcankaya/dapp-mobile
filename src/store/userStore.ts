@@ -1,10 +1,5 @@
 import { create } from "zustand";
 
-export type User = {
-  id: string;
-  username: string;
-};
-
 type State = {
   user: User;
 };
@@ -14,10 +9,7 @@ type Action = {
 };
 
 const useUserStore = create<State & Action>((set) => ({
-  user: {
-    id: "",
-    username: "",
-  },
+  user: {} as User,
   setUser: (user) => set(() => ({ user: user })),
 }));
 

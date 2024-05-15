@@ -14,27 +14,37 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import supabase from "../../lib/supabase";
-import useAdminForAdminStore from "../../store/adminStoreForAdmin";
 import colors from "../../ui/colors";
 import { useTotalCount, useContract } from "@thirdweb-dev/react-native";
 import CustomLoading from "../../components/common/CustomLoading";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
 
 const AdminHome = () => {
-  const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
-  const adminID = useAdminForAdminStore((state) => state.admin.adminId);
-  const brandName = useAdminForAdminStore((state) => state.admin.brandName);
-  const brandBranch = useAdminForAdminStore((state) => state.admin.brandBranch);
-  const numberOfOrdersSoFar = useAdminForAdminStore(
-    (state) => state.admin.numberOfOrdersSoFar
-  );
-  const notUsedNFTs = useAdminForAdminStore((state) => state.admin.notUsedNFTs);
-  const numberForReward = useAdminForAdminStore(
-    (state) => state.admin.numberForReward
-  );
-  const usedRewards = useAdminForAdminStore((state) => state.admin.usedRewards)
-  const contractAddress = useAdminForAdminStore(
-    (state) => state.admin.contractAddress
-  );
+  // const updateAdmin = useAdminForAdminStore((state) => state.updateAdmin);
+  // const brandBranch = useAdminForAdminStore((state) => state.admin.brandBranch);
+  const setBrand = useBrandStore((state) => state.setBrand);
+  const setBrandBranch = useBrandBranchStore((state) => state.setBrandBranch);
+  //--------------------------------------------------------------------------------
+  const brand = useBrandStore((state) => state.brand);
+  //brandId
+  const brandId = useBrandStore((state) => state.brand.id);
+  //brandName
+  const brandName = useBrandStore((state) => state.brand.brandName);
+  //contractAddress
+  const contractAddress = useBrandStore((state) => state.brand.contractAddress);
+  //numberForReward
+  const requiredNumberForFreeRight = useBrandStore(state => state.brand.requiredNumberForFreeRight);
+  const brandBranch = useBrandBranchStore((state) => state.brandBranch);
+  //brandBranchId
+  const brandBranchId = useBrandBranchStore((state) => state.brandBranch.id);
+  //numberOfOrdersSoFar
+  const totalOrder = useBrandBranchStore(state => state.brandBranch.totalOrders);
+  //usedRewards
+  const totalUsedFreeRights = useBrandBranchStore(state => state.brandBranch.totalUsedFreeRights);
+  //totalUnusedFreeRights
+  const totalUnusedFreeRights = useBrandBranchStore(state => state.brandBranch.totalUnusedFreeRights);
+  //--------------------------------------------------------------------------------
   const { contract: usedNFTContract } = useContract(contractAddress);
   const { data: nftData, isLoading, error } = useTotalCount(usedNFTContract);
 
@@ -42,40 +52,38 @@ const AdminHome = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchAdminDashboard = async () => {
+  const fetchBrandDashboard = async () => {
     try {
-      const { data: adminData, error: adminError } = await supabase
-        .from("admins")
-        .select(
-          "brand_name, brand_branch, not_used_nfts, number_for_reward, number_of_orders_so_far, contract_address ,admin_used_rewards"
-        )
-        .eq("id", adminID);
-      if (adminData) {
-        updateAdmin({
-          adminId: adminID,
-          brandName: adminData[0].brand_name,
-          brandBranch: adminData[0].brand_branch,
-          notUsedNFTs: adminData[0].not_used_nfts,
-          numberForReward: adminData[0].number_for_reward,
-          numberOfOrdersSoFar: adminData[0].number_of_orders_so_far,
-          contractAddress: adminData[0].contract_address,
-          usedRewards: adminData[0].admin_used_rewards,
+      console.log("brandBranchId", brandBranchId);
+      const { data: brandBranchData } = await supabase
+        .from("brand_branch")
+        .select("branch_name, total_used_free_rights, total_orders, total_unused_free_rights, brand( brand_name, required_number_for_free_right, contract_address)")
+        .eq("id", brandBranchId)
+        .single();
+      console.log("brandBranchData", brandBranchData);
+      if (brandBranchData) {
+        setBrand({
+          ...brand,
+          brandName: brandBranchData.brand.brand_name,
+          requiredNumberForFreeRight: brandBranchData.brand.required_number_for_free_right,
+          contractAddress: brandBranchData.brand.contract_address,
         });
-      } else {
-        console.error(adminError);
+        setBrandBranch({
+          ...brandBranch,
+          branchName: brandBranchData.branch_name,
+          totalUsedFreeRights: brandBranchData.total_used_free_rights,
+          totalOrders: brandBranchData.total_orders,
+          totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
+        });
       }
     } catch (error) {
       Alert.alert("Bir hata oluştu", "Lütfen tekrar deneyin.");
     }
-  };
-
-  useEffect(() => {
-    fetchAdminDashboard();
-  }, []);
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchAdminDashboard();
+    fetchBrandDashboard()
     setRefreshing(false);
   }, []);
 
@@ -99,12 +107,12 @@ const AdminHome = () => {
             <Text style={styles.adminData}></Text>
           </View>
           <View style={styles.infoTextContainer}>
-            <Text style={styles.infoText}>{brandBranch}</Text>
+            <Text style={styles.infoText}>{brandBranch.branchName}</Text>
           </View>
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            <Text style={styles.adminData}>{numberOfOrdersSoFar}</Text>
+            <Text style={styles.adminData}>{totalOrder}</Text>
           </View>
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoText}>Bugüne Kadar Kaç Ürün Satıldığı</Text>
@@ -112,7 +120,7 @@ const AdminHome = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            <Text style={styles.adminData}>{notUsedNFTs}</Text>
+            <Text style={styles.adminData}>{totalUnusedFreeRights}</Text>
           </View>
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoText}>Bekleyen Ödüllerin Sayısı</Text>
@@ -128,7 +136,7 @@ const AdminHome = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            <Text style={styles.adminData}>{numberForReward}</Text>
+            <Text style={styles.adminData}>{requiredNumberForFreeRight}</Text>
           </View>
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoText}>Kaç Alışverişte Ödül Verileceği</Text>
@@ -136,7 +144,7 @@ const AdminHome = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.circle}>
-            <Text style={styles.adminData}>{usedRewards}</Text>
+            <Text style={styles.adminData}>{totalUsedFreeRights}</Text>
           </View>
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoText}>Verilen Ödüller</Text>

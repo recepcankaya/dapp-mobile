@@ -1,27 +1,26 @@
 import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-import { Admin } from "../../../store/adminStore";
 import { heightConstant, widthConstant } from "../../../ui/responsiveScreen";
 import colors from "../../../ui/colors";
 
-type BrandsListProps = {
-  item: Admin;
+type BrandBranchesListProps = {
+  item: BrandBranchDetails;
   index: number;
-  selectBrand: (item: Admin, index: number) => void;
+  selectBrandBranch: (item: BrandBranchDetails, index: number) => void;
 };
 
-export default function BrandsList({
+export default function BrandBranchesList({
   item,
   index,
-  selectBrand,
-}: BrandsListProps) {
+  selectBrandBranch,
+}: BrandBranchesListProps) {
   return (
     <TouchableOpacity
       style={styles.brand}
-      onPress={() => selectBrand(item, index)}>
+      onPress={() => selectBrandBranch(item, index)}>
       <Image
         source={{
-          uri: item.brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+          uri: item.brandLogoIpfsUrl.replace("ipfs://", "https://ipfs.io/ipfs/"),
         }}
         style={styles.brandImage}
       />

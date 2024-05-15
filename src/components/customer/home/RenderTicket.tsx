@@ -2,31 +2,33 @@ import { FlatList, ImageBackground, StyleSheet } from "react-native";
 
 import TicketRenderItem from "./TicketRenderItem";
 
-import useAdminStore from "../../../store/adminStore";
+import useBrandStore from "../../../store/brandStore";
+import useBrandBranchStore from "../../../store/brandBranchStore";
 import { heightConstant } from "../../../ui/responsiveScreen";
 
 type RenderTicketProps = {
-    userOrderNumber: number;
-    ticketImage: string;
+    totalTicketOrders: number;
+    ticketIpfsUrl: string | null;
 };
 
-export default function RenderTicket({ userOrderNumber, ticketImage }: RenderTicketProps) {
-    const admin = useAdminStore((state) => state.admin);
-    const ticketCircles = new Array(admin.numberForReward);
+export default function RenderTicket({ totalTicketOrders, ticketIpfsUrl }: RenderTicketProps) {
+    const brand = useBrandStore((state) => state.brand);
+    const brandBranch = useBrandBranchStore((state) => state.brandBranch);
+    const ticketCircles = new Array(brand.requiredNumberForFreeRight);
     return (
         <ImageBackground source={{
-            uri: ticketImage.replace("ipfs://", "https://ipfs.io/ipfs/"),
+            uri: ticketIpfsUrl?.replace("ipfs://", "https://ipfs.io/ipfs/"),
         }} style={styles.ticket} resizeMode="contain" >
             <FlatList
-                key={admin.numberForReward <= 4 ? 2 : (admin.numberForReward === 5 || admin.numberForReward === 6 ? 3 : 4)}
+                key={brand.requiredNumberForFreeRight <= 4 ? 2 : (brand.requiredNumberForFreeRight === 5 || brand.requiredNumberForFreeRight === 6 ? 3 : 4)}
                 data={ticketCircles}
                 extraData={ticketCircles}
                 renderItem={({ item, index }) => (
-                    <TicketRenderItem index={index} userOrderNumber={userOrderNumber} />
+                    <TicketRenderItem index={index} totalUserOrders={totalTicketOrders} />
                 )}
-                numColumns={admin.numberForReward <= 4 ? 2 : (admin.numberForReward === 5 || admin.numberForReward === 6 ? 3 : 4)}
+                numColumns={brand.requiredNumberForFreeRight <= 4 ? 2 : (brand.requiredNumberForFreeRight === 5 || brand.requiredNumberForFreeRight === 6 ? 3 : 4)}
                 columnWrapperStyle={{ justifyContent: "space-between", height: 95 * heightConstant, alignItems: 'center' }}
-                contentContainerStyle={[userOrderNumber > 4 && { justifyContent: 'center' }, styles.circles]}
+                contentContainerStyle={[totalTicketOrders > 4 && { justifyContent: 'center' }, styles.circles]}
                 scrollEnabled={false}
                 keyExtractor={(item, index) => index.toString()}
             />

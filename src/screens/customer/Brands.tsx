@@ -7,90 +7,118 @@ import Geolocation, {
   GeolocationResponse,
 } from "@react-native-community/geolocation";
 
-import BrandsList from "../../components/customer/brands/BrandsList";
 import BrandsSearch from "../../components/customer/brands/BrandsSearch";
 
-import useAdminStore, { Admin } from "../../store/adminStore";
 import { secretSupabase } from "../../lib/supabase";
 import { haversine } from "../../lib/haversine";
 import { heightConstant } from "../../ui/responsiveScreen";
 import { errorToast } from "../../ui/toast";
 import colors from "../../ui/colors";
+import useBrandBranchDetailsStore from "../../store/brandBranchDetailsStore";
+import useBrandStore from "../../store/brandStore";
+import useBrandBranchStore from "../../store/brandBranchStore";
+import BrandBranchesList from "../../components/customer/brands/BrandBranchesList";
 
 const Brands = () => {
-  const [admins, updateAdmins] = useState<Admin[]>([]);
-  const [sortedAdmins, setSortedAdmins] = useState<Admin[]>([]);
-  const [searchedAdmin, setSearchedAdmin] = useState<string>("");
+  const brand = useBrandStore((state) => state.brand);
+  const setBrand = useBrandStore((state) => state.setBrand);
+  const brandBranch = useBrandBranchStore((state) => state.brandBranch);
+  const setBrandBranch = useBrandBranchStore((state) => state.setBrandBranch);
+
+  const [brandBrachDetails, setBrandBranchDetails] = useState<BrandBranchDetails[]>([] as BrandBranchDetails[]);
+  const [sortedBrandBranchesDetails, setSortedBrandBranchesDetails] = useState<BrandBranchDetails[]>([] as BrandBranchDetails[]);
+  const [searchedBrandBranchDetails, setSearchedBrandBranchDetails] = useState<string>("");
   const [customerLocation, setCustomerLocation] = useState<{
     lat: number;
     long: number;
   } | null>(null);
-  const updateAdmin = useAdminStore((state) => state.updateAdmin);
+  const updateBrandBranchDetails = useBrandBranchDetailsStore((state) => state.setBrandBranchDetails);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const fetchAdmins = async () => {
+  const fetchBrandBranchesDetails = async () => {
     try {
-      // @todo - auth yapmak için users ile adminsi bağlayalım
       const { data, error } = await secretSupabase
-        .from("admins")
-        .select(
-          "id, brand_name, brand_logo_ipfs_url, ticket_ipfs_url, number_for_reward, nft_src, contract_address, coords, free_right_image_url, brand_video_url, campaigns"
-        );
+        .from("brand_branch")
+        .select("id, branch_name, coords, campaigns, video_url, brand( id, brand_name, brand_logo_ipfs_url, ticket_ipfs_url, nft_src, contract_address, required_number_for_free_right, free_right_image_url )")
+      console.log('data', data);
+
       if (error) {
         errorToast(
           "Kafeleri gösterirken bir sorun oluştu.",
           "Lütfen tekrar dener misiniz 👉👈."
         );
       } else {
-        const admins: Admin[] = data.map((item) => ({
+        const brandBranchesDetails: BrandBranchDetails[] = data.map((item) => ({
           id: item.id,
-          brandName: item.brand_name,
-          brandLogo: item.brand_logo_ipfs_url,
-          ticketImage: item.ticket_ipfs_url,
-          numberForReward: item.number_for_reward,
-          campaigns: item.campaigns,
-          NFTSrc: item.nft_src,
-          contractAddress: item.contract_address,
+          branchName: item.branch_name,
           coords: {
             lat: item.coords.lat,
             long: item.coords.long,
           },
-          freeRightImageUrl: item.free_right_image_url,
-          brandVideoUrl: item.brand_video_url,
+          campaigns: item.campaigns,
+          videoUrl: item.video_url,
+          brandId: item.brand.id,
+          brandName: item.brand.brand_name,
+          brandLogoIpfsUrl: item.brand.brand_logo_ipfs_url,
+          ticketIpfsUrl: item.brand.ticket_ipfs_url,
+          nftSrc: item.brand.nft_src,
+          contractAddress: item.brand.contract_address,
+          requiredNumberForFreeRight: item.brand.required_number_for_free_right,
+          freeRightImageUrl: item.brand.free_right_image_url,
         }));
-        if (searchedAdmin.length > 0) {
-          const filteredAdmins = admins.filter(searchAdmin);
-          updateAdmins(filteredAdmins);
+        if (searchedBrandBranchDetails.length > 0) {
+          const filteredBrandBranches = brandBranchesDetails.filter(searchBrandBranchesDetails);
+          setBrandBranchDetails(filteredBrandBranches);
         } else {
-          updateAdmins(admins);
+          setBrandBranchDetails(brandBranchesDetails);
         }
       }
     } catch (error) {
+
       errorToast(
         "Bunu biz de beklemiyorduk 🤔",
         "Lütfen tekrar dener misiniz 👉👈"
       );
     }
-  };
+  }
+  /**
+    * Searches for a brandBranchDetails based on the brand name.
+     * @param brandBranchDetails - The brandBranchDetails object to search.
+     * @returns True if the brandBranchDetials's brand name includes the searched brandBranchDetails, false otherwise.
+     */
+  const searchBrandBranchesDetails = (brandBranchDetails: BrandBranchDetails) => {
+    return brandBranchDetails.brandName.toLowerCase().includes(searchedBrandBranchDetails.toLowerCase());
+  }
 
   /**
-   * Searches for an admin based on the brand name.
-   * @param admin - The admin object to search.
-   * @returns True if the admin's brand name includes the searched admin, false otherwise.
+   * Selects a brandBranchDetails and updates the brandBranchDetails state.
+   * @param item - The selected brandBranchDetails item.
+   * @param index - The index of the selected brandBranchDetails item.
    */
-  const searchAdmin = (admin: Admin) => {
-    return admin.brandName.toLowerCase().includes(searchedAdmin.toLowerCase());
-  };
 
-  /**
-   * Selects a brand and updates the admin state.
-   * @param item - The selected admin item.
-   * @param index - The index of the selected admin item.
-   */
-  const selectBrand = async (item: Admin, index: number) => {
-    updateAdmin(item);
+  const selectBrandBranchDetails = async (item: BrandBranchDetails, index: number) => {
+    updateBrandBranchDetails(item);
+    setBrand({
+      ...brand,
+      id: item.brandId,
+      brandName: item.brandName,
+      brandLogoIpfsUrl: item.brandLogoIpfsUrl,
+      ticketIpfsUrl: item.ticketIpfsUrl,
+      nftSrc: item.nftSrc,
+      contractAddress: item.contractAddress,
+      requiredNumberForFreeRight: item.requiredNumberForFreeRight,
+      freeRightImageUrl: item.freeRightImageUrl,
+    });
+    setBrandBranch({
+      ...brandBranch,
+      id: item.id,
+      branchName: item.branchName,
+      coords: item.coords,
+      campaigns: item.campaigns,
+      videoUrl: item.videoUrl,
+    });
     navigation.navigate("TabNavigator", { screen: "Home" });
-  };
+  }
 
   useEffect(() => {
     Geolocation.getCurrentPosition((info: GeolocationResponse) => {
@@ -99,8 +127,8 @@ const Brands = () => {
         long: info.coords.longitude,
       });
     });
-    fetchAdmins();
-  }, [searchedAdmin]);
+    fetchBrandBranchesDetails();
+  }, [searchedBrandBranchDetails]);
 
   /**
    * Sorts the array of admins based on their distance from the customer's location.
@@ -110,7 +138,7 @@ const Brands = () => {
    */
   useEffect(() => {
     if (!customerLocation) return;
-    const sorted: Admin[] = [...admins].sort((a, b): any => {
+    const sorted: BrandBranchDetails[] = [...brandBrachDetails].sort((a, b): any => {
       const distanceA = haversine(
         { lat: customerLocation.lat, lng: customerLocation.long },
         { lat: a.coords.lat, lng: a.coords.long }
@@ -121,21 +149,21 @@ const Brands = () => {
       );
       return distanceA - distanceB;
     });
-    setSortedAdmins(sorted);
-  }, [customerLocation, admins]);
+    setSortedBrandBranchesDetails(sorted);
+  }, [customerLocation, brandBrachDetails]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={colors.black} />
       <BrandsSearch
-        searchedAdmin={searchedAdmin}
-        setSearchedAdmin={setSearchedAdmin}
+        searchedAdmin={searchedBrandBranchDetails}
+        setSearchedAdmin={setSearchedBrandBranchDetails}
       />
       <FlatList
-        data={customerLocation ? sortedAdmins : admins}
-        extraData={customerLocation ? sortedAdmins : admins}
-        renderItem={({ item, index }: { item: Admin; index: number }) => (
-          <BrandsList item={item} index={index} selectBrand={selectBrand} />
+        data={customerLocation ? sortedBrandBranchesDetails : brandBrachDetails}
+        extraData={customerLocation ? sortedBrandBranchesDetails : brandBrachDetails}
+        renderItem={({ item, index }: { item: BrandBranchDetails; index: number }) => (
+          <BrandBranchesList item={item} index={index} selectBrandBranch={selectBrandBranchDetails} />
         )}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
