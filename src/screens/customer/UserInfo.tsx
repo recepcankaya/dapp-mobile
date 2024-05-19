@@ -34,7 +34,7 @@ const UserInfo = () => {
       const { data: user, error } = await supabase
         .from("users")
         .update({ username, last_login: new Date() })
-        .eq("walletAddr", walletAddr)
+        .eq("wallet_addr", walletAddr)
         .select("id, username");
       if (error) {
         Alert.alert(

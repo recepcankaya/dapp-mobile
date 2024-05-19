@@ -4,6 +4,7 @@ import {
   StatusBar,
   Text,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -114,9 +115,8 @@ const Login = () => {
       const { data: user, error: userError } = await supabase
         .from("users")
         .select("*")
-        .eq("walletAddr", walletAddr)
+        .eq("wallet_addr", walletAddr)
         .single();
-
       updateUser({
         id: user.id.toString(),
         username: user.username,
@@ -161,6 +161,13 @@ const Login = () => {
             container={{ paddingVertical: "lg", borderRadius: "lg" }}
           />
         )}
+        <View style={styles.useOfTermContainer}>
+          <Text style={styles.useOfTerm}>Devam ederek </Text>
+          <TouchableOpacity style={styles.useOfTermLink} onPress={() => Linking.openURL("https://gittjeqpqcmmbterylkd.supabase.co/storage/v1/object/public/agreements/ladderit-uyelik-sozlesmesivekullanim-kosullari.pdf?t=2024-05-10T11%3A08%3A20.741Z")}>
+            <Text style={styles.useOfTerm}>üyelik sözleşmesi ve kullanım koşullarını</Text>
+          </TouchableOpacity>
+          <Text style={styles.useOfTerm}> kabul etmiş olursunuz.</Text>
+        </View>
       </View>
       <TouchableOpacity
         onPress={() => navigation.navigate("Admin Login")}
@@ -216,6 +223,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.white,
   },
+  useOfTermContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  useOfTerm: {
+    color: colors.white
+  },
+  useOfTermLink: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.white
+  }
 });
 
 export default Login;
