@@ -33,8 +33,6 @@ const CustomerHome = () => {
   })
   const brandBranchVideoUrl = useBrandBranchStore((state) => state.brandBranch.videoUrl);
 
-
-
   const decodeTurkishCharacters = (text: string) => {
     return text
       .replace(/Ğ/gim, "g")
@@ -61,6 +59,8 @@ const CustomerHome = () => {
     .from("menus")
     .getPublicUrl(`${convertedBrandName.toLowerCase()}-${convertedBrandBranchName.toLowerCase()}-menu.pdf`);
 
+  console.log("brandBranchMenu", brandBranchMenu);
+  
   const renderTickets = async () => {
     try {
       const { data } = await supabase

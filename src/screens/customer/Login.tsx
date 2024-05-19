@@ -155,27 +155,25 @@ const Login = () => {
             </TouchableOpacity>
           </>
         ) : (
-          <ConnectEmbed
-            modalTitle="Sign In"
-            modalTitleIconUrl=""
-            container={{ paddingVertical: "lg", borderRadius: "lg" }}
-          />
+          <>
+            <ConnectEmbed
+              modalTitle="Sign In"
+              modalTitleIconUrl=""
+              container={{ paddingVertical: "lg", borderRadius: "lg" }}
+            />
+            <View style={styles.useOfTermContainer}>
+              <Text style={styles.useOfTerm}>Devam ederek </Text>
+              <TouchableOpacity
+                style={styles.useOfTermLink}
+                onPress={() => Linking.openURL("https://www.ladderit.app/terms-of-use")}>
+                <Text style={styles.useOfTermText}>
+                  üyelik sözleşmesi ve kullanım koşullarını
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.useOfTerm}> kabul etmiş olursunuz.</Text>
+            </View>
+          </>
         )}
-        <View style={styles.useOfTermContainer}>
-          <Text style={styles.useOfTerm}>Devam ederek </Text>
-          <TouchableOpacity
-            style={styles.useOfTermLink}
-            onPress={() =>
-              Linking.openURL(
-                "https://gittjeqpqcmmbterylkd.supabase.co/storage/v1/object/public/agreements/ladderit-uyelik-sozlesmesivekullanim-kosullari.pdf?t=2024-05-10T11%3A08%3A20.741Z"
-              )
-            }>
-            <Text style={styles.useOfTermText}>
-              üyelik sözleşmesi ve kullanım koşullarını
-            </Text>
-          </TouchableOpacity>
-          <Text style={styles.useOfTerm}> kabul etmiş olursunuz.</Text>
-        </View>
       </View>
       <TouchableOpacity
         onPress={() => navigation.navigate("Admin Login")}
