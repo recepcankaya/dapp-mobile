@@ -163,8 +163,16 @@ const Login = () => {
         )}
         <View style={styles.useOfTermContainer}>
           <Text style={styles.useOfTerm}>Devam ederek </Text>
-          <TouchableOpacity style={styles.useOfTermLink} onPress={() => Linking.openURL("https://gittjeqpqcmmbterylkd.supabase.co/storage/v1/object/public/agreements/ladderit-uyelik-sozlesmesivekullanim-kosullari.pdf?t=2024-05-10T11%3A08%3A20.741Z")}>
-            <Text style={styles.useOfTerm}>üyelik sözleşmesi ve kullanım koşullarını</Text>
+          <TouchableOpacity
+            style={styles.useOfTermLink}
+            onPress={() =>
+              Linking.openURL(
+                "https://gittjeqpqcmmbterylkd.supabase.co/storage/v1/object/public/agreements/ladderit-uyelik-sozlesmesivekullanim-kosullari.pdf?t=2024-05-10T11%3A08%3A20.741Z"
+              )
+            }>
+            <Text style={styles.useOfTermText}>
+              üyelik sözleşmesi ve kullanım koşullarını
+            </Text>
           </TouchableOpacity>
           <Text style={styles.useOfTerm}> kabul etmiş olursunuz.</Text>
         </View>
@@ -224,16 +232,20 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   useOfTermContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    marginTop: 50,
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   useOfTerm: {
-    color: colors.white
+    color: colors.white,
   },
   useOfTermLink: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.white
-  }
+    borderBottomColor: "#0000ff",
+  },
+  useOfTermText: {
+    color: "#0000ff",
+  },
 });
 
 export default Login;
