@@ -34,7 +34,8 @@ declare global {
     totalUsedFreeRights: SupabaseBrandBranch["total_used_free_rights"];
     videoUrl: SupabaseBrandBranch["video_url"];
     totalUnusedFreeRights: SupabaseBrandBranch["total_unused_free_rights"];
-    monthlyTotalOrdersWithYears: SupabaseBrandBranch["monthly_total_orders_with_years"]
+    monthlyTotalOrdersWithYears: SupabaseBrandBranch["monthly_total_orders_with_years"];
+    weeklyTotalOrders: SupabaseBrandBranch["weekly_total_orders"];
   };
 
   type SupabaseUser = Database["public"]["Tables"]["users"]["Row"];

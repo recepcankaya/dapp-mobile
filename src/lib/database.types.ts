@@ -4,305 +4,307 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export type Database = {
   public: {
     Tables: {
       brand: {
         Row: {
-          brand_logo_ipfs_url: string
-          brand_name: string
-          collection_metadata: Json | null
-          contract_address: string | null
-          created_at: string | null
-          email: string
-          free_right_image_url: string
-          id: string
-          nft_src: string | null
-          required_number_for_free_right: number
-          ticket_ipfs_url: string
-        }
+          brand_logo_ipfs_url: string;
+          brand_name: string;
+          collection_metadata: Json | null;
+          contract_address: string | null;
+          created_at: string | null;
+          email: string;
+          free_right_image_url: string;
+          id: string;
+          nft_src: string | null;
+          required_number_for_free_right: number;
+          ticket_ipfs_url: string;
+        };
         Insert: {
-          brand_logo_ipfs_url?: string
-          brand_name?: string
-          collection_metadata?: Json | null
-          contract_address?: string | null
-          created_at?: string | null
-          email?: string
-          free_right_image_url?: string
-          id: string
-          nft_src?: string | null
-          required_number_for_free_right?: number
-          ticket_ipfs_url?: string
-        }
+          brand_logo_ipfs_url?: string;
+          brand_name?: string;
+          collection_metadata?: Json | null;
+          contract_address?: string | null;
+          created_at?: string | null;
+          email?: string;
+          free_right_image_url?: string;
+          id: string;
+          nft_src?: string | null;
+          required_number_for_free_right?: number;
+          ticket_ipfs_url?: string;
+        };
         Update: {
-          brand_logo_ipfs_url?: string
-          brand_name?: string
-          collection_metadata?: Json | null
-          contract_address?: string | null
-          created_at?: string | null
-          email?: string
-          free_right_image_url?: string
-          id?: string
-          nft_src?: string | null
-          required_number_for_free_right?: number
-          ticket_ipfs_url?: string
-          
-        }
+          brand_logo_ipfs_url?: string;
+          brand_name?: string;
+          collection_metadata?: Json | null;
+          contract_address?: string | null;
+          created_at?: string | null;
+          email?: string;
+          free_right_image_url?: string;
+          id?: string;
+          nft_src?: string | null;
+          required_number_for_free_right?: number;
+          ticket_ipfs_url?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "admins_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "admins_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       brand_branch: {
         Row: {
-          branch_name: string
-          brand_id: string
-          campaigns: Json[] | null
-          coords: Json | null
-          daily_total_orders: number
-          daily_total_used_free_rights: number
-          email: string
-          id: string
-          monthly_total_orders: number
-          total_orders: number
-          total_used_free_rights: number
-          video_url: string | null
-          total_unused_free_rights?: number
-          monthly_total_orders_with_years?: number
-        }
+          branch_name: string;
+          brand_id: string;
+          campaigns: Json[] | null;
+          coords: Json | null;
+          daily_total_orders: number;
+          daily_total_used_free_rights: number;
+          email: string;
+          id: string;
+          monthly_total_orders: number;
+          total_orders: number;
+          total_used_free_rights: number;
+          video_url: string | null;
+          total_unused_free_rights?: number;
+          monthly_total_orders_with_years?: number;
+          weekly_total_orders?: number;
+        };
         Insert: {
-          branch_name?: string
-          brand_id?: string
-          campaigns?: Json[] | null
-          coords?: Json | null
-          daily_total_orders?: number
-          daily_total_used_free_rights?: number
-          email?: string
-          id?: string
-          monthly_total_orders?: number
-          total_orders?: number
-          total_used_free_rights?: number
-          video_url?: string | null
-          total_unused_free_rights?: number
-          monthly_total_orders_with_years?: number
-        }
+          branch_name?: string;
+          brand_id?: string;
+          campaigns?: Json[] | null;
+          coords?: Json | null;
+          daily_total_orders?: number;
+          daily_total_used_free_rights?: number;
+          email?: string;
+          id?: string;
+          monthly_total_orders?: number;
+          total_orders?: number;
+          total_used_free_rights?: number;
+          video_url?: string | null;
+          total_unused_free_rights?: number;
+          monthly_total_orders_with_years?: number;
+          weekly_total_orders?: number;
+        };
         Update: {
-          branch_name?: string
-          brand_id?: string
-          campaigns?: Json[] | null
-          coords?: Json | null
-          daily_total_orders?: number
-          daily_total_used_free_rights?: number
-          email?: string
-          id?: string
-          monthly_total_orders?: number
-          total_orders?: number
-          total_used_free_rights?: number
-          video_url?: string | null
-          total_unused_free_rights?: number
-          monthly_total_orders_with_years?: number
-        }
+          branch_name?: string;
+          brand_id?: string;
+          campaigns?: Json[] | null;
+          coords?: Json | null;
+          daily_total_orders?: number;
+          daily_total_used_free_rights?: number;
+          email?: string;
+          id?: string;
+          monthly_total_orders?: number;
+          total_orders?: number;
+          total_used_free_rights?: number;
+          video_url?: string | null;
+          total_unused_free_rights?: number;
+          monthly_total_orders_with_years?: number;
+          weekly_total_orders?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "brand_branch_brand_id_fkey"
-            columns: ["brand_id"]
-            isOneToOne: false
-            referencedRelation: "brand"
-            referencedColumns: ["id"]
+            foreignKeyName: "brand_branch_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brand";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       employees: {
         Row: {
-          admin_id: string | null
-          created_at: string
-          id: string
-          last_qr_scan_time: string | null
-        }
+          admin_id: string | null;
+          created_at: string;
+          id: string;
+          last_qr_scan_time: string | null;
+        };
         Insert: {
-          admin_id?: string | null
-          created_at?: string
-          id?: string
-          last_qr_scan_time?: string | null
-        }
+          admin_id?: string | null;
+          created_at?: string;
+          id?: string;
+          last_qr_scan_time?: string | null;
+        };
         Update: {
-          admin_id?: string | null
-          created_at?: string
-          id?: string
-          last_qr_scan_time?: string | null
-        }
+          admin_id?: string | null;
+          created_at?: string;
+          id?: string;
+          last_qr_scan_time?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "public_employees_admin_id_fkey"
-            columns: ["admin_id"]
-            isOneToOne: false
-            referencedRelation: "brand"
-            referencedColumns: ["id"]
+            foreignKeyName: "public_employees_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "brand";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       user_orders: {
         Row: {
-          branch_id: string
-          brand_id: string
-          created_at: string
-          id: string
-          last_order_date: string
-          total_ticket_orders: number
-          total_user_orders: number
-          user_id: string
-          user_total_free_rights: number
-          user_total_used_free_rights: number
-        }
+          branch_id: string;
+          brand_id: string;
+          created_at: string;
+          id: string;
+          last_order_date: string;
+          total_ticket_orders: number;
+          total_user_orders: number;
+          user_id: string;
+          user_total_free_rights: number;
+          user_total_used_free_rights: number;
+        };
         Insert: {
-          branch_id: string
-          brand_id: string
-          created_at?: string
-          id?: string
-          last_order_date?: string
-          total_ticket_orders?: number
-          total_user_orders?: number
-          user_id?: string
-          user_total_free_rights?: number
-          user_total_used_free_rights?: number
-        }
+          branch_id: string;
+          brand_id: string;
+          created_at?: string;
+          id?: string;
+          last_order_date?: string;
+          total_ticket_orders?: number;
+          total_user_orders?: number;
+          user_id?: string;
+          user_total_free_rights?: number;
+          user_total_used_free_rights?: number;
+        };
         Update: {
-          branch_id?: string
-          brand_id?: string
-          created_at?: string
-          id?: string
-          last_order_date?: string
-          total_ticket_orders?: number
-          total_user_orders?: number
-          user_id?: string
-          user_total_free_rights?: number
-          user_total_used_free_rights?: number
-        }
+          branch_id?: string;
+          brand_id?: string;
+          created_at?: string;
+          id?: string;
+          last_order_date?: string;
+          total_ticket_orders?: number;
+          total_user_orders?: number;
+          user_id?: string;
+          user_total_free_rights?: number;
+          user_total_used_free_rights?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "public_user_missions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "public_user_missions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_orders_branch_id_fkey"
-            columns: ["branch_id"]
-            isOneToOne: false
-            referencedRelation: "brand_branch"
-            referencedColumns: ["id"]
+            foreignKeyName: "user_orders_branch_id_fkey";
+            columns: ["branch_id"];
+            isOneToOne: false;
+            referencedRelation: "brand_branch";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_orders_brand_id_fkey"
-            columns: ["brand_id"]
-            isOneToOne: false
-            referencedRelation: "brand"
-            referencedColumns: ["id"]
+            foreignKeyName: "user_orders_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brand";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       users: {
         Row: {
-          created_at: string | null
-          id: string
-          last_login: string | null
-          username: string | null
-          wallet_addr: string | null
-        }
+          created_at: string | null;
+          id: string;
+          last_login: string | null;
+          username: string | null;
+          wallet_addr: string | null;
+        };
         Insert: {
-          created_at?: string | null
-          id?: string
-          last_login?: string | null
-          username?: string | null
-          wallet_addr?: string | null
-        }
+          created_at?: string | null;
+          id?: string;
+          last_login?: string | null;
+          username?: string | null;
+          wallet_addr?: string | null;
+        };
         Update: {
-          created_at?: string | null
-          id?: string
-          last_login?: string | null
-          username?: string | null
-          wallet_addr?: string | null
-        }
-        Relationships: []
-      }
-    }
+          created_at?: string | null;
+          id?: string;
+          last_login?: string | null;
+          username?: string | null;
+          wallet_addr?: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Views: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Functions: {
       decrement_admins_not_used_nfts: {
         Args: {
-          admin_id: string
-        }
-        Returns: undefined
-      }
+          admin_id: string;
+        };
+        Returns: undefined;
+      };
       decrement_user_missions_number_of_free_rigths: {
         Args: {
-          mission_id: string
-        }
-        Returns: undefined
-      }
+          mission_id: string;
+        };
+        Returns: undefined;
+      };
       increment_admins_not_used_nfts: {
         Args: {
-          admin_id: string
-        }
-        Returns: undefined
-      }
+          admin_id: string;
+        };
+        Returns: undefined;
+      };
       increment_admins_number_of_orders_so_far: {
         Args: {
-          admin_id: string
-        }
-        Returns: undefined
-      }
+          admin_id: string;
+        };
+        Returns: undefined;
+      };
       increment_admins_used_rewards: {
         Args: {
-          admin_id: string
-        }
-        Returns: undefined
-      }
+          admin_id: string;
+        };
+        Returns: undefined;
+      };
       increment_user_missions_number_of_free_rigths: {
         Args: {
-          mission_id: string
-        }
-        Returns: undefined
-      }
+          mission_id: string;
+        };
+        Returns: undefined;
+      };
       increment_user_missions_number_of_orders: {
         Args: {
-          mission_id: string
-        }
-        Returns: undefined
-      }
+          mission_id: string;
+        };
+        Returns: undefined;
+      };
       increment_user_missions_number_of_orders_so_far: {
         Args: {
-          mission_id: string
-        }
-        Returns: undefined
-      }
+          mission_id: string;
+        };
+        Returns: undefined;
+      };
       increment_user_missions_used_rewards: {
         Args: {
-          mission_id: string
-        }
-        Returns: undefined
-      }
-    }
+          mission_id: string;
+        };
+        Returns: undefined;
+      };
+    };
     Enums: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type PublicSchema = Database[Extract<keyof Database, "public">];
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -315,7 +317,7 @@ export type Tables<
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
@@ -323,11 +325,11 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
+        Row: infer R;
       }
       ? R
       : never
-    : never
+    : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -338,17 +340,17 @@ export type TablesInsert<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
+        Insert: infer I;
       }
       ? I
       : never
-    : never
+    : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -359,17 +361,17 @@ export type TablesUpdate<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
+        Update: infer U;
       }
       ? U
       : never
-    : never
+    : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -382,4 +384,4 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
+    : never;
