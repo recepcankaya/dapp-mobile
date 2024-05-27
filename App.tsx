@@ -15,11 +15,7 @@ import {
   Loading,
   QrCode,
 } from "./src/screens/customer";
-import {
-  AdminCamera,
-  AdminHome,
-  AdminLogin,
-} from "./src/screens/admin";
+import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
 /**
@@ -104,7 +100,7 @@ function App() {
       ]}
       autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Loading">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Loading"
             component={Loading}
