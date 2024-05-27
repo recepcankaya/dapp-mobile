@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Pressable, Image, Dimensions, Modal, StyleSheet, ViewToken } from 'react-native';
 
 import colors from '../../../../ui/colors';
@@ -12,7 +12,7 @@ import Animated, {
 import Pagination from './Pagination';
 
 type CustomCarouselProps = {
-    data: { image: string }[]
+    data: { image: string, favourite: boolean }[],
 }
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width;
@@ -26,6 +26,14 @@ const CustomCarousel = ({ data }: CustomCarouselProps) => {
 
     const onLeft = useSharedValue(true);
     const position = useSharedValue(0);
+
+    useEffect(() => {
+        data.forEach((_, index) => {
+            if (_.favourite) {
+                openImage(_.image)
+            }
+        })
+    }, [])
 
     //pinch to zoom
     const panGesture = Gesture.Pan()
