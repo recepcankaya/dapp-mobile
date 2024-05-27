@@ -9,7 +9,7 @@ import Geolocation, {
 
 import BrandsSearch from "../../components/customer/brands/BrandsSearch";
 
-import { secretSupabase } from "../../lib/supabase";
+import supabase from "../../lib/supabase";
 import { haversine } from "../../lib/haversine";
 import { heightConstant } from "../../ui/responsiveScreen";
 import { errorToast } from "../../ui/toast";
@@ -18,6 +18,7 @@ import useBrandBranchDetailsStore from "../../store/brandBranchDetailsStore";
 import useBrandStore from "../../store/brandStore";
 import useBrandBranchStore from "../../store/brandBranchStore";
 import BrandBranchesList from "../../components/customer/brands/BrandBranchesList";
+import { BrandBranchDetails } from "../../types/dbTables.types";
 
 const Brands = () => {
   const brand = useBrandStore((state) => state.brand);
@@ -25,35 +26,54 @@ const Brands = () => {
   const brandBranch = useBrandBranchStore((state) => state.brandBranch);
   const setBrandBranch = useBrandBranchStore((state) => state.setBrandBranch);
 
-  const [brandBrachDetails, setBrandBranchDetails] = useState<BrandBranchDetails[]>([] as BrandBranchDetails[]);
-  const [sortedBrandBranchesDetails, setSortedBrandBranchesDetails] = useState<BrandBranchDetails[]>([] as BrandBranchDetails[]);
-  const [searchedBrandBranchDetails, setSearchedBrandBranchDetails] = useState<string>("");
+  const [brandBrachDetails, setBrandBranchDetails] = useState<
+    BrandBranchDetails[]
+  >([] as BrandBranchDetails[]);
+  const [sortedBrandBranchesDetails, setSortedBrandBranchesDetails] = useState<
+    BrandBranchDetails[]
+  >([] as BrandBranchDetails[]);
+  const [searchedBrandBranchDetails, setSearchedBrandBranchDetails] =
+    useState<string>("");
   const [customerLocation, setCustomerLocation] = useState<{
     lat: number;
     long: number;
   } | null>(null);
-  const updateBrandBranchDetails = useBrandBranchDetailsStore((state) => state.setBrandBranchDetails);
+  const updateBrandBranchDetails = useBrandBranchDetailsStore(
+    (state) => state.setBrandBranchDetails
+  );
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const fetchBrandBranchesDetails = async () => {
     try {
-      const { data, error } = await secretSupabase
+      const { data } = await supabase
         .from("brand_branch")
-        .select("id, branch_name, coords, campaigns, video_url, brand( id, brand_name, brand_logo_ipfs_url, ticket_ipfs_url, nft_src, contract_address, required_number_for_free_right, free_right_image_url )")
-      console.log('data', data);
+        .select(
+          "id, branch_name, coords, campaigns, video_url, brand( id, brand_name, brand_logo_ipfs_url, ticket_ipfs_url, nft_src, contract_address, required_number_for_free_right, free_right_image_url )"
+        );
 
-      if (error) {
+      if (!data) {
         errorToast(
-          "Kafeleri gösterirken bir sorun oluştu.",
+          "İşletmeleri gösterirken bir sorun oluştu.",
           "Lütfen tekrar dener misiniz 👉👈."
         );
-      } else {
-        const brandBranchesDetails: BrandBranchDetails[] = data.map((item) => ({
+        return;
+      }
+
+      const brandBranchesDetails: BrandBranchDetails[] = data.map((item) => {
+        if (item.brand === null) {
+          throw new Error("Brand is null");
+        }
+
+        if (item.coords === null) {
+          throw new Error("Coords is null");
+        }
+
+        return {
           id: item.id,
           branchName: item.branch_name,
           coords: {
-            lat: item.coords.lat,
-            long: item.coords.long,
+            lat: (item.coords as any).lat,
+            long: (item.coords as any).long,
           },
           campaigns: item.campaigns,
           videoUrl: item.video_url,
@@ -65,30 +85,36 @@ const Brands = () => {
           contractAddress: item.brand.contract_address,
           requiredNumberForFreeRight: item.brand.required_number_for_free_right,
           freeRightImageUrl: item.brand.free_right_image_url,
-        }));
-        if (searchedBrandBranchDetails.length > 0) {
-          const filteredBrandBranches = brandBranchesDetails.filter(searchBrandBranchesDetails);
-          setBrandBranchDetails(filteredBrandBranches);
-        } else {
-          setBrandBranchDetails(brandBranchesDetails);
-        }
+        };
+      });
+
+      if (searchedBrandBranchDetails.length > 0) {
+        const filteredBrandBranches = brandBranchesDetails.filter(
+          searchBrandBranchesDetails
+        );
+        setBrandBranchDetails(filteredBrandBranches);
+      } else {
+        setBrandBranchDetails(brandBranchesDetails);
       }
     } catch (error) {
-
       errorToast(
         "Bunu biz de beklemiyorduk 🤔",
         "Lütfen tekrar dener misiniz 👉👈"
       );
     }
-  }
+  };
   /**
-    * Searches for a brandBranchDetails based on the brand name.
-     * @param brandBranchDetails - The brandBranchDetails object to search.
-     * @returns True if the brandBranchDetials's brand name includes the searched brandBranchDetails, false otherwise.
-     */
-  const searchBrandBranchesDetails = (brandBranchDetails: BrandBranchDetails) => {
-    return brandBranchDetails.brandName.toLowerCase().includes(searchedBrandBranchDetails.toLowerCase());
-  }
+   * Searches for a brandBranchDetails based on the brand name.
+   * @param brandBranchDetails - The brandBranchDetails object to search.
+   * @returns True if the brandBranchDetials's brand name includes the searched brandBranchDetails, false otherwise.
+   */
+  const searchBrandBranchesDetails = (
+    brandBranchDetails: BrandBranchDetails
+  ) => {
+    return brandBranchDetails.brandName
+      .toLowerCase()
+      .includes(searchedBrandBranchDetails.toLowerCase());
+  };
 
   /**
    * Selects a brandBranchDetails and updates the brandBranchDetails state.
@@ -96,7 +122,10 @@ const Brands = () => {
    * @param index - The index of the selected brandBranchDetails item.
    */
 
-  const selectBrandBranchDetails = async (item: BrandBranchDetails, index: number) => {
+  const selectBrandBranchDetails = async (
+    item: BrandBranchDetails,
+    index: number
+  ) => {
     updateBrandBranchDetails(item);
     setBrand({
       ...brand,
@@ -118,7 +147,7 @@ const Brands = () => {
       videoUrl: item.videoUrl,
     });
     navigation.navigate("TabNavigator", { screen: "Home" });
-  }
+  };
 
   useEffect(() => {
     Geolocation.getCurrentPosition((info: GeolocationResponse) => {
@@ -138,17 +167,25 @@ const Brands = () => {
    */
   useEffect(() => {
     if (!customerLocation) return;
-    const sorted: BrandBranchDetails[] = [...brandBrachDetails].sort((a, b): any => {
-      const distanceA = haversine(
-        { lat: customerLocation.lat, lng: customerLocation.long },
-        { lat: a.coords.lat, lng: a.coords.long }
-      );
-      const distanceB = haversine(
-        { lat: customerLocation.lat, lng: customerLocation.long },
-        { lat: b.coords.lat, lng: b.coords.long }
-      );
-      return distanceA - distanceB;
-    });
+    const sorted: BrandBranchDetails[] = [...brandBrachDetails].sort(
+      (a, b): any => {
+        const distanceA = haversine(
+          { lat: customerLocation.lat, lng: customerLocation.long },
+          {
+            lat: a.coords ? Number(a.coords.lat) : null,
+            lng: a.coords ? Number(a.coords.long) : null,
+          }
+        );
+        const distanceB = haversine(
+          { lat: customerLocation.lat, lng: customerLocation.long },
+          {
+            lat: b.coords ? Number(b.coords.lat) : null,
+            lng: b.coords ? Number(b.coords.long) : null,
+          }
+        );
+        return distanceA - distanceB;
+      }
+    );
     setSortedBrandBranchesDetails(sorted);
   }, [customerLocation, brandBrachDetails]);
 
@@ -161,9 +198,21 @@ const Brands = () => {
       />
       <FlatList
         data={customerLocation ? sortedBrandBranchesDetails : brandBrachDetails}
-        extraData={customerLocation ? sortedBrandBranchesDetails : brandBrachDetails}
-        renderItem={({ item, index }: { item: BrandBranchDetails; index: number }) => (
-          <BrandBranchesList item={item} index={index} selectBrandBranch={selectBrandBranchDetails} />
+        extraData={
+          customerLocation ? sortedBrandBranchesDetails : brandBrachDetails
+        }
+        renderItem={({
+          item,
+          index,
+        }: {
+          item: BrandBranchDetails;
+          index: number;
+        }) => (
+          <BrandBranchesList
+            item={item}
+            index={index}
+            selectBrandBranch={selectBrandBranchDetails}
+          />
         )}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}

@@ -51,13 +51,10 @@ export type UserOrder = {
 export type BrandBranchDetails = {
   id: SupabaseBrandBranch["id"];
   branchName: SupabaseBrandBranch["branch_name"];
-  coords: {
-    lat: number;
-    long: number;
-  };
+  coords: { lat: string; long: string } | null;
   campaigns: SupabaseBrandBranch["campaigns"];
   videoUrl: SupabaseBrandBranch["video_url"];
-  brandId: SupabaseBrand["id"];
+  brandId: SupabaseBrandBranch["brand_id"];
   brandName: SupabaseBrand["brand_name"];
   brandLogoIpfsUrl: SupabaseBrand["brand_logo_ipfs_url"];
   ticketIpfsUrl: SupabaseBrand["ticket_ipfs_url"];

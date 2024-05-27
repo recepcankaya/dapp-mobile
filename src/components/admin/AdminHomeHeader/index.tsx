@@ -12,6 +12,7 @@ import colors from "../../../ui/colors";
 import { responsiveFontSize } from "../../../ui/responsiveFontSize";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Brand } from "../../../types/dbTables.types";
 const { width } = Dimensions.get("window");
 
 type HomeHeaderProps = {
