@@ -30,112 +30,125 @@ const AdminLogin = () => {
       Alert.alert("Giriş Hatası", "Mail ve şifre alanları boş bırakılamaz.");
       return;
     }
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (data) {
-      if (data.user) {
-        const { data: brandData, error: brandError } = await supabase
-          .from("brand")
-          .select(
-            "id,brand_name, contract_address, required_number_for_free_right"
-          )
-          .eq("id", data.user.id)
-          .single();
-        if (brandData) {
-          setBrand({
-            ...brand,
-            id: brandData.id,
-            brandName: brandData.brand_name,
-            contractAddress: brandData.contract_address,
 
-            requiredNumberForFreeRight:
-              brandData.required_number_for_free_right,
-          });
-          const { data: brandBranchData } = await supabase
-            .from("brand_branch")
-            .select(
-              "id, branch_name, total_order, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders, total_unused_free_rights, monthly_total_orders_with_years, weekly_total_orders"
-            )
-            .eq("brand_id", brandData.id)
-            .single();
-          console.log("brandBranchData", brandBranchData);
-          if (brandBranchData)
-            setBrandBranch({
-              ...brandBranch,
-              id: brandBranchData.id,
-              branchName: brandBranchData.branch_name,
-              totalOrders: brandBranchData.total_order,
-              totalUsedFreeRights: brandBranchData.total_used_free_rights,
-              dailyTotalOrders: brandBranchData.daily_total_orders,
-              dailyTotalUsedFreeRights:
-                brandBranchData.daily_total_used_free_rights,
-              monthlyTotalOrders: brandBranchData.monthly_total_orders,
-              totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
-              monthlyTotalOrdersWithYears:
-                brandBranchData.monthly_total_orders_with_years,
-              weeklyTotalOrders: brandBranchData.weekly_total_orders,
-            });
-        } else {
-          const { data: brandBrancData } = await supabase
-            .from("brand_branch")
-            .select(
-              "id, brand_id,branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders"
-            )
-            .eq("id", data.user.id)
-            .single();
-          if (brandBrancData) {
-            setBrandBranch({
-              ...brandBranch,
-              id: brandBrancData.id,
-              brandId: brandBrancData.brand_id,
-              branchName: brandBrancData.branch_name,
-              totalOrders: brandBrancData.total_orders,
-              totalUsedFreeRights: brandBrancData.total_used_free_rights,
-              dailyTotalOrders: brandBrancData.daily_total_orders,
-              dailyTotalUsedFreeRights:
-                brandBrancData.daily_total_used_free_rights,
-              monthlyTotalOrders: brandBrancData.monthly_total_orders,
-            });
-            const { data: brandData } = await supabase
-              .from("brand")
-              .select(
-                "brand_name, contract_address, required_number_for_free_right"
-              )
-              .eq("id", brandBrancData.brand_id)
-              .single();
-            if (brandData) {
-              setBrand({
-                ...brand,
-                id: brandBrancData.brand_id,
-                brandName: brandData.brand_name,
-                contractAddress: brandData.contract_address,
-                requiredNumberForFreeRight:
-                  brandData.required_number_for_free_right,
-              });
-            }
-          }
-        }
-        // Check if it's the first login
-        if (data.user.last_sign_in_at === null) {
-          navigation.navigate("Admin New Password");
-        } else {
-          setEmail("");
-          setPassword("");
-          return navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Admin Home" }],
-            })
-          );
-        }
-      }
-    }
-    if (error) {
-      console.error(error);
+    if (!data.user) {
+      Alert.alert("Giriş Hatası", "Mail veya şifre hatalı.");
       return;
     }
+
+    const { data: brandData } = await supabase
+      .from("brand")
+      .select(
+        "id, brand_name, contract_address, required_number_for_free_right"
+      )
+      .eq("id", data.user.id)
+      .single();
+
+    if (brandData) {
+      // If the user is a brand
+      setBrand({
+        ...brand,
+        id: brandData.id,
+        brandName: brandData.brand_name,
+        contractAddress: brandData.contract_address,
+        requiredNumberForFreeRight: brandData.required_number_for_free_right,
+      });
+
+      const { data: brandBranchData } = await supabase
+        .from("brand_branch")
+        .select(
+          "id, branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders, total_unused_free_rights, monthly_total_orders_with_years, weekly_total_orders"
+        )
+        .eq("brand_id", brandData.id)
+        .single();
+
+      if (!brandBranchData) {
+        Alert.alert(
+          "Bir sorun oluştur",
+          "Markanıza ait bir şube bulunamadı. Lütfen tekrar giriş yapınız."
+        );
+        return;
+      }
+
+      setBrandBranch({
+        ...brandBranch,
+        id: brandBranchData.id,
+        branchName: brandBranchData.branch_name,
+        totalOrders: brandBranchData.total_orders,
+        totalUsedFreeRights: brandBranchData.total_used_free_rights,
+        dailyTotalOrders: brandBranchData.daily_total_orders,
+        dailyTotalUsedFreeRights: brandBranchData.daily_total_used_free_rights,
+        monthlyTotalOrders: brandBranchData.monthly_total_orders,
+        totalUnusedFreeRights: brandBranchData.total_unused_free_rights,
+        monthlyTotalOrdersWithYears:
+          brandBranchData.monthly_total_orders_with_years,
+        weeklyTotalOrders: brandBranchData.weekly_total_orders,
+      });
+    } else {
+      // If the user is a branch
+      const { data: brandBranchData } = await supabase
+        .from("brand_branch")
+        .select(
+          "id, brand_id, branch_name, total_orders, total_used_free_rights, daily_total_orders, daily_total_used_free_rights, monthly_total_orders"
+        )
+        .eq("id", data.user.id)
+        .single();
+
+      if (!brandBranchData) {
+        Alert.alert(
+          "Bir sorun oluştur",
+          "Markanıza ait bir şube bulunamadı. Lütfen tekrar giriş yapınız."
+        );
+        return;
+      }
+
+      setBrandBranch({
+        ...brandBranch,
+        id: brandBranchData.id,
+        brandId: brandBranchData.brand_id,
+        branchName: brandBranchData.branch_name,
+        totalOrders: brandBranchData.total_orders,
+        totalUsedFreeRights: brandBranchData.total_used_free_rights,
+        dailyTotalOrders: brandBranchData.daily_total_orders,
+        dailyTotalUsedFreeRights: brandBranchData.daily_total_used_free_rights,
+        monthlyTotalOrders: brandBranchData.monthly_total_orders,
+      });
+
+      const { data: brandData } = await supabase
+        .from("brand")
+        .select("brand_name, contract_address, required_number_for_free_right")
+        .eq("id", brandBranchData.brand_id)
+        .single();
+
+      if (!brandData) {
+        Alert.alert(
+          "Bir sorun oluştur",
+          "Şubenize ait bir marka bulunamadı. Lütfen tekrar giriş yapınız."
+        );
+        return;
+      }
+      setBrand({
+        ...brand,
+        id: brandBranchData.brand_id,
+        brandName: brandData.brand_name,
+        contractAddress: brandData.contract_address,
+        requiredNumberForFreeRight: brandData.required_number_for_free_right,
+      });
+    }
+
+    setEmail("");
+    setPassword("");
+
+    return navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Admin Home" }],
+      })
+    );
   };
 
   return (

@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           brand_logo_ipfs_url: string;
           brand_name: string;
+          category: string;
           collection_metadata: Json | null;
           contract_address: string | null;
           created_at: string | null;
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           brand_logo_ipfs_url?: string;
           brand_name?: string;
+          category?: string;
           collection_metadata?: Json | null;
           contract_address?: string | null;
           created_at?: string | null;
@@ -39,6 +41,7 @@ export type Database = {
         Update: {
           brand_logo_ipfs_url?: string;
           brand_name?: string;
+          category?: string;
           collection_metadata?: Json | null;
           contract_address?: string | null;
           created_at?: string | null;
@@ -64,52 +67,55 @@ export type Database = {
           branch_name: string;
           brand_id: string;
           campaigns: Json[] | null;
+          city: string;
           coords: Json | null;
           daily_total_orders: number;
           daily_total_used_free_rights: number;
           email: string;
           id: string;
           monthly_total_orders: number;
+          monthly_total_orders_with_years: Json;
           total_orders: number;
+          total_unused_free_rights: number;
           total_used_free_rights: number;
           video_url: string | null;
-          total_unused_free_rights?: number;
-          monthly_total_orders_with_years?: number;
-          weekly_total_orders?: number;
+          weekly_total_orders: Json;
         };
         Insert: {
           branch_name?: string;
           brand_id?: string;
           campaigns?: Json[] | null;
+          city?: string;
           coords?: Json | null;
           daily_total_orders?: number;
           daily_total_used_free_rights?: number;
           email?: string;
           id?: string;
           monthly_total_orders?: number;
+          monthly_total_orders_with_years?: Json;
           total_orders?: number;
+          total_unused_free_rights?: number;
           total_used_free_rights?: number;
           video_url?: string | null;
-          total_unused_free_rights?: number;
-          monthly_total_orders_with_years?: number;
-          weekly_total_orders?: number;
+          weekly_total_orders?: Json;
         };
         Update: {
           branch_name?: string;
           brand_id?: string;
           campaigns?: Json[] | null;
+          city?: string;
           coords?: Json | null;
           daily_total_orders?: number;
           daily_total_used_free_rights?: number;
           email?: string;
           id?: string;
           monthly_total_orders?: number;
+          monthly_total_orders_with_years?: Json;
           total_orders?: number;
+          total_unused_free_rights?: number;
           total_used_free_rights?: number;
           video_url?: string | null;
-          total_unused_free_rights?: number;
-          monthly_total_orders_with_years?: number;
-          weekly_total_orders?: number;
+          weekly_total_orders?: Json;
         };
         Relationships: [
           {
@@ -240,60 +246,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      decrement_admins_not_used_nfts: {
-        Args: {
-          admin_id: string;
-        };
-        Returns: undefined;
-      };
-      decrement_user_missions_number_of_free_rigths: {
-        Args: {
-          mission_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_admins_not_used_nfts: {
-        Args: {
-          admin_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_admins_number_of_orders_so_far: {
-        Args: {
-          admin_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_admins_used_rewards: {
-        Args: {
-          admin_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_user_missions_number_of_free_rigths: {
-        Args: {
-          mission_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_user_missions_number_of_orders: {
-        Args: {
-          mission_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_user_missions_number_of_orders_so_far: {
-        Args: {
-          mission_id: string;
-        };
-        Returns: undefined;
-      };
-      increment_user_missions_used_rewards: {
-        Args: {
-          mission_id: string;
-        };
-        Returns: undefined;
-      };
+      [_ in never]: never;
     };
     Enums: {
       [_ in never]: never;
