@@ -4,6 +4,7 @@ import {
   StatusBar,
   Text,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -86,7 +87,7 @@ const Login = () => {
           })
           .eq("id", data.user?.id);
       }
-
+      
       if (isNewUser) {
         navigation.navigate("User Info");
       } else {
@@ -112,11 +113,24 @@ const Login = () => {
             </TouchableOpacity>
           </>
         ) : (
-          <ConnectEmbed
-            modalTitle="Sign In"
-            modalTitleIconUrl=""
-            container={{ paddingVertical: "lg", borderRadius: "lg" }}
-          />
+          <>
+            <ConnectEmbed
+              modalTitle="Sign In"
+              modalTitleIconUrl=""
+              container={{ paddingVertical: "lg", borderRadius: "lg" }}
+            />
+            <View style={styles.useOfTermContainer}>
+              <Text style={styles.useOfTerm}>Devam ederek </Text>
+              <TouchableOpacity
+                style={styles.useOfTermLink}
+                onPress={() => Linking.openURL("https://www.ladderit.app/terms-of-use")}>
+                <Text style={styles.useOfTermText}>
+                  üyelik sözleşmesi ve kullanım koşullarını
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.useOfTerm}> kabul etmiş olursunuz.</Text>
+            </View>
+          </>
         )}
       </View>
       <TouchableOpacity
@@ -172,6 +186,21 @@ const styles = StyleSheet.create({
   businessText: {
     fontSize: 18,
     color: colors.white,
+  },
+  useOfTermContainer: {
+    marginTop: 50,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  useOfTerm: {
+    color: colors.white,
+  },
+  useOfTermLink: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#0000ff",
+  },
+  useOfTermText: {
+    color: "#0000ff",
   },
 });
 

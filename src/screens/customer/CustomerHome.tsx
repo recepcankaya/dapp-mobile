@@ -28,10 +28,39 @@ const CustomerHome = () => {
   const campaigns = useBrandBranchStore((state) => state.brandBranch.campaigns)?.map((campaign: any) => {
     return {
       image: campaign.campaign_image.replace("ipfs://", "https://ipfs.io/ipfs/"),
+      favourite: campaign.favourite
     };
   })
   const brandBranchVideoUrl = useBrandBranchStore((state) => state.brandBranch.videoUrl);
 
+  const decodeTurkishCharacters = (text: string) => {
+    return text
+      .replace(/Ğ/gim, "g")
+      .replace(/Ü/gim, "u")
+      .replace(/Ş/gim, "s")
+      .replace(/I/gim, "i")
+      .replace(/İ/gim, "i")
+      .replace(/Ö/gim, "o")
+      .replace(/Ç/gim, "c")
+      .replace(/ğ/gim, "g")
+      .replace(/ü/gim, "u")
+      .replace(/ş/gim, "s")
+      .replace(/ı/gim, "i")
+      .replace(/ö/gim, "o")
+      .replace(/ç/gim, "c")
+      .replace(" ", "-");
+  }
+
+  const convertedBrandName = decodeTurkishCharacters(decodeURI(brand.brandName));
+  const convertedBrandBranchName = decodeTurkishCharacters(decodeURIComponent(brandBranch.branchName));
+
+  const { data: brandBranchMenu } = supabase
+    .storage
+    .from("menus")
+    .getPublicUrl(`${convertedBrandName.toLowerCase()}-${convertedBrandBranchName.toLowerCase()}-menu.pdf`);
+
+  console.log("brandBranchMenu", brandBranchMenu);
+  
   const renderTickets = async () => {
     try {
       const { data } = await supabase
@@ -79,14 +108,12 @@ const CustomerHome = () => {
   const video = useRef(null);
   const [status, setStatus] = useState({});
 
-
-
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <HomeHeader />
       <ScrollView>
         <RenderTicket totalTicketOrders={totalTicketOrders} ticketIpfsUrl={brand.ticketIpfsUrl} />
-        <TouchableOpacity style={styles.menuButton} onPress={() => Linking.openURL("http://claincoffe.com")}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => { console.log(brandBranchMenu.publicUrl); Linking.openURL(decodeTurkishCharacters(brandBranchMenu.publicUrl)) }}>
           <Text style={styles.menuText}>
             Menü
           </Text>

@@ -49,7 +49,7 @@ const UserInfo = () => {
         })
         .eq("id", user.id);
 
-      if (error) {
+        if (error) {
         Alert.alert(
           "Bunu biz de beklemiyorduk 🤔",
           "Lütfen tekrar dener misiniz 👉👈"
