@@ -31,20 +31,33 @@ const UserInfo = () => {
         );
         return;
       }
-      const { data: user, error } = await supabase
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigation.navigate("Login");
+        return;
+      }
+
+      const { error } = await supabase
         .from("users")
-        .update({ username, last_login: new Date() })
-        .eq("wallet_addr", walletAddr)
-        .select("id, username");
-      if (error) {
+        .update({
+          username: username,
+          last_login: String(new Date().toISOString()),
+        })
+        .eq("id", user.id);
+
+        if (error) {
         Alert.alert(
           "Bunu biz de beklemiyorduk 🤔",
           "Lütfen tekrar dener misiniz 👉👈"
         );
       } else {
         updateUser({
-          id: user[0].id,
-          username: user[0].username,
+          id: user.id,
+          username: username,
           lastLogin: new Date().toString(),
           walletAddr: walletAddr ? walletAddr.toString() : "",
         });

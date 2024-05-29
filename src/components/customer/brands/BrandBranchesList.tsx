@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { heightConstant, widthConstant } from "../../../ui/responsiveScreen";
 import colors from "../../../ui/colors";
+import { BrandBranchDetails } from "../../../types/dbTables.types";
 
 type BrandBranchesListProps = {
   item: BrandBranchDetails;
@@ -20,7 +21,10 @@ export default function BrandBranchesList({
       onPress={() => selectBrandBranch(item, index)}>
       <Image
         source={{
-          uri: item.brandLogoIpfsUrl.replace("ipfs://", "https://ipfs.io/ipfs/"),
+          uri: item.brandLogoIpfsUrl.replace(
+            "ipfs://",
+            "https://ipfs.io/ipfs/"
+          ),
         }}
         style={styles.brandImage}
       />

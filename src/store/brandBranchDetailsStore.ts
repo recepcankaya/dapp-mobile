@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { type BrandBranchDetails } from "../types/dbTables.types";
 
 type State = {
   brandBranchDetails: BrandBranchDetails;

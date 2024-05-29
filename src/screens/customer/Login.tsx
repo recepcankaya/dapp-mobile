@@ -45,15 +45,16 @@ const Login = () => {
    * @returns {Promise<void>} A promise that resolves when the login process is completed.
    * @throws {Error} If the wallet address is undefined or if there is an error during the login process.
    */
-  const handleLoginWithSIWE = async (): Promise<void> => {
+  const signIn = async (): Promise<void> => {
     try {
       let isNewUser = false;
       if (!walletAddr) {
-        throw new Error("Wallet address is undefined");
+        throw new Error("Lütfen giriş yapınız.");
       }
 
-      const nonce = uuidv4();
-      const passwordHash = sha512(`${walletAddr}l4dder1t`).slice(0, 50);
+      const passwordHash = sha512(
+        `${walletAddr}${process.env.HASH_SALT}`
+      ).slice(0, 50);
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: `${walletAddr}@ladderuser.com`,
@@ -62,78 +63,37 @@ const Login = () => {
 
       if (error) {
         isNewUser = true;
-        const { data, error } = await supabase.auth.signUp({
+        const {
+          data: { user },
+        } = await supabase.auth.signUp({
           email: `${walletAddr}@ladderuser.com`,
           password: passwordHash,
         });
+
+        if (!user) {
+          return;
+        }
+
         await supabase
           .from("users")
-          .update({ nonce, walletAddr })
-          .eq("id", data.user?.id);
+          .update({ wallet_addr: walletAddr })
+          .eq("id", user?.id);
       } else {
         await supabase
           .from("users")
-          .update({ nonce, last_login: new Date() })
+          .update({
+            last_login: String(new Date().toISOString()),
+            wallet_addr: walletAddr,
+          })
           .eq("id", data.user?.id);
       }
-
-      const siweMessage = {
-        domain: "Ladder It",
-        addres: walletAddr,
-        statement: "Onaylama tuşuna basarak uygulamaya giriş yapabilirsiniz.",
-        version: "1",
-        chainId: "137",
-        nonce,
-      };
-
-      const ifEmbeddedWallet = await checkIfEmbeddedWallet();
-      if (ifEmbeddedWallet) {
-        const signature = await embeddedWallet?.signMessage(
-          siweMessage.statement
-        );
-
-        if (!signature) {
-          throw new Error("Signature is undefined");
-        }
-        await embeddedWallet?.verifySignature(
-          siweMessage.statement,
-          signature,
-          walletAddr,
-          137
-        );
-      } else {
-        const signature = await signer?.signMessage(siweMessage.statement);
-        if (!signature) {
-          throw new Error("Signature is undefined");
-        }
-        const signerAddr = utils.verifyMessage(nonce, signature);
-        if (signerAddr !== walletAddr) {
-          throw new Error("Signature verification failed.");
-        }
-      }
-
-      const { data: user, error: userError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("wallet_addr", walletAddr)
-        .single();
-      updateUser({
-        id: user.id.toString(),
-        username: user.username,
-        lastLogin: user.last_login,
-        walletAddr: user.wallet_addr,
-      });
-
+      
       if (isNewUser) {
         navigation.navigate("User Info");
       } else {
         navigation.navigate("TabNavigator");
       }
     } catch (error) {
-      // Alert.alert(
-      //   "Bunu biz de beklemiyorduk 🤔",
-      //   "Lütfen tekrar dener misiniz 👉👈"
-      // );
       console.error(error);
     }
   };
@@ -148,9 +108,7 @@ const Login = () => {
             <Text style={styles.subheader}>
               Devam etmek için lütfen aşağıdaki butona tıklayın
             </Text>
-            <TouchableOpacity
-              style={styles.continueButton}
-              onPress={handleLoginWithSIWE}>
+            <TouchableOpacity style={styles.continueButton} onPress={signIn}>
               <Text style={styles.buttonText}>Devam Et</Text>
             </TouchableOpacity>
           </>

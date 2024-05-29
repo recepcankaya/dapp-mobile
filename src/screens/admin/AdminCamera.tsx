@@ -31,13 +31,7 @@ const AdminCamera = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const brandId = useBrandStore((state) => state.brand.id);
 
-  useEffect(() => {
-    console.log("brandId", brandId)
-  }, [brandId])
-
   let qrCodeValue = [];
-
-  const resetQrCodeValue = () => qrCodeValue = [];
 
   useEffect(() => {
     if (!hasPermission) requestPermission();
@@ -77,8 +71,11 @@ const AdminCamera = () => {
       qrCodeValue = codes;
 
       if (typeof codes[0].value === "string") {
-        const parsedValue: { userID: string; brandBranchID: string; forNFT: boolean; } =
-          JSON.parse(codes[0].value);
+        const parsedValue: {
+          userID: string;
+          brandBranchID: string;
+          forNFT: boolean;
+        } = JSON.parse(codes[0].value);
         ({ userID, brandBranchID, forNFT } = parsedValue);
       }
 
@@ -98,17 +95,16 @@ const AdminCamera = () => {
           .eq("id", brandBranchID)
           .single();
 
-        console.log("isTrueQRData", isTrueQRData, isTrueQRData?.brand_id === brandId);
-
-        if (isTrueQRData?.brand_id !== brandId) return Alert.alert("Hata", "Gecersiz QR kodu", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+        if (isTrueQRData?.brand_id !== brandId)
+          return Alert.alert("Hata", "Gecersiz QR kodu", [
+            { text: "Tamam", onPress: () => (qrCodeValue = []) },
+          ]);
 
         const { data: user } = await supabase
           .from("users")
           .select("username, wallet_addr")
           .eq("id", userID)
           .single();
-
-        console.log("user", user);
 
         const { data: userOrderInfo } = await supabase
           .from("user_orders")
@@ -120,8 +116,6 @@ const AdminCamera = () => {
           .eq("brand_id", brandId)
           .single();
 
-        console.log("userOrderInfo", userOrderInfo);
-
         const { data: brandBranchInfo } = await supabase
           .from("brand_branch")
           .select(
@@ -130,18 +124,20 @@ const AdminCamera = () => {
           .eq("id", brandBranchID)
           .eq("brand_id", brandId);
 
-        console.log("brandBranchInfo", brandBranchInfo);
-
-        if (!brandBranchInfo) return Alert.alert("Hata", "Şube bilgisi bulunamadı.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+        if (!brandBranchInfo)
+          return Alert.alert("Hata", "Şube bilgisi bulunamadı.", [
+            { text: "Tamam", onPress: () => (qrCodeValue = []) },
+          ]);
 
         const { data: brandInfo } = await supabase
           .from("brand")
           .select("required_number_for_free_right")
           .eq("id", brandId);
 
-        console.log("brandInfo", brandInfo);
-
-        if (!brandInfo) return Alert.alert("Hata", "İşletme bilgisi bulunamadı.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+        if (!brandInfo)
+          return Alert.alert("Hata", "İşletme bilgisi bulunamadı.", [
+            { text: "Tamam", onPress: () => (qrCodeValue = []) },
+          ]);
 
         const { data: userTotalFreeRights } = await supabase
           .from("user_orders")
@@ -149,14 +145,21 @@ const AdminCamera = () => {
           .eq("user_id", userID)
           .eq("brand_id", brandId);
 
-        console.log("userTotalFreeRights", userTotalFreeRights);
-
-        const totalUserFreeRights = userTotalFreeRights && userTotalFreeRights.reduce((total, item) => total + item.user_total_free_rights, 0);
+        const totalUserFreeRights =
+          userTotalFreeRights &&
+          userTotalFreeRights.reduce(
+            (total, item) => total + item.user_total_free_rights,
+            0
+          );
         if (userOrderInfo) {
           if (forNFT) {
-            if (totalUserFreeRights === 0) return Alert.alert("Hata", "Müşterinizin ödül hakkı kalmamıştır.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+            if (totalUserFreeRights === 0)
+              return Alert.alert(
+                "Hata",
+                "Müşterinizin ödül hakkı kalmamıştır.",
+                [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+              );
             try {
-
               await supabase
                 .from("user_orders")
                 .update({
@@ -164,7 +167,8 @@ const AdminCamera = () => {
                     totalUserFreeRights && totalUserFreeRights - 1
                   ),
                   user_total_used_free_rights: Number(
-                    userOrderInfo && userOrderInfo.user_total_used_free_rights + 1
+                    userOrderInfo &&
+                      userOrderInfo.user_total_used_free_rights + 1
                   ),
                   total_user_orders: Number(
                     userOrderInfo && userOrderInfo.total_user_orders + 1
@@ -186,7 +190,8 @@ const AdminCamera = () => {
                       )[currentYear] || {}),
                       [currentMonth]: Number(
                         (
-                          brandBranchInfo[0]?.monthly_total_orders_with_years as {
+                          brandBranchInfo[0]
+                            ?.monthly_total_orders_with_years as {
                             [key: string]: { [key: string]: number };
                           }
                         )[currentYear]?.[currentMonth] + 1
@@ -221,26 +226,31 @@ const AdminCamera = () => {
                 })
                 .eq("id", brandBranchID);
 
-
-
               return Alert.alert(
                 `${user?.username} adlı müşteriniz ödülünüzü kullandı.`,
                 `Bugüne kadar verilen sipariş sayısı: ${userOrderInfo.total_user_orders + 1} ${"\n"} Kalan ödül hakkı: ${totalUserFreeRights ? totalUserFreeRights - 1 : 1} ${"\n"} Bugüne kadar kullanılan ödül sayısı: ${userOrderInfo.user_total_used_free_rights + 1}`,
                 [
                   {
                     text: "Tamam",
-                    onPress: () => qrCodeValue = [],
+                    onPress: () => (qrCodeValue = []),
                   },
                 ]
               );
             } catch (error) {
-              return Alert.alert("Hata", "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+              return Alert.alert(
+                "Hata",
+                "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.",
+                [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+              );
             }
           }
           //forNFT false yani ödül olmayan sipariş ve ilk sipariş veya başka bir markanın qr ı değil normal arttırma işlemi
           else {
             //ödüle götürecek olan sipariş değilse
-            if (Number(brandInfo[0].required_number_for_free_right) - 1 > userOrderInfo.total_ticket_orders) {
+            if (
+              Number(brandInfo[0].required_number_for_free_right) - 1 >
+              userOrderInfo.total_ticket_orders
+            ) {
               try {
                 const { error: userOrderError } = await supabase
                   .from("user_orders")
@@ -248,11 +258,11 @@ const AdminCamera = () => {
                     total_ticket_orders: Number(
                       userOrderInfo.total_ticket_orders + 1
                     ),
-                    total_user_orders: Number(userOrderInfo.total_user_orders + 1),
+                    total_user_orders: Number(
+                      userOrderInfo.total_user_orders + 1
+                    ),
                   })
                   .eq("id", userOrderInfo.id);
-
-                console.log(userOrderError);
 
                 const { error: brandBranchError } = await supabase
                   .from("brand_branch")
@@ -262,13 +272,15 @@ const AdminCamera = () => {
                         .monthly_total_orders_with_years as MonthlyOrdersWithYear),
                       [currentYear]: {
                         ...((
-                          brandBranchInfo[0]?.monthly_total_orders_with_years as {
+                          brandBranchInfo[0]
+                            ?.monthly_total_orders_with_years as {
                             [key: string]: { [key: string]: number };
                           }
                         )[currentYear] || {}),
                         [currentMonth]: Number(
                           (
-                            brandBranchInfo[0]?.monthly_total_orders_with_years as {
+                            brandBranchInfo[0]
+                              ?.monthly_total_orders_with_years as {
                               [key: string]: { [key: string]: number };
                             }
                           )[currentYear]?.[currentMonth] + 1
@@ -294,29 +306,35 @@ const AdminCamera = () => {
                   })
                   .eq("id", brandBranchID);
 
-                console.log(brandBranchError);
-
                 return Alert.alert(
                   `${user?.username} adlı müşterinin işlemi başarıyla gerçekleştirildi.`,
                   `Bugüne kadar verilen sipariş sayısı: ${userOrderInfo.total_user_orders + 1} ${"\n"} Müşterinin ödül hakkı : ${totalUserFreeRights} ${"\n"} Bugüne kadar kullanılan ödül sayısı: ${userOrderInfo.user_total_used_free_rights}`,
                   [
                     {
                       text: "Tamam",
-                      onPress: () => qrCodeValue = [],
+                      onPress: () => (qrCodeValue = []),
                     },
                   ]
-                )
+                );
               } catch (error) {
-                return Alert.alert("Hata", "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+                return Alert.alert(
+                  "Hata",
+                  "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.",
+                  [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+                );
               }
-            }
-            else if (userOrderInfo.total_ticket_orders === Number(brandInfo[0]?.required_number_for_free_right) - 1) {
+            } else if (
+              userOrderInfo.total_ticket_orders ===
+              Number(brandInfo[0]?.required_number_for_free_right) - 1
+            ) {
               try {
                 await supabase
                   .from("user_orders")
                   .update({
                     total_ticket_orders: 0,
-                    total_user_orders: Number(userOrderInfo.total_user_orders + 1),
+                    total_user_orders: Number(
+                      userOrderInfo.total_user_orders + 1
+                    ),
                     user_total_free_rights: Number(
                       totalUserFreeRights ? totalUserFreeRights + 1 : 1
                     ),
@@ -331,13 +349,15 @@ const AdminCamera = () => {
                         .monthly_total_orders_with_years as MonthlyOrdersWithYear),
                       [currentYear]: {
                         ...((
-                          brandBranchInfo[0]?.monthly_total_orders_with_years as {
+                          brandBranchInfo[0]
+                            ?.monthly_total_orders_with_years as {
                             [key: string]: { [key: string]: number };
                           }
                         )[currentYear] || {}),
                         [currentMonth]: Number(
                           (
-                            brandBranchInfo[0]?.monthly_total_orders_with_years as {
+                            brandBranchInfo[0]
+                              ?.monthly_total_orders_with_years as {
                               [key: string]: { [key: string]: number };
                             }
                           )[currentYear]?.[currentMonth] + 1
@@ -377,17 +397,20 @@ const AdminCamera = () => {
                   [
                     {
                       text: "Tamam",
-                      onPress: () => qrCodeValue = [],
-                    }
+                      onPress: () => (qrCodeValue = []),
+                    },
                   ]
-                )
+                );
               } catch (error) {
-                return Alert.alert("Hata", "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+                return Alert.alert(
+                  "Hata",
+                  "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.",
+                  [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+                );
               }
             }
           }
-        }
-        else {
+        } else {
           //burada ilk sipariş
           try {
             await supabase.from("user_orders").insert({
@@ -436,16 +459,27 @@ const AdminCamera = () => {
                 ),
               })
               .eq("id", brandBranchID);
-            return Alert.alert(`${user?.username} adlı müşterinin işlemi başarıyla gerçekleşti.`, `İlk Sipariş !`, [{ text: "Tamam", onPress: () => qrCodeValue = [], },])
+            return Alert.alert(
+              `${user?.username} adlı müşterinin işlemi başarıyla gerçekleşti.`,
+              `İlk Sipariş !`,
+              [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+            );
           } catch (error) {
-            return Alert.alert("Hata", "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+            return Alert.alert(
+              "Hata",
+              "Sipariş verme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyiniz.",
+              [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+            );
           }
         }
       } catch (error) {
-        return Alert.alert("Hata", "Bir şeyler yanlış gitti. Lütfen tekrar deneyiniz.", [{ text: "Tamam", onPress: () => qrCodeValue = [] }]);
+        return Alert.alert(
+          "Hata",
+          "Bir şeyler yanlış gitti. Lütfen tekrar deneyiniz.",
+          [{ text: "Tamam", onPress: () => (qrCodeValue = []) }]
+        );
       }
-
-    }
+    },
   });
 
   return (

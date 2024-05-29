@@ -1,6 +1,6 @@
 export type LatLng = {
-  lat: number;
-  lng: number;
+  lat: number | null;
+  lng: number | null;
 };
 
 export const haversine = (
@@ -13,6 +13,15 @@ export const haversine = (
   const toRadians = (degrees: number) => {
     return (degrees * Math.PI) / 180;
   };
+
+  if (
+    !userLocation.lat ||
+    !userLocation.lng ||
+    !storeLocation.lat ||
+    !storeLocation.lng
+  ) {
+    return 0;
+  }
 
   userLocation.lat = toRadians(userLocation.lat);
   userLocation.lng = toRadians(userLocation.lng);

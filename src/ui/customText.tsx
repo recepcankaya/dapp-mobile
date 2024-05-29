@@ -1,5 +1,4 @@
 import { Text, StyleSheet, StyleProp, TextStyle } from "react-native";
-import { responsiveFontSize } from "./responsiveFontSize";
 import colors from "./colors";
 
 type Props = {

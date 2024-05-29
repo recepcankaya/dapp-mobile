@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { type UserOrder } from "../types/dbTables.types";
 
 type State = {
   userOrder: UserOrder;

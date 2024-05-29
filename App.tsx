@@ -15,11 +15,7 @@ import {
   Loading,
   QrCode,
 } from "./src/screens/customer";
-import {
-  AdminCamera,
-  AdminHome,
-  AdminLogin,
-} from "./src/screens/admin";
+import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
 /**
