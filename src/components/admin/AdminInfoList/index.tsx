@@ -1,4 +1,3 @@
-import {} from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { ScrollView, StyleSheet, RefreshControl } from "react-native";
 import Card from "./card";

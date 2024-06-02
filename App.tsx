@@ -4,7 +4,6 @@ import { ThirdwebProvider, embeddedWallet } from "@thirdweb-dev/react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image } from "react-native";
 import Toast from "react-native-toast-message";
-import Icon from "react-native-vector-icons/AntDesign";
 
 import {
   Brands,
@@ -15,7 +14,7 @@ import {
   Loading,
   QrCode,
 } from "./src/screens/customer";
-import { AdminCamera, AdminHome, AdminLogin } from "./src/screens/admin";
+import { AdminCamera, AdminHome, AdminLogin, BranchHome } from "./src/screens/admin";
 import colors from "./src/ui/colors";
 
 /**
@@ -100,7 +99,7 @@ function App() {
       ]}
       autoConnect={true}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Loading">
           <Stack.Screen
             name="Loading"
             component={Loading}
@@ -119,6 +118,11 @@ function App() {
           <Stack.Screen
             name="Admin Home"
             component={AdminHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Branch Home"
+            component={BranchHome}
             options={{ headerShown: false }}
           />
           <Stack.Screen
