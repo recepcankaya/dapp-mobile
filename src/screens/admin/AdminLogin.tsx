@@ -15,7 +15,7 @@ import colors from "../../ui/colors";
 import supabase from "../../lib/supabase";
 import useBrandStore from "../../store/brandStore";
 import useBrandBranchStore from "../../store/brandBranchStore";
-import useBrandBranchesDetailsStore, { BrandBranchesDetailsProps } from "../../store/brandBranchesDetailsStore";
+import useBrandBranchesDetailsStore from "../../store/brandBranchesDetailsStore";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -153,7 +153,7 @@ const AdminLogin = () => {
         )
         .eq("id", data.user.id)
         .single();
-      console.log('brandBranchData', brandBranchData);
+
       if (!brandBranchData) {
         Alert.alert(
           "Bir sorun oluştur",

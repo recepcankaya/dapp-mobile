@@ -1,27 +1,16 @@
 import { create } from "zustand";
-
-export type BrandBranchesDetailsProps = {
-  totalOrders: number;
-  totalUsedFreeRights: number;
-  totalUnusedFreeRights: number;
-  dailyTotalOrders: number;
-  dailyTotalUsedFreeRights: number;
-  weeklyTotalOrders: SupabaseBrandBranch["weekly_total_orders"];
-  monthlyTotalOrders: number;
-};
+import { BrandBranchesDetails } from "../types/dbTables.types";
 
 type State = {
-  brandBranchesDetails: BrandBranchesDetailsProps;
+  brandBranchesDetails: BrandBranchesDetails;
 };
 
 type Action = {
-  setBrandBranchesDetails: (
-    brandBranchesDetails: BrandBranchesDetailsProps
-  ) => void;
+  setBrandBranchesDetails: (brandBranchesDetails: BrandBranchesDetails) => void;
 };
 
 const useBrandBranchesDetailsStore = create<State & Action>((set) => ({
-  brandBranchesDetails: {} as BrandBranchesDetailsProps,
+  brandBranchesDetails: {} as BrandBranchesDetails,
   setBrandBranchesDetails: (brandBranchesDetails) =>
     set(() => ({ brandBranchesDetails })),
 }));
