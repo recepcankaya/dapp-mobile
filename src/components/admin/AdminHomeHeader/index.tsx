@@ -10,8 +10,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import colors from "../../../ui/colors";
 import { responsiveFontSize } from "../../../ui/responsiveFontSize";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Brand } from "../../../types/dbTables.types";
 const { width } = Dimensions.get("window");
 
@@ -21,7 +19,7 @@ type HomeHeaderProps = {
 };
 
 const AdminHomeHeader = ({ brandName, brandLogo }: HomeHeaderProps) => {
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   const statusBarHeight = useSafeAreaInsets().top;
   return (
     <View style={[styles.container, { paddingTop: statusBarHeight }]}>
@@ -31,14 +29,9 @@ const AdminHomeHeader = ({ brandName, brandLogo }: HomeHeaderProps) => {
           <Text style={styles.title}>{brandName}</Text>
         </View>
         <View style={styles.logoContainer}>
-          <TouchableOpacity
-            style={styles.qrCodeContainer}
-            onPress={() => navigation.navigate("Admin Camera")}>
-            <Text style={styles.qrCodeText}>Qr Kodu Okut</Text>
-          </TouchableOpacity>
           <Image
             source={{
-              uri: brandLogo.replace("ipfs://", "https://ipfs.io/ipfs/"),
+              uri: brandLogo?.replace("ipfs://", "https://ipfs.io/ipfs/"),
             }}
             style={styles.logo}
           />
@@ -91,7 +84,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-end",
   },
   logo: {
     width: 50,
